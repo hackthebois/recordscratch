@@ -6,7 +6,7 @@ import { hairlineWidth } from "nativewind/theme";
 
 export default {
 	darkMode: "class",
-	content: ["./src/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
+	content: ["./src/**/*.{ts,tsx}"],
 	presets: [nativewind],
 	theme: {
 		extend: {
