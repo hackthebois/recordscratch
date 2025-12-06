@@ -28,8 +28,7 @@ const FeedPage = () => {
 							tab: value === "recent" ? undefined : value,
 						});
 					}}
-					className="sm:mt-4"
-				>
+					className="sm:mt-4">
 					<View className="px-4">
 						<TabsList className="w-full flex-row">
 							<TabsTrigger value="recent" className="flex-1">

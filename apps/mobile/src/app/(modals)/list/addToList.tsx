@@ -59,8 +59,7 @@ const AddToListModal = () => {
 							href={{
 								pathname: "/(modals)/list/createList",
 								params: { categoryProp: category },
-							}}
-						>
+							}}>
 							<Button
 								variant="outline"
 								className="flex flex-col items-center justify-center gap-1 rounded-2xl"
@@ -69,20 +68,14 @@ const AddToListModal = () => {
 									height: dimensions.width / 3.25,
 									maxHeight: dimensions.width / 3.25,
 									maxWidth: dimensions.width / 3.25,
-								}}
-							>
+								}}>
 								<SquarePlus className="mt-6" />
-								<Text className="text-center">
-									Create a List
-								</Text>
+								<Text className="text-center">Create a List</Text>
 							</Button>
 						</Link>
 						{!lists?.length && (
 							<View className="mt-40 w-full items-center justify-center">
-								<Text
-									variant="h3"
-									className="text-muted-foreground capitalize"
-								>
+								<Text variant="h3" className="capitalize text-muted-foreground">
 									Make sure to create a list first
 								</Text>
 							</View>

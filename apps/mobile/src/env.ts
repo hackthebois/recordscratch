@@ -4,8 +4,7 @@ import { Platform } from "react-native";
 let env = {
 	ENV: "development",
 	R2_PUBLIC_URL: "https://cdn.recordscratch.app",
-	SCHEME:
-		Platform.OS === "web" ? "http://localhost:8081/" : "recordscratch://",
+	SCHEME: Platform.OS === "web" ? "http://localhost:8081/" : "recordscratch://",
 	SITE_URL: "http://localhost:3000",
 	DEBUG: true,
 };

@@ -170,17 +170,12 @@ const RatingModal = () => {
 				<WebWrapper>
 					<View className="p-4">
 						<View className="flex-row items-center">
-							<View className="border-border h-14 flex-1 flex-row items-center rounded-xl border pr-4">
-								<Search
-									size={20}
-									className="text-foreground mx-4"
-								/>
+							<View className="h-14 flex-1 flex-row items-center rounded-xl border border-border pr-4">
+								<Search size={20} className="mx-4 text-foreground" />
 								<Controller
 									control={control}
 									name="query"
-									render={({
-										field: { onChange, value },
-									}) => (
+									render={({ field: { onChange, value } }) => (
 										<TextInput
 											autoComplete="off"
 											placeholder={`Search for a ${category.toLowerCase()}`}
@@ -188,18 +183,13 @@ const RatingModal = () => {
 											cursorColor={"#ffb703"}
 											style={{
 												paddingTop: 0,
-												paddingBottom:
-													Platform.OS === "ios"
-														? 4
-														: 0,
+												paddingBottom: Platform.OS === "ios" ? 4 : 0,
 												textAlignVertical: "center",
 											}}
 											autoCorrect={false}
 											autoFocus
-											className="text-foreground h-full w-full flex-1 p-0 text-xl outline-none"
-											onChangeText={(text) =>
-												onChange(text)
-											}
+											className="h-full w-full flex-1 p-0 text-xl text-foreground outline-none"
+											onChangeText={(text) => onChange(text)}
 											keyboardType="default"
 										/>
 									)}

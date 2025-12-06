@@ -45,11 +45,7 @@ const Metadata = ({
 			)}
 			<View className="flex flex-1 flex-col items-center justify-center gap-4 sm:items-start sm:justify-center">
 				<View className="flex flex-col items-center justify-center gap-4 sm:items-start">
-					{!!type && (
-						<Text className="text-muted-foreground">
-							{type.toUpperCase()}
-						</Text>
-					)}
+					{!!type && <Text className="text-muted-foreground">{type.toUpperCase()}</Text>}
 					{title && (
 						<Text variant={"h1"} className="text-center">
 							{title}
@@ -67,10 +63,7 @@ const Metadata = ({
 								genres
 									.filter((genre) => Boolean(genre))
 									.map((genre) => (
-										<Link
-											href={`/genre/${genre.id}`}
-											key={genre.id}
-										>
+										<Link href={`/genre/${genre.id}`} key={genre.id}>
 											<Pill>{genre.name}</Pill>
 										</Link>
 									))}

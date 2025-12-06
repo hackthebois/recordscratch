@@ -27,23 +27,22 @@ export const RatingInfo = ({
 				className={cn(
 					"flex min-h-12 justify-center gap-4",
 					size === "sm" && "min-w-18 h-8",
-					size === "lg" && "h-12 min-w-20",
-				)}
-			>
+					size === "lg" && "h-12 min-w-20"
+				)}>
 				<View className="flex flex-row items-center justify-center gap-2">
 					<Star size={size === "lg" ? 32 : 21} color="#ffb703" />
 					<View className="flex flex-col gap-1">
 						<Skeleton className="w-6">
 							<Text
 								className={cn({
-									"text-lg font-semibold": size === "lg",
+									"font-semibold text-lg": size === "lg",
 									"text font-semibold": size === "sm",
 								})}
 							/>
 						</Skeleton>
 						{size === "lg" && (
 							<Skeleton className="w-4">
-								<Text className="text-muted-foreground text-lg" />
+								<Text className="text-lg text-muted-foreground" />
 							</Skeleton>
 						)}
 					</View>
@@ -64,29 +63,23 @@ export const RatingInfo = ({
 				className={cn(
 					"flex min-h-12 justify-center gap-4",
 					size === "sm" && "min-w-18 h-8",
-					size === "lg" && "h-12 min-w-20",
-				)}
-			>
+					size === "lg" && "h-12 min-w-20"
+				)}>
 				{!(size === "sm" && !rating?.average) && (
 					<View className="flex flex-row items-center justify-center gap-2">
-						<Star
-							size={size === "lg" ? 32 : 21}
-							color="#ffb703"
-							fill="#ffb703"
-						/>
+						<Star size={size === "lg" ? 32 : 21} color="#ffb703" fill="#ffb703" />
 						<View className="flex flex-col">
 							{rating?.average && (
 								<Text
 									className={cn({
-										"text-lg font-semibold": size === "lg",
+										"font-semibold text-lg": size === "lg",
 										"text font-semibold": size === "sm",
-									})}
-								>
+									})}>
 									{Number(rating.average).toFixed(1)}
 								</Text>
 							)}
 							{size === "lg" && (
-								<Text className="text-muted-foreground text-lg">
+								<Text className="text-lg text-muted-foreground">
 									{rating?.total && Number(rating.total) !== 0
 										? rating.total
 										: resource.category === "ARTIST"

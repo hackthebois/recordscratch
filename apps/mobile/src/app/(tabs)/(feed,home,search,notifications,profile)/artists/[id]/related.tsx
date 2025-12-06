@@ -13,9 +13,7 @@ const RelatedPage = () => {
 	const dimensions = useWindowDimensions();
 	const screenSize = Math.min(dimensions.width, 1024);
 	const numColumns = screenSize === 1024 ? 6 : 3;
-	const top6Width =
-		(Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns -
-		1;
+	const top6Width = (Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns - 1;
 
 	const { data: artist } = useSuspenseQuery(
 		getQueryOptions({
@@ -23,7 +21,7 @@ const RelatedPage = () => {
 			input: {
 				id: artistId,
 			},
-		}),
+		})
 	);
 	const { data: artists } = useSuspenseQuery(
 		getQueryOptions({
@@ -31,7 +29,7 @@ const RelatedPage = () => {
 			input: {
 				id: artistId,
 			},
-		}),
+		})
 	);
 
 	return (

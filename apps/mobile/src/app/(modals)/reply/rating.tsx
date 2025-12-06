@@ -87,19 +87,15 @@ const Reply = () => {
 													? 16
 													: 0,
 									}}
-									className="flex-row items-center gap-2"
-								>
-									<Send
-										size={16}
-										className="text-foreground"
-									/>
+									className="flex-row items-center gap-2">
+									<Send size={16} className="text-foreground" />
 									<Text>Post</Text>
 								</Button>
 							),
 						}}
 					/>
 					<Review {...rating} profile={profile} hideActions />
-					<View className="bg-muted h-[1px]" />
+					<View className="h-[1px] bg-muted" />
 					<Controller
 						control={form.control}
 						name="content"
@@ -109,7 +105,7 @@ const Reply = () => {
 									placeholder="Create a new comment..."
 									autoFocus
 									multiline
-									className="text-foreground text-lg outline-none"
+									className="text-lg text-foreground outline-none"
 									scrollEnabled={false}
 									onChangeText={field.onChange}
 									{...field}

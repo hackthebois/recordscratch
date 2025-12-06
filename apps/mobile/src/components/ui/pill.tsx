@@ -14,11 +14,10 @@ export const Pill = ({
 	return (
 		<View
 			className={cn(
-				"bg-background border-border rounded-full border px-2.5 py-1",
-				className,
-			)}
-		>
-			<Text className="text-sm font-medium">{children}</Text>
+				"rounded-full border border-border bg-background px-2.5 py-1",
+				className
+			)}>
+			<Text className="font-medium text-sm">{children}</Text>
 		</View>
 	);
 };

@@ -30,7 +30,7 @@ const CommentPage = () => {
 					ListHeaderComponent={
 						<WebWrapper>
 							<Comment comment={comment} />
-							<View className="bg-muted h-[1px]" />
+							<View className="h-[1px] bg-muted" />
 						</WebWrapper>
 					}
 					data={comment.replies}
@@ -41,7 +41,7 @@ const CommentPage = () => {
 					)}
 					ItemSeparatorComponent={() => (
 						<WebWrapper>
-							<View className="bg-muted h-[1px]" />
+							<View className="h-[1px] bg-muted" />
 						</WebWrapper>
 					)}
 					estimatedItemSize={200}

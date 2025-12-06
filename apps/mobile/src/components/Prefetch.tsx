@@ -1,13 +1,7 @@
 import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 
-export const Prefetch = ({
-	handle,
-	userId,
-}: {
-	handle: string;
-	userId: string;
-}) => {
+export const Prefetch = ({ handle, userId }: { handle: string; userId: string }) => {
 	api.profiles.get.usePrefetchQuery(handle);
 	api.ratings.user.streak.usePrefetchQuery({ userId });
 	api.ratings.user.totalLikes.usePrefetchQuery({ userId });
@@ -30,10 +24,7 @@ export const Prefetch = ({
 	return null;
 };
 
-export const PrefetchProfile = (props: {
-	handle?: string;
-	userId?: string;
-}) => {
+export const PrefetchProfile = (props: { handle?: string; userId?: string }) => {
 	const profile = useAuth((s) => s.profile);
 	const handle = props.handle ?? profile?.handle ?? "";
 	const userId = props.userId ?? profile?.userId ?? "";

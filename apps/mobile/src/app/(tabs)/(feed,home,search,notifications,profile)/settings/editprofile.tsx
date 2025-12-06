@@ -90,8 +90,7 @@ const TopListTab = ({
 				variant={editMode ? "destructive" : "outline"}
 				onPress={() => {
 					setEditMode(!editMode);
-				}}
-			>
+				}}>
 				<Eraser size={20} className="text-foreground" />
 			</Button>
 			<View className="h-28"></View>
@@ -141,22 +140,16 @@ const EditProfile = () => {
 			});
 		},
 	});
-	const { mutateAsync: getSignedURL } =
-		api.profiles.getSignedURL.useMutation();
+	const { mutateAsync: getSignedURL } = api.profiles.getSignedURL.useMutation();
 
 	const image = form.watch("image");
 	const handle = form.watch("handle");
 	const name = form.watch("name");
 
 	const debouncedHandle = useDebounce(handle, 500);
-	const { data: handleExists } = api.profiles.handleExists.useQuery(
-		debouncedHandle,
-		{
-			enabled:
-				debouncedHandle.length > 0 &&
-				debouncedHandle !== profile.handle,
-		},
-	);
+	const { data: handleExists } = api.profiles.handleExists.useQuery(debouncedHandle, {
+		enabled: debouncedHandle.length > 0 && debouncedHandle !== profile.handle,
+	});
 
 	useEffect(() => {
 		if (handleExists) {
@@ -165,10 +158,7 @@ const EditProfile = () => {
 				message: "Handle already exists",
 			});
 		} else {
-			if (
-				form.formState.errors.handle?.message ===
-				"Handle already exists"
-			) {
+			if (form.formState.errors.handle?.message === "Handle already exists") {
 				form.clearErrors("handle");
 			}
 		}
@@ -234,15 +224,12 @@ const EditProfile = () => {
 									<Button
 										variant="secondary"
 										onPress={async () => {
-											let result =
-												await ImagePicker.launchImageLibraryAsync(
-													{
-														mediaTypes: ["images"],
-														allowsEditing: true,
-														aspect: [1, 1],
-														quality: 1,
-													},
-												);
+											let result = await ImagePicker.launchImageLibraryAsync({
+												mediaTypes: ["images"],
+												allowsEditing: true,
+												aspect: [1, 1],
+												quality: 1,
+											});
 
 											if (
 												!result.canceled &&
@@ -252,22 +239,16 @@ const EditProfile = () => {
 												const asset = result.assets[0]!;
 												onChange({
 													uri: asset.uri,
-													type:
-														asset.type ??
-														"image/jpeg",
+													type: asset.type ?? "image/jpeg",
 													size: asset.fileSize,
 												});
 											}
-										}}
-									>
+										}}>
 										<Text>Pick an image</Text>
 									</Button>
 									{form.formState.errors.image && (
-										<Text className="text-destructive mt-2">
-											{
-												form.formState.errors.image
-													.message
-											}
+										<Text className="mt-2 text-destructive">
+											{form.formState.errors.image.message}
 										</Text>
 									)}
 								</View>
@@ -283,12 +264,12 @@ const EditProfile = () => {
 								<TextInput
 									{...field}
 									placeholder="Name"
-									className="text-foreground border-border self-stretch rounded-md border px-4 py-3"
+									className="self-stretch rounded-md border border-border px-4 py-3 text-foreground"
 									autoComplete="off"
 									onChangeText={field.onChange}
 								/>
 								{form.formState.errors.name && (
-									<Text className="text-destructive mt-2">
+									<Text className="mt-2 text-destructive">
 										{form.formState.errors.name.message}
 									</Text>
 								)}
@@ -303,22 +284,19 @@ const EditProfile = () => {
 								<Text>Handle</Text>
 								<View>
 									<AtSign
-										className="text-muted-foreground absolute left-3 top-[11px] text-lg"
+										className="absolute left-3 top-[11px] text-lg text-muted-foreground"
 										size={16}
 									/>
 									<TextInput
 										{...field}
 										placeholder="Handle"
-										className="text-foreground border-border self-stretch rounded-md border py-3 pl-9 pr-4"
+										className="self-stretch rounded-md border border-border py-3 pl-9 pr-4 text-foreground"
 										autoComplete="off"
 										onChangeText={field.onChange}
 									/>
 									{form.formState.errors.handle && (
-										<Text className="text-destructive mt-2">
-											{
-												form.formState.errors.handle
-													.message
-											}
+										<Text className="mt-2 text-destructive">
+											{form.formState.errors.handle.message}
 										</Text>
 									)}
 								</View>
@@ -334,13 +312,13 @@ const EditProfile = () => {
 								<TextInput
 									{...field}
 									placeholder="Bio"
-									className="text-foreground border-border h-40 self-stretch rounded-md border p-4"
+									className="h-40 self-stretch rounded-md border border-border p-4 text-foreground"
 									multiline
 									autoComplete="off"
 									onChangeText={field.onChange}
 								/>
 								{form.formState.errors.bio && (
-									<Text className="text-destructive mt-2">
+									<Text className="mt-2 text-destructive">
 										{form.formState.errors.bio.message}
 									</Text>
 								)}
@@ -351,8 +329,7 @@ const EditProfile = () => {
 						onPress={form.handleSubmit(onSubmit)}
 						disabled={!pageValid()}
 						className="self-stretch"
-						variant="secondary"
-					>
+						variant="secondary">
 						{loading ? <Text>Loading...</Text> : <Text>Save</Text>}
 					</Button>
 					<TopListTab

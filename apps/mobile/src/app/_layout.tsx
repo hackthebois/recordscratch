@@ -25,10 +25,7 @@ import * as Updates from "expo-updates";
 import React, { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import "../styles.css";
-import {
-	configureReanimatedLogger,
-	ReanimatedLogLevel,
-} from "react-native-reanimated";
+import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { defaultScreenOptions } from "@/lib/navigation";
 
@@ -153,9 +150,7 @@ const RootLayout = () => {
 		<AuthProvider>
 			<TRPCProvider>
 				<SafeAreaProvider>
-					<ThemeProvider
-						value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
-					>
+					<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
 						<PrefetchProfile />
 						<Stack screenOptions={defaultScreenOptions}>
 							<Stack.Screen

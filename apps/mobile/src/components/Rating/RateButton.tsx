@@ -33,7 +33,7 @@ const RateButton = ({
 		{
 			staleTime: Infinity,
 			initialData: initialUserRating,
-		},
+		}
 	);
 
 	if (isLoading) {
@@ -52,8 +52,7 @@ const RateButton = ({
 					name,
 				},
 			}}
-			asChild
-		>
+			asChild>
 			<Button variant="secondary" size={size} className="flex-row gap-2">
 				<Star size={iconSize[size]} color="#fb8500" {...fill} />
 				<Text>{userRating ? userRating.rating : "Rate"}</Text>

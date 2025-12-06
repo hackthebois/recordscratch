@@ -28,8 +28,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		},
 		package: "app.recordscratch.android",
 		versionCode: 1,
-		googleServicesFile:
-			process.env.GOOGLE_SERVICES_JSON || "./google-services.json",
+		googleServicesFile: process.env.GOOGLE_SERVICES_JSON || "./google-services.json",
 	},
 	web: {
 		favicon: "./assets/icon.png",
@@ -53,6 +52,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 				backgroundColor: "#ffffff",
 			},
 		],
+		"expo-web-browser",
 		"expo-apple-authentication",
 		"expo-font",
 		"expo-secure-store",

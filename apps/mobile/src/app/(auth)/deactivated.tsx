@@ -21,19 +21,16 @@ const deactivated = () => {
 		<View className="mx-4 flex-1 items-center justify-center gap-16">
 			<Hand size={100} color="red" fillOpacity={0} />
 			<Text variant="h2" className="text-center">
-				Your account has been deactivated for violating our terms of
-				service.
+				Your account has been deactivated for violating our terms of service.
 			</Text>
 			<View className="flex flex-col items-center justify-center gap-5">
 				<Text variant="h4" className="text-center">
-					You can appeal this decision by contacting support through
-					our discord
+					You can appeal this decision by contacting support through our discord
 				</Text>
 				<Button
 					variant="outline"
 					onPress={() => openUrl(socials.discord)}
-					className="flex-row items-center gap-3"
-				>
+					className="flex-row items-center gap-3">
 					<Discord size={20} />
 					<Text>Discord</Text>
 				</Button>
@@ -43,8 +40,7 @@ const deactivated = () => {
 				onPress={async () => {
 					await logout();
 					await reloadAppAsync();
-				}}
-			>
+				}}>
 				<Text>Sign Out</Text>
 			</Button>
 		</View>

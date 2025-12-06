@@ -1,11 +1,7 @@
 import { ArtistItem } from "@/components/Item/ArtistItem";
 import { ResourceItem } from "@/components/Item/ResourceItem";
 import { Category, ListItem } from "@recordscratch/types";
-import {
-	Gesture,
-	GestureDetector,
-	GestureHandlerRootView,
-} from "react-native-gesture-handler";
+import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, {
 	cancelAnimation,
 	SharedValue,
@@ -39,11 +35,7 @@ function clamp(value: number, lowerBound: number, upperBound: number) {
 	"worklet";
 	return Math.max(lowerBound, Math.min(value, upperBound));
 }
-function objectMove(
-	positions: Record<string, number>,
-	from: number,
-	to: number,
-) {
+function objectMove(positions: Record<string, number>, from: number, to: number) {
 	"worklet";
 	const newPositions: Record<string, number> = { ...positions };
 	for (const id in positions) {
@@ -63,14 +55,14 @@ function setMap(resources: ListItem[]) {
 			map[obj.resourceId] = obj.position;
 			return map;
 		},
-		{},
+		{}
 	);
 }
 
 function getUpdatedResources(
 	resources: ListItem[],
 	resourceId: string,
-	positions: Record<string, number>,
+	positions: Record<string, number>
 ) {
 	const updatedResources: ListItem[] = [];
 	let deletedResource: ListItem | null = null;
@@ -145,12 +137,9 @@ const AnimatedResource = ({
 	contentHeight: number;
 }) => {
 	const moving = useSharedValue<boolean>(false);
-	const position = useSharedValue<string>(
-		resourcesSharedMap.value[item.resourceId].toString(),
-	);
+	const position = useSharedValue<string>(resourcesSharedMap.value[item.resourceId].toString());
 	const top = useSharedValue<number>(
-		(resourcesSharedMap.value[item.resourceId] - 1) * SONG_HEIGHT +
-			MARGIN_TOP_OFFSET,
+		(resourcesSharedMap.value[item.resourceId] - 1) * SONG_HEIGHT + MARGIN_TOP_OFFSET
 	);
 	const { colorScheme } = useColorScheme();
 	const backgroundColor = color("hsl(240, 10%, 3.9%)").rgb().string();
@@ -160,13 +149,11 @@ const AnimatedResource = ({
 		(currentPosition, previousPosition) => {
 			if (currentPosition && currentPosition !== previousPosition)
 				if (!moving.value) {
-					top.value = withSpring(
-						(currentPosition - 1) * SONG_HEIGHT + MARGIN_TOP_OFFSET,
-					);
+					top.value = withSpring((currentPosition - 1) * SONG_HEIGHT + MARGIN_TOP_OFFSET);
 					position.value = currentPosition.toString();
 				}
 		},
-		[moving],
+		[moving]
 	);
 
 	const panHandler = Gesture.Pan()
@@ -179,27 +166,23 @@ const AnimatedResource = ({
 			const positionY = event.absoluteY + scrollY.value;
 
 			top.value = withTiming(
-				clamp(
-					positionY - SONG_HEIGHT * 2,
-					0,
-					contentHeight - SONG_HEIGHT,
-				), // modal causes song_height offset
+				clamp(positionY - SONG_HEIGHT * 2, 0, contentHeight - SONG_HEIGHT), // modal causes song_height offset
 				{
 					duration: 16,
-				},
+				}
 			);
 
 			const newPosition = clamp(
 				Math.floor((positionY - MARGIN_TOP_OFFSET) / SONG_HEIGHT),
 				1,
-				resourcesCount,
+				resourcesCount
 			);
 
 			if (newPosition !== resourcesSharedMap.value[item.resourceId]) {
 				resourcesSharedMap.value = objectMove(
 					resourcesSharedMap.value,
 					resourcesSharedMap.value[item.resourceId],
-					newPosition,
+					newPosition
 				);
 				position.value = newPosition.toString();
 				hasListChanged.value = true;
@@ -207,8 +190,7 @@ const AnimatedResource = ({
 		})
 		.onEnd(() => {
 			top.value = withSpring(
-				(resourcesSharedMap.value[item.resourceId] - 1) * SONG_HEIGHT +
-					MARGIN_TOP_OFFSET,
+				(resourcesSharedMap.value[item.resourceId] - 1) * SONG_HEIGHT + MARGIN_TOP_OFFSET
 			);
 			moving.value = false;
 		})
@@ -238,7 +220,7 @@ const AnimatedResource = ({
 			gap: 16,
 			visibility: "false",
 		}),
-		[moving],
+		[moving]
 	);
 
 	return (
@@ -266,14 +248,10 @@ const AnimatedResource = ({
 						deleteResource(item.resourceId);
 					}}
 					variant="secondary"
-					size="icon"
-				>
+					size="icon">
 					<Trash2 size={18} className="text-foreground" />
 				</Button>
-				<AlignJustify
-					className="text-foreground"
-					style={{ marginRight: 16 }}
-				/>
+				<AlignJustify className="text-foreground" style={{ marginRight: 16 }} />
 			</Animated.View>
 		</GestureDetector>
 	);
@@ -298,8 +276,7 @@ const SortableList = ({
 }) => {
 	const scrollY = useSharedValue(0);
 	const scrollViewRef = useAnimatedRef<Animated.ScrollView>();
-	const contentHeight =
-		resourcesState.length * SONG_HEIGHT + MARGIN_TOP_OFFSET * 2;
+	const contentHeight = resourcesState.length * SONG_HEIGHT + MARGIN_TOP_OFFSET * 2;
 
 	const handleScroll = useAnimatedScrollHandler((event) => {
 		scrollY.value = event.contentOffset.y;
@@ -310,7 +287,7 @@ const SortableList = ({
 		const { updatedResources, deletedResource } = getUpdatedResources(
 			resourcesState,
 			resourceId,
-			resourcesSharedMap.value,
+			resourcesSharedMap.value
 		);
 		setResourcesState(updatedResources);
 		setDeletedResources([...deletedResources, deletedResource!]);
@@ -324,8 +301,7 @@ const SortableList = ({
 			nestedScrollEnabled={true}
 			style={{ flex: 1, position: "relative" }}
 			contentContainerStyle={{ height: contentHeight }}
-			showsVerticalScrollIndicator={false}
-		>
+			showsVerticalScrollIndicator={false}>
 			{resourcesState.map((item) => (
 				<AnimatedResource
 					key={item.resourceId}
@@ -355,16 +331,11 @@ const RearrangeListModal = () => {
 	const [resourcesState, setResourcesState] = useState<ListItem[]>(listItems);
 	const [deletedResources, setDeletedResources] = useState<ListItem[]>([]);
 	const hasListChanged = useSharedValue<boolean>(false);
-	const resourcesSharedMap = useDerivedValue(
-		() => setMap(resourcesState),
-		[resourcesState],
-	);
+	const resourcesSharedMap = useDerivedValue(() => setMap(resourcesState), [resourcesState]);
 
 	const utils = api.useUtils();
-	const { mutateAsync: updatePositions } =
-		api.lists.resources.updatePositions.useMutation();
-	const { mutateAsync: deletePositions } =
-		api.lists.resources.multipleDelete.useMutation();
+	const { mutateAsync: updatePositions } = api.lists.resources.updatePositions.useMutation();
+	const { mutateAsync: deletePositions } = api.lists.resources.multipleDelete.useMutation();
 
 	const handleSave = async () => {
 		router.back();
@@ -411,8 +382,7 @@ const RearrangeListModal = () => {
 								<Button
 									variant="secondary"
 									onPress={handleSave}
-									className="mt-1 flex"
-								>
+									className="mt-1 flex">
 									<Text variant="h4">Save</Text>
 								</Button>
 							),
@@ -420,9 +390,9 @@ const RearrangeListModal = () => {
 					/>
 					{Platform.OS === "web" ? (
 						<WebWrapper>
-							<Text className="text-muted-foreground mt-40 text-center text-xl">
-								Editing lists is not supported on the web yet.
-								Please use the mobile app.
+							<Text className="mt-40 text-center text-xl text-muted-foreground">
+								Editing lists is not supported on the web yet. Please use the mobile
+								app.
 							</Text>
 						</WebWrapper>
 					) : (

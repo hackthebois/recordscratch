@@ -20,9 +20,9 @@ const Followers = () => {
 		handle: string;
 		type?: string;
 	}>();
-	const type = (
-		params.type && types.includes(params.type) ? params.type : "followers"
-	) as "followers" | "following";
+	const type = (params.type && types.includes(params.type) ? params.type : "followers") as
+		| "followers"
+		| "following";
 
 	const profile = useAuth((s) => s.profile);
 
@@ -30,11 +30,10 @@ const Followers = () => {
 
 	if (!userProfile) return <NotFoundScreen />;
 
-	const { data: followProfiles, refetch } =
-		api.profiles.followProfiles.useQuery({
-			profileId: userProfile.userId,
-			type,
-		});
+	const { data: followProfiles, refetch } = api.profiles.followProfiles.useQuery({
+		profileId: userProfile.userId,
+		type,
+	});
 
 	const { refetchByUser, isRefetchingByUser } = useRefreshByUser(refetch);
 
@@ -52,8 +51,7 @@ const Followers = () => {
 						type: value === "followers" ? undefined : value,
 					})
 				}
-				className="flex-1 sm:mt-4"
-			>
+				className="flex-1 sm:mt-4">
 				<WebWrapper>
 					<View className="w-full px-4">
 						<TabsList className="flex-row">
@@ -70,10 +68,12 @@ const Followers = () => {
 					data={followProfiles?.flatMap((item) => item?.profile as Profile)}
 					renderItem={({ item }) => (
 						<WebWrapper>
-							{item && <ProfileItem
-								profile={item}
-								isUser={profile!.userId === item.userId}
-							/>} 
+							{item && (
+								<ProfileItem
+									profile={item}
+									isUser={profile!.userId === item.userId}
+								/>
+							)}
 						</WebWrapper>
 					)}
 					estimatedItemSize={60}

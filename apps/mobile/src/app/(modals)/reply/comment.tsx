@@ -93,8 +93,7 @@ const CommentModal = () => {
 													? 16
 													: 0,
 									}}
-									className="flex-row items-center gap-2"
-								>
+									className="flex-row items-center gap-2">
 									<Send size={16} />
 									<Text>Post</Text>
 								</Button>
@@ -102,7 +101,7 @@ const CommentModal = () => {
 						}}
 					/>
 					<Comment comment={comment} hideActions />
-					<View className="bg-muted h-[1px]" />
+					<View className="h-[1px] bg-muted" />
 					<Controller
 						control={form.control}
 						name="content"
@@ -112,7 +111,7 @@ const CommentModal = () => {
 									placeholder="Create a new comment..."
 									autoFocus
 									multiline
-									className="text-foreground text-lg outline-none"
+									className="text-lg text-foreground outline-none"
 									scrollEnabled={false}
 									onChangeText={field.onChange}
 									{...field}
@@ -126,8 +125,7 @@ const CommentModal = () => {
 							onPress={form.handleSubmit(onSubmit)}
 							disabled={isPending}
 							variant="secondary"
-							size="sm"
-						>
+							size="sm">
 							<Text>Post</Text>
 						</Button>
 					) : null}

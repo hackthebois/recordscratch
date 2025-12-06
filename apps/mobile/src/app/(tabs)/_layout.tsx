@@ -17,12 +17,9 @@ import { Platform } from "react-native";
 export default function TabLayout() {
 	const router = useRouter();
 	const sessionId = useAuth((s) => s.sessionId);
-	const { data: notifications } = api.notifications.getUnseen.useQuery(
-		undefined,
-		{
-			enabled: !!sessionId,
-		},
-	);
+	const { data: notifications } = api.notifications.getUnseen.useQuery(undefined, {
+		enabled: !!sessionId,
+	});
 
 	useNotificationObserver();
 
@@ -35,9 +32,7 @@ export default function TabLayout() {
 				sceneStyle: {
 					paddingBottom: Platform.OS === "web" ? 0 : 80,
 				},
-				headerTitle: (props: any) => (
-					<Text variant="h4">{props.children}</Text>
-				),
+				headerTitle: (props: any) => <Text variant="h4">{props.children}</Text>,
 				tabBarStyle: {
 					height: 80,
 					position: "absolute",
@@ -72,8 +67,7 @@ export default function TabLayout() {
 				//    <ArrowLeft size={28} className="text-primary" />
 				//  </Pressable>
 				//),
-			}}
-		>
+			}}>
 			<Tabs.Screen
 				name="(home)"
 				options={{
@@ -81,11 +75,7 @@ export default function TabLayout() {
 					tabBarIcon: ({ focused }) => (
 						<Home
 							size={26}
-							className={cn(
-								focused
-									? "text-primary"
-									: "text-muted-foreground",
-							)}
+							className={cn(focused ? "text-primary" : "text-muted-foreground")}
 						/>
 					),
 					headerShown: false,
@@ -98,11 +88,7 @@ export default function TabLayout() {
 					tabBarIcon: ({ focused }) => (
 						<Search
 							size={26}
-							className={cn(
-								focused
-									? "text-primary"
-									: "text-muted-foreground",
-							)}
+							className={cn(focused ? "text-primary" : "text-muted-foreground")}
 						/>
 					),
 					headerShown: false,
@@ -115,11 +101,7 @@ export default function TabLayout() {
 					tabBarIcon: ({ focused }) => (
 						<Rows3
 							size={26}
-							className={cn(
-								focused
-									? "text-primary"
-									: "text-muted-foreground",
-							)}
+							className={cn(focused ? "text-primary" : "text-muted-foreground")}
 						/>
 					),
 					headerShown: false,
@@ -137,11 +119,7 @@ export default function TabLayout() {
 					tabBarIcon: ({ focused }) => (
 						<Bell
 							size={26}
-							className={cn(
-								focused
-									? "text-primary"
-									: "text-muted-foreground",
-							)}
+							className={cn(focused ? "text-primary" : "text-muted-foreground")}
 						/>
 					),
 					headerShown: false,
@@ -154,11 +132,7 @@ export default function TabLayout() {
 					tabBarIcon: ({ focused }) => (
 						<User
 							size={26}
-							className={cn(
-								focused
-									? "text-primary"
-									: "text-muted-foreground",
-							)}
+							className={cn(focused ? "text-primary" : "text-muted-foreground")}
 						/>
 					),
 					headerShown: false,

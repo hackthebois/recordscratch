@@ -8,11 +8,11 @@
 		"@recordscratch/api": "workspace:*",
 		"@recordscratch/auth": "workspace:*",
 		"@recordscratch/db": "workspace:*",
-		"@hono/trpc-server": "^0.3.4",
-		"hono": "^4.6.20"
+		"@hono/trpc-server": "^0.4.1",
+		"hono": "^4.10.7"
 	},
 	"devDependencies": {
-		"@cloudflare/workers-types": "^4.20250109.0",
-		"wrangler": "^3.101.0"
+		"@cloudflare/workers-types": "^4.20251205.0",
+		"wrangler": "^4.53.0"
 	}
 }

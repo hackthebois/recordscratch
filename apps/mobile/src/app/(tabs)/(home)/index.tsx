@@ -22,7 +22,7 @@ const AlbumOfTheDay = () => {
 		getQueryOptions({
 			route: "/album/{id}",
 			input: { id: albumOfTheDay.albumId },
-		}),
+		})
 	);
 
 	if (!album) return <NotFound />;
@@ -35,19 +35,15 @@ const AlbumOfTheDay = () => {
 			type="ALBUM OF THE DAY"
 			tags={[
 				album.release_date,
-				album.duration
-					? `${formatDuration(album.duration)}`
-					: undefined,
+				album.duration ? `${formatDuration(album.duration)}` : undefined,
 			]}
-			genres={album.genres?.data ?? []}
-		>
+			genres={album.genres?.data ?? []}>
 			<Button
 				variant="secondary"
 				onPress={() => {
 					router.navigate(`/albums/${albumOfTheDay.albumId}`);
 				}}
-				className="self-center sm:self-start"
-			>
+				className="self-center sm:self-start">
 				<Text>Go to Album</Text>
 			</Button>
 		</Metadata>
@@ -74,8 +70,7 @@ const HomePage = () => {
 			/>
 			<ScrollView
 				contentContainerClassName="flex flex-col pb-4 items-center"
-				nestedScrollEnabled
-			>
+				nestedScrollEnabled>
 				<View className="w-full max-w-screen-lg">
 					<AlbumOfTheDay />
 					<View className="px-4">
@@ -87,15 +82,10 @@ const HomePage = () => {
 							renderItem={({ item }) => <AlbumItem {...item} />}
 							horizontal
 							contentContainerClassName="h-64"
-							ItemSeparatorComponent={() => (
-								<View className="w-4" />
-							)}
+							ItemSeparatorComponent={() => <View className="w-4" />}
 							estimatedItemSize={150}
 							ListEmptyComponent={
-								<ScrollView
-									horizontal
-									contentContainerClassName="gap-4"
-								>
+								<ScrollView horizontal contentContainerClassName="gap-4">
 									<ResourceItemSkeleton direction="vertical" />
 									<ResourceItemSkeleton direction="vertical" />
 									<ResourceItemSkeleton direction="vertical" />
@@ -104,9 +94,7 @@ const HomePage = () => {
 									<ResourceItemSkeleton direction="vertical" />
 								</ScrollView>
 							}
-							showsHorizontalScrollIndicator={
-								Platform.OS === "web"
-							}
+							showsHorizontalScrollIndicator={Platform.OS === "web"}
 						/>
 						<Text variant="h2" className="pb-4 pt-6">
 							Top Albums
@@ -116,15 +104,10 @@ const HomePage = () => {
 							renderItem={({ item }) => <AlbumItem {...item} />}
 							horizontal
 							contentContainerClassName="h-64"
-							ItemSeparatorComponent={() => (
-								<View className="w-4" />
-							)}
+							ItemSeparatorComponent={() => <View className="w-4" />}
 							estimatedItemSize={150}
 							ListEmptyComponent={
-								<ScrollView
-									horizontal
-									contentContainerClassName="gap-4"
-								>
+								<ScrollView horizontal contentContainerClassName="gap-4">
 									<ResourceItemSkeleton direction="vertical" />
 									<ResourceItemSkeleton direction="vertical" />
 									<ResourceItemSkeleton direction="vertical" />
@@ -133,9 +116,7 @@ const HomePage = () => {
 									<ResourceItemSkeleton direction="vertical" />
 								</ScrollView>
 							}
-							showsHorizontalScrollIndicator={
-								Platform.OS === "web"
-							}
+							showsHorizontalScrollIndicator={Platform.OS === "web"}
 						/>
 						<Text variant="h2" className="pb-4 pt-6">
 							Most Popular Albums
@@ -145,15 +126,10 @@ const HomePage = () => {
 							renderItem={({ item }) => <AlbumItem {...item} />}
 							horizontal
 							contentContainerClassName="h-64"
-							ItemSeparatorComponent={() => (
-								<View className="w-4" />
-							)}
+							ItemSeparatorComponent={() => <View className="w-4" />}
 							estimatedItemSize={150}
 							ListEmptyComponent={
-								<ScrollView
-									horizontal
-									contentContainerClassName="gap-4"
-								>
+								<ScrollView horizontal contentContainerClassName="gap-4">
 									<ResourceItemSkeleton direction="vertical" />
 									<ResourceItemSkeleton direction="vertical" />
 									<ResourceItemSkeleton direction="vertical" />
@@ -162,9 +138,7 @@ const HomePage = () => {
 									<ResourceItemSkeleton direction="vertical" />
 								</ScrollView>
 							}
-							showsHorizontalScrollIndicator={
-								Platform.OS === "web"
-							}
+							showsHorizontalScrollIndicator={Platform.OS === "web"}
 						/>
 						<Text variant="h2" className="pb-4 pt-6">
 							Top Artists
@@ -179,13 +153,9 @@ const HomePage = () => {
 								/>
 							)}
 							horizontal
-							showsHorizontalScrollIndicator={
-								Platform.OS === "web"
-							}
+							showsHorizontalScrollIndicator={Platform.OS === "web"}
 							contentContainerClassName="h-40"
-							ItemSeparatorComponent={() => (
-								<View className="w-4" />
-							)}
+							ItemSeparatorComponent={() => <View className="w-4" />}
 							estimatedItemSize={105}
 						/>
 					</View>

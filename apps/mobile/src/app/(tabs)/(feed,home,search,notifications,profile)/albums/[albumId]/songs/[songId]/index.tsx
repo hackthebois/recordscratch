@@ -31,14 +31,14 @@ const SongPage = () => {
 		getQueryOptions({
 			route: "/album/{id}",
 			input: { id: albumId! },
-		}),
+		})
 	);
 
 	const { data: song } = useSuspenseQuery(
 		getQueryOptions({
 			route: "/track/{id}",
 			input: { id: songId! },
-		}),
+		})
 	);
 
 	if (!album || !song) return <NotFoundScreen />;
@@ -76,8 +76,7 @@ const SongPage = () => {
 								album.release_date,
 								song.explicit_lyrics ? "Explicit" : undefined,
 								formatDuration(song.duration),
-							]}
-						>
+							]}>
 							<View className="flex w-auto flex-col sm:max-w-72">
 								<View className="my-4 flex-row items-center justify-center gap-4 sm:justify-start">
 									<RatingInfo resource={resource} />
@@ -95,8 +94,7 @@ const SongPage = () => {
 										<Button
 											variant="secondary"
 											size={"sm"}
-											className="hidden sm:flex"
-										>
+											className="hidden sm:flex">
 											<Text>Go to album</Text>
 										</Button>
 									</Link>
@@ -104,13 +102,9 @@ const SongPage = () => {
 								<Link
 									href={`/albums/${album.id}/songs/${song.id}/reviews`}
 									asChild
-									style={{ width: "100%" }}
-								>
+									style={{ width: "100%" }}>
 									<Pressable>
-										<StatBlock
-											title="Ratings"
-											description={String(total)}
-										/>
+										<StatBlock title="Ratings" description={String(total)} />
 									</Pressable>
 								</Link>
 							</View>

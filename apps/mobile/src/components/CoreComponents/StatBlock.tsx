@@ -19,12 +19,11 @@ const StatBlock = ({
 	return (
 		<View
 			className={cn(
-				"rounded-xl border border-border gap-2",
+				"gap-2 rounded-xl border border-border",
 				size === "sm" && "px-3 py-2",
 				size === "default" && "px-4 py-3",
 				className
-			)}
-		>
+			)}>
 			<Text className={cn("font-semibold", size === "default" && "text-lg")}>{title}</Text>
 			{loading ? (
 				<Skeleton>

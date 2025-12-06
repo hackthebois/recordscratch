@@ -44,8 +44,7 @@ const SettingsPage = () => {
 		onSettled: () => {
 			utils.lists.getUser.invalidate({ userId: list!.userId });
 			utils.lists.get.invalidate({ id: listId });
-			if (list?.onProfile)
-				utils.lists.topLists.invalidate({ userId: list!.userId });
+			if (list?.onProfile) utils.lists.topLists.invalidate({ userId: list!.userId });
 		},
 	}).mutate;
 
@@ -100,7 +99,7 @@ const SettingsPage = () => {
 						<Text className="mt-2">Show as Top 6?</Text>
 						<Switch {...field} onValueChange={field.onChange} />
 						{form.formState.errors.onProfile && (
-							<Text className="text-destructive mt-2">
+							<Text className="mt-2 text-destructive">
 								{form.formState.errors.onProfile.message}
 							</Text>
 						)}
@@ -117,12 +116,12 @@ const SettingsPage = () => {
 						<TextInput
 							{...field}
 							placeholder="Name"
-							className="text-foreground border-border self-stretch rounded-md border px-4 py-3"
+							className="self-stretch rounded-md border border-border px-4 py-3 text-foreground"
 							autoComplete="off"
 							onChangeText={field.onChange}
 						/>
 						{form.formState.errors.name && (
-							<Text className="text-destructive mt-2">
+							<Text className="mt-2 text-destructive">
 								{form.formState.errors.name.message}
 							</Text>
 						)}
@@ -138,14 +137,14 @@ const SettingsPage = () => {
 						<TextInput
 							{...field}
 							placeholder="description"
-							className="text-foreground border-border h-40 self-stretch rounded-md border p-4"
+							className="h-40 self-stretch rounded-md border border-border p-4 text-foreground"
 							multiline
 							autoComplete="off"
 							onChangeText={field.onChange}
 							value={field.value ?? ""}
 						/>
 						{form.formState.errors.description && (
-							<Text className="text-destructive mt-2">
+							<Text className="mt-2 text-destructive">
 								{form.formState.errors.description.message}
 							</Text>
 						)}
@@ -156,15 +155,10 @@ const SettingsPage = () => {
 				onPress={form.handleSubmit(onSubmit)}
 				disabled={!pageValid()}
 				className="self-stretch"
-				variant="secondary"
-			>
+				variant="secondary">
 				<Text>{loading ? "Loading..." : "Save"}</Text>
 			</Button>
-			<Button
-				disabled={loading}
-				variant="destructive"
-				onPress={handleDelete}
-			>
+			<Button disabled={loading} variant="destructive" onPress={handleDelete}>
 				<Text>Delete List</Text>
 			</Button>
 		</KeyboardAvoidingScrollView>

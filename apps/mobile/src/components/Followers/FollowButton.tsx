@@ -38,18 +38,16 @@ export const FollowButton = ({
 		});
 	};
 
-	const { mutate: followUser, isPending: isFollow } =
-		api.profiles.follow.useMutation({
-			onSettled: async () => {
-				await revalidate();
-			},
-		});
-	const { mutate: unFollowUser, isPending: isUnFollow } =
-		api.profiles.unFollow.useMutation({
-			onSettled: async () => {
-				await revalidate();
-			},
-		});
+	const { mutate: followUser, isPending: isFollow } = api.profiles.follow.useMutation({
+		onSettled: async () => {
+			await revalidate();
+		},
+	});
+	const { mutate: unFollowUser, isPending: isUnFollow } = api.profiles.unFollow.useMutation({
+		onSettled: async () => {
+			await revalidate();
+		},
+	});
 
 	const following = isFollow ? true : isUnFollow ? false : isFollowing;
 
@@ -63,8 +61,7 @@ export const FollowButton = ({
 				if (isFollow || isUnFollow) return;
 				if (following) unFollowUser(profileId);
 				else followUser(profileId);
-			}}
-		>
+			}}>
 			<Text>{following ? "Unfollow" : "Follow"}</Text>
 		</Button>
 	);

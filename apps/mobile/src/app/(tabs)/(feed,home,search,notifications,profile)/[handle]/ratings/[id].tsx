@@ -52,7 +52,7 @@ const RatingPage = () => {
 			comments.map(({ allreplies, ...rest }) => ({
 				...rest,
 				data: allreplies,
-			})),
+			}))
 		);
 	}, [comments]);
 
@@ -72,7 +72,7 @@ const RatingPage = () => {
 						ListHeaderComponent={
 							<>
 								<Review {...rating} profile={profile} />
-								<View className="bg-muted h-[1px]" />
+								<View className="h-[1px] bg-muted" />
 							</>
 						}
 						extraData={expandedSections}
@@ -81,9 +81,7 @@ const RatingPage = () => {
 						renderItem={({ section: { id }, item }) => {
 							const hidden = !expandedSections.has(id);
 							return (
-								<View
-									className={cn("ml-10", hidden && "hidden")}
-								>
+								<View className={cn("ml-10", hidden && "hidden")}>
 									<Comment comment={item} />
 								</View>
 							);

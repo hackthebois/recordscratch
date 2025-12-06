@@ -12,7 +12,7 @@ const TabsList = React.forwardRef<
 	<TabsPrimitive.List
 		ref={ref}
 		className={cn(
-			"web:inline-flex h-10 native:h-12 items-center justify-center rounded-md border-border border p-1 native:px-1.5",
+			"native:h-12 native:px-1.5 h-10 items-center justify-center rounded-md border border-border p-1 web:inline-flex",
 			className
 		)}
 		{...props}
@@ -30,13 +30,12 @@ const TabsTrigger = React.forwardRef<
 			value={cn(
 				"text-sm native:text-base font-medium text-muted-foreground web:transition-all",
 				value === props.value && "text-foreground"
-			)}
-		>
+			)}>
 			<TabsPrimitive.Trigger
 				ref={ref}
 				className={cn(
-					"inline-flex items-center justify-center shadow-none web:whitespace-nowrap px-3 py-1.5 text-sm font-medium web:ring-offset-background web:transition-all web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2 rounded",
-					props.disabled && "web:pointer-events-none opacity-50",
+					"inline-flex items-center justify-center rounded px-3 py-1.5 font-medium text-sm shadow-none web:whitespace-nowrap web:ring-offset-background web:transition-all web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2",
+					props.disabled && "opacity-50 web:pointer-events-none",
 					props.value === value && "bg-secondary",
 					className
 				)}

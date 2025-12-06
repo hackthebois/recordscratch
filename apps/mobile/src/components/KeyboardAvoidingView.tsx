@@ -1,5 +1,5 @@
 import { useHeaderHeight } from "@react-navigation/elements";
-import React, { MutableRefObject, ReactNode } from "react";
+import React, { RefObject, ReactNode } from "react";
 import {
 	Keyboard,
 	KeyboardAvoidingView,
@@ -15,7 +15,7 @@ type Props = {
 	className?: string;
 	contentContainerClassName?: string;
 	scrollContentContainerStyle?: ViewStyle;
-	scrollViewRef?: MutableRefObject<ScrollView | null>;
+	scrollViewRef?: RefObject<ScrollView | null>;
 	modal?: boolean;
 };
 
@@ -36,11 +36,13 @@ export const KeyboardAvoidingScrollView: React.FC<Props> = ({
 		<ScrollView
 			className={className}
 			contentContainerClassName={contentContainerClassName}
-			contentContainerStyle={{ flexGrow: 1, ...scrollContentContainerStyle }}
+			contentContainerStyle={{
+				flexGrow: 1,
+				...scrollContentContainerStyle,
+			}}
 			contentInsetAdjustmentBehavior="never"
 			keyboardShouldPersistTaps="handled"
-			ref={scrollViewRef}
-		>
+			ref={scrollViewRef}>
 			{children}
 		</ScrollView>
 	);
@@ -52,8 +54,7 @@ export const KeyboardAvoidingScrollView: React.FC<Props> = ({
 			className={className}
 			style={{ flex: 1 }}
 			behavior="padding"
-			keyboardVerticalOffset={headerHeight + (modal ? insets.top + 16 : 0)}
-		>
+			keyboardVerticalOffset={headerHeight + (modal ? insets.top + 16 : 0)}>
 			<Pressable onPress={Keyboard.dismiss}>{renderScrollView}</Pressable>
 		</KeyboardAvoidingView>
 	);

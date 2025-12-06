@@ -1,8 +1,4 @@
-import {
-	QueryCache,
-	QueryClient,
-	QueryClientProvider,
-} from "@tanstack/react-query";
+import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { loggerLink, httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import React, { useState } from "react";

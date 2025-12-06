@@ -14,10 +14,7 @@ const CreateListButton = ({ isProfile }: { isProfile: boolean }) => {
 	return (
 		isProfile && (
 			<Link asChild href="/(modals)/list/createList">
-				<Button
-					variant="outline"
-					className="my-2 flex flex-row items-center gap-3"
-				>
+				<Button variant="outline" className="my-2 flex flex-row items-center gap-3">
 					<SquarePlus className="text-foreground" />
 					<Text>Create A List</Text>
 				</Button>
@@ -35,9 +32,7 @@ const AllListsPage = () => {
 	const dimensions = useWindowDimensions();
 	const screenSize = Math.min(dimensions.width, 1024);
 	const numColumns = screenSize === 1024 ? 6 : 3;
-	const top6Width =
-		(Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns -
-		1;
+	const top6Width = (Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns - 1;
 
 	if (!profile) return <NotFoundScreen />;
 
@@ -61,8 +56,7 @@ const AllListsPage = () => {
 					) : (
 						<Text
 							variant="h2"
-							className="pb-4"
-						>{`${isProfile ? "My" : `${profile.handle}'s`} Lists`}</Text>
+							className="pb-4">{`${isProfile ? "My" : `${profile.handle}'s`} Lists`}</Text>
 					)
 				}
 				numColumns={numColumns}

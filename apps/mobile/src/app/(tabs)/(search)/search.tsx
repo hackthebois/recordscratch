@@ -57,11 +57,8 @@ export default function SearchPage() {
 	const router = useRouter();
 	const params = useLocalSearchParams<{ query?: string; tab?: string }>();
 	const tab = useMemo(
-		() =>
-			params.tab && params.tab !== "undefined"
-				? tabs[params.tab]
-				: tabs.all,
-		[params.tab],
+		() => (params.tab && params.tab !== "undefined" ? tabs[params.tab] : tabs.all),
+		[params.tab]
 	);
 	const debouncedQuery = useDebounce(params.query ?? "", 1000);
 
@@ -78,17 +75,14 @@ export default function SearchPage() {
 			["all", "songs", "albums", "artists"].includes(tab.value),
 	});
 
-	const { data: profiles, isLoading: isLoadingProfiles } =
-		api.profiles.search.useQuery(
-			{ query: debouncedQuery, ...tab },
-			{
-				gcTime: 0,
-				refetchOnMount: false,
-				enabled:
-					debouncedQuery.trim().length > 0 &&
-					["profiles", "all"].includes(tab.value),
-			},
-		);
+	const { data: profiles, isLoading: isLoadingProfiles } = api.profiles.search.useQuery(
+		{ query: debouncedQuery, ...tab },
+		{
+			gcTime: 0,
+			refetchOnMount: false,
+			enabled: debouncedQuery.trim().length > 0 && ["profiles", "all"].includes(tab.value),
+		}
+	);
 
 	const userProfile = useAuth((s) => s.profile);
 
@@ -101,8 +95,8 @@ export default function SearchPage() {
 			/>
 			<WebWrapper>
 				<View className="gap-2 px-4 sm:mt-4">
-					<View className="border-border h-14 w-full flex-row items-center rounded-xl border pr-4">
-						<Search size={20} className="text-foreground mx-4" />
+					<View className="h-14 w-full flex-row items-center rounded-xl border border-border pr-4">
+						<Search size={20} className="mx-4 text-foreground" />
 						<TextInput
 							id="name"
 							autoComplete="off"
@@ -116,7 +110,7 @@ export default function SearchPage() {
 							}}
 							autoCorrect={false}
 							autoFocus
-							className="text-foreground h-full flex-1 p-0 text-xl outline-none"
+							className="h-full flex-1 p-0 text-xl text-foreground outline-none"
 							onChangeText={(text) => {
 								router.setParams({ query: text });
 							}}
@@ -130,15 +124,10 @@ export default function SearchPage() {
 							} else {
 								router.setParams({ tab: value });
 							}
-						}}
-					>
+						}}>
 						<TabsList className="flex-row">
 							{Object.entries(tabs).map(([key, tab]) => (
-								<TabsTrigger
-									key={key}
-									value={key}
-									className="flex-1"
-								>
+								<TabsTrigger key={key} value={key} className="flex-1">
 									<Text>{tab.label}</Text>
 								</TabsTrigger>
 							))}
@@ -151,10 +140,7 @@ export default function SearchPage() {
 					<View className="gap-2 p-4">
 						{isLoading || isLoadingProfiles ? (
 							<View className="flex items-center justify-center pt-40">
-								<ActivityIndicator
-									size="large"
-									color="#ff8500"
-								/>
+								<ActivityIndicator size="large" color="#ff8500" />
 							</View>
 						) : (
 							<>
@@ -163,9 +149,7 @@ export default function SearchPage() {
 											<ResourceItem
 												key={song.id}
 												resource={{
-													parentId: String(
-														song.album.id,
-													),
+													parentId: String(song.album.id),
 													resourceId: String(song.id),
 													category: "SONG" as const,
 												}}
@@ -187,12 +171,8 @@ export default function SearchPage() {
 											<ResourceItem
 												key={album.id}
 												resource={{
-													parentId: String(
-														album.artist?.id,
-													),
-													resourceId: String(
-														album.id,
-													),
+													parentId: String(album.artist?.id),
+													resourceId: String(album.id),
 													category: "ALBUM" as const,
 												}}
 												onPress={() => {
@@ -229,10 +209,7 @@ export default function SearchPage() {
 									: null}
 								{tab.value === "profiles" || tab.value === "all"
 									? profiles?.items.map((profile, index) => {
-											if (
-												profile.deactivated &&
-												userProfile?.role != "MOD"
-											)
+											if (profile.deactivated && userProfile?.role != "MOD")
 												return null;
 											return (
 												<ProfileItem
@@ -246,9 +223,7 @@ export default function SearchPage() {
 														// 	data: profile,
 														// });
 													}}
-													showType={
-														tab.value === "all"
-													}
+													showType={tab.value === "all"}
 													isUser
 												/>
 											);

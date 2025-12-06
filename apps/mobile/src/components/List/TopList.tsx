@@ -2,11 +2,7 @@ import { Text } from "@/components/ui/text";
 import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@recordscratch/lib";
-import {
-	Category,
-	ListWithResources,
-	UserListItem,
-} from "@recordscratch/types";
+import { Category, ListWithResources, UserListItem } from "@recordscratch/types";
 import { Link, Stack, useRouter } from "expo-router";
 import { Dimensions, View, useWindowDimensions } from "react-native";
 import { ArtistItem } from "../Item/ArtistItem";
@@ -31,8 +27,7 @@ export const DeleteButton = ({
 				className={cn("size-9", className)}
 				onPress={() => onPress(position)}
 				variant="destructive"
-				size="icon"
-			>
+				size="icon">
 				<Trash2 size={18} />
 			</Button>
 		)
@@ -50,8 +45,7 @@ const Resource = ({
 }) => {
 	const props = {
 		direction: "vertical" as any,
-		textClassName:
-			"line-clamp-2 truncate w-38 text-wrap text-center sm:line-clamp-3",
+		textClassName: "line-clamp-2 truncate w-38 text-wrap text-center sm:line-clamp-3",
 		imageWidthAndHeight: top6Width,
 		style: { width: top6Width },
 	};
@@ -88,8 +82,7 @@ export const TopList = ({
 	const userId = useAuth((s) => s.profile!.userId);
 	const screenSize = Math.min(useWindowDimensions().width, 1024);
 	const numColumns = screenSize === 1024 ? 6 : 3;
-	const top6Width =
-		(Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns;
+	const top6Width = (Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns;
 	const router = useRouter();
 
 	const { mutate: deleteResource } = api.lists.resources.delete.useMutation({
@@ -118,11 +111,7 @@ export const TopList = ({
 		<View className="flex flex-row flex-wrap gap-3 px-2">
 			{resources.map((resource) => (
 				<View className={className} key={resource.resourceId}>
-					<Resource
-						resource={resource}
-						category={category}
-						top6Width={top6Width}
-					/>
+					<Resource resource={resource} category={category} top6Width={top6Width} />
 					<DeleteButton
 						isVisible={editMode}
 						position={resource.position}
@@ -140,10 +129,7 @@ export const TopList = ({
 			{resources.length < 6 && isUser && (
 				<Button
 					variant={"outline"}
-					className={cn(
-						className,
-						category === "ARTIST" ? "rounded-full" : "rounded-lg",
-					)}
+					className={cn(className, category === "ARTIST" ? "rounded-full" : "rounded-lg")}
 					style={{
 						width: top6Width,
 						height: top6Width,
@@ -166,8 +152,7 @@ export const TopList = ({
 							});
 
 						setEditMode(false);
-					}}
-				>
+					}}>
 					<Text className="w-20 text-center capitalize">
 						Add {category.toLowerCase()}
 					</Text>

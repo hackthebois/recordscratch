@@ -25,27 +25,21 @@ export const ResourceItemSkeleton = ({
 		<View
 			className={cn(
 				"flex gap-4",
-				direction === "vertical" ? "flex-col" : "flex-row items-center",
+				direction === "vertical" ? "flex-col" : "flex-row items-center"
 			)}
 			style={{
 				width: direction === "vertical" ? imageWidthAndHeight : "100%",
-			}}
-		>
+			}}>
 			<View
 				style={{
 					width: imageWidthAndHeight,
 					height: imageWidthAndHeight,
-				}}
-			>
-				<Skeleton
-					className={cn(`h-full w-full rounded-xl`, imageCss)}
-				/>
+				}}>
+				<Skeleton className={cn(`h-full w-full rounded-xl`, imageCss)} />
 			</View>
 			<View className="flex flex-1 flex-col gap-2">
 				<Skeleton className="h-6 w-[80%] max-w-[300px]" />
-				{showArtist ? (
-					<Skeleton className="h-6 w-[60%] max-w-[220px]" />
-				) : null}
+				{showArtist ? <Skeleton className="h-6 w-[60%] max-w-[220px]" /> : null}
 			</View>
 		</View>
 	);
@@ -82,8 +76,7 @@ export const ResourceItem = ({
 	style?: StyleProp<ViewStyle>;
 }) => {
 	const router = useRouter();
-	const albumId =
-		resource.category === "SONG" ? resource.parentId : resource.resourceId;
+	const albumId = resource.category === "SONG" ? resource.parentId : resource.resourceId;
 
 	const { data: album, isLoading } = useQuery({
 		...getQueryOptions({
@@ -105,11 +98,7 @@ export const ResourceItem = ({
 		enabled: resource.category === "SONG",
 	});
 
-	if (
-		isLoading ||
-		!album ||
-		(resource.category === "SONG" && isLoadingTracks)
-	) {
+	if (isLoading || !album || (resource.category === "SONG" && isLoadingTracks)) {
 		return (
 			<ResourceItemSkeleton
 				{...{
@@ -124,9 +113,7 @@ export const ResourceItem = ({
 
 	const name =
 		resource.category === "SONG"
-			? tracks?.data.find(
-					(track) => track.id === Number(resource.resourceId),
-				)?.title
+			? tracks?.data.find((track) => track.id === Number(resource.resourceId))?.title
 			: album?.title;
 
 	const link: RelativePathString = (
@@ -139,24 +126,19 @@ export const ResourceItem = ({
 			onPress={() => {
 				if (onPress) onPress();
 				if (showLink) router.push(link);
-			}}
-		>
+			}}>
 			<View
 				className={cn(
 					"flex items-center gap-4",
 					className,
-					direction === "vertical" ? "flex-col" : "flex-row",
+					direction === "vertical" ? "flex-col" : "flex-row"
 				)}
 				style={[
 					{
-						width:
-							direction === "vertical"
-								? imageWidthAndHeight
-								: "auto",
+						width: direction === "vertical" ? imageWidthAndHeight : "auto",
 					},
 					style,
-				]}
-			>
+				]}>
 				<View className="overflow-hidden rounded-xl">
 					{album!.cover_big ? (
 						<Image
@@ -168,50 +150,35 @@ export const ResourceItem = ({
 							}}
 							className={cn(
 								"aspect-square overflow-hidden rounded-xl transition-all hover:scale-105",
-								imageClassName,
+								imageClassName
 							)}
 						/>
 					) : (
-						<View className="bg-muted h-full w-full"></View>
+						<View className="h-full w-full bg-muted"></View>
 					)}
 				</View>
 				<View
 					className={cn(
 						"flex flex-col gap-2",
-						direction === "horizontal" ? "w-full" : "",
+						direction === "horizontal" ? "w-full" : ""
 					)}
 					style={{
-						width:
-							direction === "vertical"
-								? imageWidthAndHeight
-								: "auto",
-					}}
-				>
+						width: direction === "vertical" ? imageWidthAndHeight : "auto",
+					}}>
 					<Text
-						className={cn(
-							"w-full text-ellipsis font-semibold",
-							textClassName,
-						)}
+						className={cn("w-full text-ellipsis font-semibold", textClassName)}
 						numberOfLines={direction === "horizontal" ? 2 : 1}
-						style={{ flexWrap: "wrap" }}
-					>
+						style={{ flexWrap: "wrap" }}>
 						{name}
 					</Text>
 					<View className="flex flex-row gap-1 self-baseline">
 						{showType && (
 							<Text className="text-muted-foreground">
-								{resource.category === "SONG"
-									? "Song"
-									: "Album"}
+								{resource.category === "SONG" ? "Song" : "Album"}
 							</Text>
 						)}
 						{showArtist && (
-							<Text
-								className={cn(
-									"text-muted-foreground",
-									artistClassName,
-								)}
-							>
+							<Text className={cn("text-muted-foreground", artistClassName)}>
 								{showType ? "• " : ""}
 								{album!.artist?.name}
 							</Text>

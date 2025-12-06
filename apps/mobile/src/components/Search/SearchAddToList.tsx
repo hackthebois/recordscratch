@@ -58,8 +58,7 @@ export const SearchAddToList = ({
 			}}
 			triggerOutline={button}
 			contentClassName="mt-10"
-			className="h-40"
-		>
+			className="h-40">
 			<View className="flex flex-row items-center border-b">
 				<Search size={20} className="text-muted-foreground" />
 				<TextInput
@@ -67,7 +66,7 @@ export const SearchAddToList = ({
 					autoComplete="off"
 					placeholder="Search"
 					value={query}
-					className="text-foreground w-full bg-transparent p-2 text-lg outline-none"
+					className="w-full bg-transparent p-2 text-lg text-foreground outline-none"
 					onChangeText={(text) => setQuery(text)}
 				/>
 			</View>

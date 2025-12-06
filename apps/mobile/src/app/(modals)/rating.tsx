@@ -29,26 +29,16 @@ const RatingInput = ({
 					onPress={() => {
 						onChange(index);
 					}}
-					className="flex flex-row items-center justify-center pt-2"
-				>
+					className="flex flex-row items-center justify-center pt-2">
 					<View className="flex flex-col items-center">
 						{rating ? (
 							index <= rating ? (
-								<Star
-									size={28}
-									className="stroke-star fill-star"
-								/>
+								<Star size={28} className="fill-star stroke-star" />
 							) : (
-								<Star
-									size={28}
-									className="stroke-star fill-background"
-								/>
+								<Star size={28} className="fill-background stroke-star" />
 							)
 						) : (
-							<Star
-								size={28}
-								className="stroke-star fill-background"
-							/>
+							<Star size={28} className="fill-background stroke-star" />
 						)}
 						<Text className="text-muted-foreground">{index}</Text>
 					</View>
@@ -74,7 +64,7 @@ const RatingModal = () => {
 		{ resourceId: resource.resourceId, userId },
 		{
 			staleTime: Infinity,
-		},
+		}
 	);
 
 	const { control, handleSubmit, formState } = useForm<RateForm>({
@@ -156,10 +146,7 @@ const RatingModal = () => {
 								control={control}
 								name="rating"
 								render={({ field: { onChange, value } }) => (
-									<RatingInput
-										value={value ?? 0}
-										onChange={onChange}
-									/>
+									<RatingInput value={value ?? 0} onChange={onChange} />
 								)}
 							/>
 							<Controller
@@ -169,7 +156,7 @@ const RatingModal = () => {
 									<TextInput
 										onChangeText={onChange}
 										value={value ?? undefined}
-										className="text-foreground border-border min-h-32 rounded-xl border p-4 text-lg"
+										className="min-h-32 rounded-xl border border-border p-4 text-lg text-foreground"
 										placeholder="Add review..."
 										multiline
 										scrollEnabled={false}
@@ -182,8 +169,7 @@ const RatingModal = () => {
 								onPress={handleSubmit(onSubmit)}
 								disabled={!formState.isValid}
 								className="mb-4"
-								variant="secondary"
-							>
+								variant="secondary">
 								<Text>Rate</Text>
 							</Button>
 							{userRating &&
@@ -201,20 +187,15 @@ const RatingModal = () => {
 													},
 													{
 														text: "Remove",
-														onPress: () =>
-															clearRating(),
+														onPress: () => clearRating(),
 													},
-												],
+												]
 											)
-										}
-									>
+										}>
 										<Text>Remove rating</Text>
 									</Pressable>
 								) : (
-									<Pressable
-										onPress={clearRating}
-										className="flex items-center"
-									>
+									<Pressable onPress={clearRating} className="flex items-center">
 										<Text>Remove rating</Text>
 									</Pressable>
 								))}

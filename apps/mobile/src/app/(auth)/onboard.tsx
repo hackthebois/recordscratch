@@ -32,8 +32,7 @@ const SlideWrapper = ({
 		<Animated.View
 			className={"w-full flex-col items-center justify-center gap-4 p-4"}
 			entering={FadeIn}
-			exiting={FadeOut}
-		>
+			exiting={FadeOut}>
 			{page !== 0 ? <Pill>STEP {page}/3</Pill> : null}
 			{title ? (
 				<Text className="my-8 text-center" variant="h1">
@@ -80,19 +79,15 @@ const OnboardPage = () => {
 			setStatus("authenticated");
 		},
 	});
-	const { mutateAsync: getSignedURL } =
-		api.profiles.getSignedURL.useMutation();
+	const { mutateAsync: getSignedURL } = api.profiles.getSignedURL.useMutation();
 
 	const debouncedHandle = useDebounce(handle, 500);
-	const { data: handleExists } = api.profiles.handleExists.useQuery(
-		debouncedHandle,
-		{
-			enabled: debouncedHandle?.length > 0,
-		},
-	);
+	const { data: handleExists } = api.profiles.handleExists.useQuery(debouncedHandle, {
+		enabled: debouncedHandle?.length > 0,
+	});
 	const handleDoesNotExist = useMemo(
 		() => handleExists !== undefined && !handleExists,
-		[handleExists],
+		[handleExists]
 	);
 
 	useEffect(() => {
@@ -102,10 +97,7 @@ const OnboardPage = () => {
 				message: "Handle already exists",
 			});
 		} else {
-			if (
-				form.formState.errors.handle?.message ===
-				"Handle already exists"
-			) {
+			if (form.formState.errors.handle?.message === "Handle already exists") {
 				form.clearErrors("handle");
 			}
 		}
@@ -143,9 +135,7 @@ const OnboardPage = () => {
 		if (!form.getFieldState("handle").isTouched) {
 			form.setValue(
 				"handle",
-				name
-					?.replace(new RegExp(`[^${handleRegex.source}]+`, "g"), "")
-					.replace(" ", ""),
+				name?.replace(new RegExp(`[^${handleRegex.source}]+`, "g"), "").replace(" ", "")
 			);
 		}
 	}, [form, name]);
@@ -161,9 +151,7 @@ const OnboardPage = () => {
 			case 0:
 				return true;
 			case 1:
-				return (
-					name?.length > 0 && handleDoesNotExist && handle?.length > 0
-				);
+				return name?.length > 0 && handleDoesNotExist && handle?.length > 0;
 			case 2:
 				return !form.getFieldState("bio").invalid;
 			case 3:
@@ -176,13 +164,8 @@ const OnboardPage = () => {
 	if (loading) {
 		return (
 			<View className="mx-auto flex min-h-[100svh] w-full max-w-screen-lg flex-1 flex-col items-center justify-center p-4 sm:p-6">
-				<ActivityIndicator
-					size="large"
-					className="text-muted-foreground"
-				/>
-				<Text className="text-muted-foreground mt-4">
-					Creating your account
-				</Text>
+				<ActivityIndicator size="large" className="text-muted-foreground" />
+				<Text className="mt-4 text-muted-foreground">Creating your account</Text>
 			</View>
 		);
 	}
@@ -204,12 +187,9 @@ const OnboardPage = () => {
 							Welcome to RecordScratch
 						</Text>
 						<Text className="mt-4 text-center">
-							Before you get started we have to set up your
-							profile.
+							Before you get started we have to set up your profile.
 						</Text>
-						<Text className="mt-1 text-center">
-							Press next below to get started.
-						</Text>
+						<Text className="mt-1 text-center">Press next below to get started.</Text>
 					</SlideWrapper>
 				);
 			case 1:
@@ -218,8 +198,7 @@ const OnboardPage = () => {
 						page={page}
 						// pageIndex={1}
 						title="Pick a display name and handle"
-						key={1}
-					>
+						key={1}>
 						<Controller
 							control={form.control}
 							name="name"
@@ -228,12 +207,12 @@ const OnboardPage = () => {
 									<TextInput
 										{...field}
 										placeholder="Display name"
-										className="text-foreground border-border self-stretch rounded-md border px-4 py-3"
+										className="self-stretch rounded-md border border-border px-4 py-3 text-foreground"
 										autoComplete="off"
 										onChangeText={field.onChange}
 									/>
 									{form.formState.errors.name && (
-										<Text className="text-destructive mt-2">
+										<Text className="mt-2 text-destructive">
 											{form.formState.errors.name.message}
 										</Text>
 									)}
@@ -245,27 +224,24 @@ const OnboardPage = () => {
 							name="handle"
 							render={({ field }) => (
 								<View className="self-stretch">
-									<View className="border-border flex flex-row items-center rounded-md border">
+									<View className="flex flex-row items-center rounded-md border border-border">
 										<View className="pl-3 pr-1.5">
 											<AtSign
-												className="text-muted-foreground text-lg"
+												className="text-lg text-muted-foreground"
 												size={16}
 											/>
 										</View>
 										<TextInput
 											{...field}
 											placeholder="Handle"
-											className="text-foreground mb-[1px] flex-1 py-3 pr-4"
+											className="mb-[1px] flex-1 py-3 pr-4 text-foreground"
 											autoComplete="off"
 											onChangeText={field.onChange}
 										/>
 									</View>
 									{form.formState.errors.handle && (
-										<Text className="text-destructive mt-2">
-											{
-												form.formState.errors.handle
-													.message
-											}
+										<Text className="mt-2 text-destructive">
+											{form.formState.errors.handle.message}
 										</Text>
 									)}
 								</View>
@@ -279,8 +255,7 @@ const OnboardPage = () => {
 						page={page}
 						// pageIndex={2}
 						title="Describe yourself"
-						key={2}
-					>
+						key={2}>
 						<Controller
 							control={form.control}
 							name="bio"
@@ -289,13 +264,13 @@ const OnboardPage = () => {
 									<TextInput
 										{...field}
 										placeholder="Bio"
-										className="text-foreground border-border h-40 self-stretch rounded-md border p-4"
+										className="h-40 self-stretch rounded-md border border-border p-4 text-foreground"
 										multiline
 										autoComplete="off"
 										onChangeText={field.onChange}
 									/>
 									{form.formState.errors.bio && (
-										<Text className="text-destructive mt-2">
+										<Text className="mt-2 text-destructive">
 											{form.formState.errors.bio.message}
 										</Text>
 									)}
@@ -306,11 +281,7 @@ const OnboardPage = () => {
 				);
 			case 3:
 				return (
-					<SlideWrapper
-						page={page}
-						/*pageIndex={3} */ title="Image"
-						key={3}
-					>
+					<SlideWrapper page={page} /*pageIndex={3} */ title="Image" key={3}>
 						<UserAvatar imageUrl={image?.uri} size={200} />
 						<Controller
 							control={form.control}
@@ -320,15 +291,12 @@ const OnboardPage = () => {
 									<Button
 										variant="secondary"
 										onPress={async () => {
-											let result =
-												await ImagePicker.launchImageLibraryAsync(
-													{
-														mediaTypes: ["images"],
-														allowsEditing: true,
-														aspect: [1, 1],
-														quality: 1,
-													},
-												);
+											let result = await ImagePicker.launchImageLibraryAsync({
+												mediaTypes: ["images"],
+												allowsEditing: true,
+												aspect: [1, 1],
+												quality: 1,
+											});
 
 											if (
 												!result.canceled &&
@@ -338,23 +306,17 @@ const OnboardPage = () => {
 												const asset = result.assets[0]!;
 												onChange({
 													uri: asset.uri,
-													type:
-														asset.type ??
-														"image/jpeg",
+													type: asset.type ?? "image/jpeg",
 													size: asset.fileSize,
 												});
 											}
 										}}
-										className="mt-8"
-									>
+										className="mt-8">
 										<Text>Pick an image</Text>
 									</Button>
 									{form.formState.errors.image && (
-										<Text className="text-destructive mt-2">
-											{
-												form.formState.errors.image
-													.message
-											}
+										<Text className="mt-2 text-destructive">
+											{form.formState.errors.image.message}
 										</Text>
 									)}
 								</View>
@@ -371,10 +333,7 @@ const OnboardPage = () => {
 				{renderPage(page)}
 				<View className="mt-8 flex flex-row gap-4">
 					{page !== 0 && (
-						<Button
-							variant="secondary"
-							onPress={() => setPage((page) => page - 1)}
-						>
+						<Button variant="secondary" onPress={() => setPage((page) => page - 1)}>
 							<Text>Back</Text>
 						</Button>
 					)}
@@ -387,8 +346,7 @@ const OnboardPage = () => {
 								setPage((page) => page + 1);
 							}
 						}}
-						disabled={!pageValid}
-					>
+						disabled={!pageValid}>
 						<Text>
 							{page === 2 && !bio
 								? "Skip"

@@ -31,18 +31,10 @@ const ListResources = ({
 			{items?.map((item, index) => (
 				<View
 					key={item.resourceId}
-					className={cn(
-						"border-muted w-full",
-						index !== items.length - 1 && "border-b",
-					)}
-				>
-					<View
-						className={cn(
-							"my-2 flex flex-row items-center justify-between gap-3",
-						)}
-					>
+					className={cn("w-full border-muted", index !== items.length - 1 && "border-b")}>
+					<View className={cn("my-2 flex flex-row items-center justify-between gap-3")}>
 						<View className="flex flex-row items-center px-4">
-							<Text className="text-muted-foreground w-6 text-base font-bold">
+							<Text className="w-6 font-bold text-base text-muted-foreground">
 								{index + 1}
 							</Text>
 							{category === "ARTIST" ? (
@@ -51,7 +43,7 @@ const ListResources = ({
 									imageWidthAndHeight={size}
 									textClassName={cn(
 										"font-medium",
-										item.rating ? "w-52 lg:w-full" : "w-64",
+										item.rating ? "w-52 lg:w-full" : "w-64"
 									)}
 								/>
 							) : (
@@ -64,7 +56,7 @@ const ListResources = ({
 									imageWidthAndHeight={size}
 									textClassName={cn(
 										"font-medium",
-										item.rating ? "w-52 lg:w-full" : "w-64",
+										item.rating ? "w-52 lg:w-full" : "w-64"
 									)}
 									showArtist={false}
 								/>
@@ -74,9 +66,7 @@ const ListResources = ({
 							<RatingInfo
 								initialRating={{
 									resourceId: item.resourceId,
-									average: item.rating
-										? String(item.rating)
-										: null,
+									average: item.rating ? String(item.rating) : null,
 									total: 1,
 								}}
 								resource={{
@@ -122,12 +112,8 @@ const ListPage = () => {
 									pathname: "/lists/[id]/settings",
 									params: { id: listId },
 								}}
-								className="p-2"
-							>
-								<Settings
-									size={22}
-									className="text-foreground"
-								/>
+								className="p-2">
+								<Settings size={22} className="text-foreground" />
 							</Link>
 						) : null,
 				}
@@ -142,35 +128,21 @@ const ListPage = () => {
 						type={`${list.category} LIST`}
 						title={list.name}
 						cover={
-							<ListImage
-								listItems={listItems}
-								category={list!.category}
-								size={200}
-							/>
+							<ListImage listItems={listItems} category={list!.category} size={200} />
 						}
-						size="sm"
-					>
+						size="sm">
 						<View className="flex flex-col items-center sm:items-start">
 							<View className="flex flex-row items-center gap-2">
 								<Link
 									href={{
 										pathname: "/[handle]",
 										params: {
-											handle: String(
-												list?.profile.handle,
-											),
+											handle: String(list?.profile.handle),
 										},
-									}}
-								>
+									}}>
 									<View className="flex flex-row items-center gap-2">
-										<UserAvatar
-											imageUrl={getImageUrl(
-												list!.profile,
-											)}
-										/>
-										<Text className="flex text-lg">
-											{list!.profile.name}
-										</Text>
+										<UserAvatar imageUrl={getImageUrl(list!.profile)} />
+										<Text className="flex text-lg">{list!.profile.name}</Text>
 									</View>
 								</Link>
 								<Text className="text-muted-foreground">
@@ -190,21 +162,16 @@ const ListPage = () => {
 										isTopList: list.onProfile.toString(),
 									},
 								}}
-								asChild
-							>
+								asChild>
 								<Button
 									variant="outline"
 									style={{
 										width: dimensions.width / 2 - 5,
 										flexDirection: "row",
 										gap: 15,
-									}}
-								>
+									}}>
 									<Text variant="h4">Add</Text>
-									<ListPlus
-										className="text-foreground"
-										size={22}
-									/>
+									<ListPlus className="text-foreground" size={22} />
 								</Button>
 							</Link>
 							<Link
@@ -214,42 +181,29 @@ const ListPage = () => {
 										listId,
 									},
 								}}
-								asChild
-							>
+								asChild>
 								<Button
 									variant="outline"
 									style={{
 										width: dimensions.width / 2 - 5,
 										flexDirection: "row",
 										gap: 15,
-									}}
-								>
+									}}>
 									<Text variant="h4">Edit</Text>
-									<Pencil
-										className="text-foreground"
-										size={18}
-									/>
+									<Pencil className="text-foreground" size={18} />
 								</Button>
 							</Link>
 						</View>
 					)}
-					<ListResources
-						items={listItems}
-						category={list!.category}
-					/>
-					{Platform.OS != "web" &&
-						listItems?.length == 0 &&
-						isProfile && (
-							<View className="flex h-56 flex-col items-center justify-center gap-2">
-								<ListPlus size={30} />
-								<Text
-									variant="h4"
-									className="text-muted-foreground"
-								>
-									Make Sure to Add to Your List
-								</Text>
-							</View>
-						)}
+					<ListResources items={listItems} category={list!.category} />
+					{Platform.OS != "web" && listItems?.length == 0 && isProfile && (
+						<View className="flex h-56 flex-col items-center justify-center gap-2">
+							<ListPlus size={30} />
+							<Text variant="h4" className="text-muted-foreground">
+								Make Sure to Add to Your List
+							</Text>
+						</View>
+					)}
 				</WebWrapper>
 			</ScrollView>
 		</SafeAreaView>

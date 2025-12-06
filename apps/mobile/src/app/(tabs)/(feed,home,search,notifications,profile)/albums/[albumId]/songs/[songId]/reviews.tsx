@@ -24,12 +24,9 @@ const Reviews = () => {
 		ratingFilter?: string;
 	}>();
 	const { albumId, songId } = params;
-	const tab =
-		params.tab && tabs.includes(params.tab) ? params.tab : "everyone";
+	const tab = params.tab && tabs.includes(params.tab) ? params.tab : "everyone";
 	const ratingTab = (
-		params.ratingTab && ratingTabs.includes(params.ratingTab)
-			? params.ratingTab
-			: "all"
+		params.ratingTab && ratingTabs.includes(params.ratingTab) ? params.ratingTab : "all"
 	) as "REVIEW" | "RATING" | "all";
 	const ratingFilter =
 		params.ratingFilter && params.ratingFilter !== "undefined"
@@ -40,7 +37,7 @@ const Reviews = () => {
 		getQueryOptions({
 			route: "/track/{id}",
 			input: { id: songId! },
-		}),
+		})
 	);
 
 	const { data: values } = api.ratings.distribution.useQuery(
@@ -53,7 +50,7 @@ const Reviews = () => {
 		},
 		{
 			placeholderData: keepPreviousData,
-		},
+		}
 	);
 
 	useEffect(() => {
@@ -96,7 +93,7 @@ const Reviews = () => {
 									{song.title + " Ratings"}
 								</Text>
 							)}
-							<View className="border-border rounded-xl border px-2 pt-3">
+							<View className="rounded-xl border border-border px-2 pt-3">
 								<DistributionChart
 									distribution={values}
 									height={Platform.OS === "web" ? 100 : 80}
@@ -112,24 +109,14 @@ const Reviews = () => {
 								value={tab}
 								onValueChange={(value) => {
 									router.setParams({
-										tab:
-											value === "everyone"
-												? undefined
-												: value,
+										tab: value === "everyone" ? undefined : value,
 									});
-								}}
-							>
+								}}>
 								<TabsList className="w-full flex-row">
-									<TabsTrigger
-										value="everyone"
-										className="flex-1"
-									>
+									<TabsTrigger value="everyone" className="flex-1">
 										<Text>All</Text>
 									</TabsTrigger>
-									<TabsTrigger
-										value="friends"
-										className="flex-1"
-									>
+									<TabsTrigger value="friends" className="flex-1">
 										<Text>Following</Text>
 									</TabsTrigger>
 								</TabsList>
@@ -144,22 +131,15 @@ const Reviews = () => {
 									} else {
 										router.setParams({ ratingTab: value });
 									}
-								}}
-							>
+								}}>
 								<TabsList className="w-full flex-row">
 									<TabsTrigger value="all" className="flex-1">
 										<Text>All</Text>
 									</TabsTrigger>
-									<TabsTrigger
-										value="REVIEW"
-										className="flex-1"
-									>
+									<TabsTrigger value="REVIEW" className="flex-1">
 										<Text>Reviews</Text>
 									</TabsTrigger>
-									<TabsTrigger
-										value="RATING"
-										className="flex-1"
-									>
+									<TabsTrigger value="RATING" className="flex-1">
 										<Text>Ratings</Text>
 									</TabsTrigger>
 								</TabsList>

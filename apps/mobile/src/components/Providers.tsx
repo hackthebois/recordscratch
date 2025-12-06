@@ -1,8 +1,4 @@
-import {
-	QueryCache,
-	QueryClient,
-	QueryClientProvider,
-} from "@tanstack/react-query";
+import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { loggerLink, httpBatchLink } from "@trpc/client";
 import React, { useState } from "react";
 import superjson from "superjson";
@@ -30,11 +26,10 @@ export const TRPCProvider = (props: { children: React.ReactNode }) => {
 			new QueryClient({
 				queryCache: new QueryCache({
 					onError: (error) => {
-						catchError({ ...error, sessionId: sessionId }),
-							reloadAppAsync();
+						(catchError({ ...error, sessionId: sessionId }), reloadAppAsync());
 					},
 				}),
-			}),
+			})
 	);
 
 	const trpcClient = api.createClient({
@@ -64,9 +59,7 @@ export const TRPCProvider = (props: { children: React.ReactNode }) => {
 
 	return (
 		<api.Provider client={trpcClient} queryClient={queryClient}>
-			<QueryClientProvider client={queryClient}>
-				{props.children}
-			</QueryClientProvider>
+			<QueryClientProvider client={queryClient}>{props.children}</QueryClientProvider>
 		</api.Provider>
 	);
 };
@@ -101,10 +94,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	}, [login]);
 
 	useEffect(() => {
-		if (
-			status !== "loading" &&
-			(status !== "authenticated" || pathname === "/signin")
-		) {
+		if (status !== "loading" && (status !== "authenticated" || pathname === "/signin")) {
 			handleLoginRedirect({ status, router });
 		}
 	}, [pathname]);
@@ -113,7 +103,5 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		return null;
 	}
 
-	return (
-		<AuthContext.Provider value={store}>{children}</AuthContext.Provider>
-	);
+	return <AuthContext.Provider value={store}>{children}</AuthContext.Provider>;
 };

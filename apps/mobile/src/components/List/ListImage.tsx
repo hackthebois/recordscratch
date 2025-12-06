@@ -120,8 +120,7 @@ const ListImage = ({
 				height: size,
 				maxWidth: size,
 				maxHeight: size,
-			}}
-		>
+			}}>
 			<Feather name="list" size={24} color="black" />
 		</View>
 	);

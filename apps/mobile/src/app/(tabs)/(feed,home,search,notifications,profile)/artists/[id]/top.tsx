@@ -17,7 +17,7 @@ const TopPage = () => {
 			input: {
 				id: artistId,
 			},
-		}),
+		})
 	);
 	const { data: top } = useSuspenseQuery(
 		getQueryOptions({
@@ -26,7 +26,7 @@ const TopPage = () => {
 				id: artistId,
 				limit: 50,
 			},
-		}),
+		})
 	);
 
 	return (
