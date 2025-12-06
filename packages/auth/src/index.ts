@@ -7,7 +7,7 @@ import { getDB, sessions, users } from "@recordscratch/db";
 import type { Session, User } from "@recordscratch/types";
 import { eq, or } from "drizzle-orm";
 import type { Context } from "hono";
-import { deleteCookie, getCookie, setCookie } from "hono/cookie";
+import {  getCookie, setCookie } from "hono/cookie";
 import { generateRandomString, type RandomReader } from "@oslojs/crypto/random";
 import { z } from "zod";
 

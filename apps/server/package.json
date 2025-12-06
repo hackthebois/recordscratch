@@ -5,11 +5,16 @@
 		"deploy": "wrangler deploy --minify"
 	},
 	"dependencies": {
+		"@hono/trpc-server": "^0.4.1",
+		"@oslojs/encoding": "^1.1.0",
 		"@recordscratch/api": "workspace:*",
 		"@recordscratch/auth": "workspace:*",
 		"@recordscratch/db": "workspace:*",
-		"@hono/trpc-server": "^0.4.1",
-		"hono": "^4.10.7"
+		"@recordscratch/types": "workspace:*",
+		"arctic": "^3.7.0",
+		"drizzle-orm": "^0.45.0",
+		"hono": "^4.10.7",
+		"zod": "^4.1.13"
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20251205.0",

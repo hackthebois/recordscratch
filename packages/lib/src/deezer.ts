@@ -3,27 +3,27 @@ import { z } from "zod";
 export const EditorialSchema = z.object({
 	id: z.number(),
 	name: z.string(),
-	picture: z.string().url().optional(),
-	picture_small: z.string().url().optional(),
-	picture_medium: z.string().url().optional(),
-	picture_big: z.string().url().optional(),
-	picture_xl: z.string().url().optional(),
+	picture: z.url().optional(),
+	picture_small: z.url().optional(),
+	picture_medium: z.url().optional(),
+	picture_big: z.url().optional(),
+	picture_xl: z.url().optional(),
 });
 export type Editorial = z.infer<typeof EditorialSchema>;
 
 export const ArtistSchema = z.object({
 	id: z.number(),
 	name: z.string(),
-	link: z.string().url().optional(),
-	share: z.string().url().optional(),
-	picture: z.string().url().optional(),
-	picture_small: z.string().url().optional(),
-	picture_medium: z.string().url().optional(),
-	picture_big: z.string().url().optional(),
-	picture_xl: z.string().url().optional(),
+	link: z.url().optional(),
+	share: z.url().optional(),
+	picture: z.url().optional(),
+	picture_small: z.url().optional(),
+	picture_medium: z.url().optional(),
+	picture_big: z.url().optional(),
+	picture_xl: z.url().optional(),
 	nb_album: z.number().optional(),
 	nb_fan: z.number().optional(),
-	tracklist: z.string().url(),
+	tracklist: z.url(),
 });
 export type Artist = z.infer<typeof ArtistSchema>;
 
@@ -33,8 +33,8 @@ export const BaseTrackSchema = z.object({
 	title: z.string(),
 	title_short: z.string(),
 	title_version: z.string().optional(),
-	link: z.string().url(),
-	share: z.string().url().optional(),
+	link: z.url(),
+	share: z.url().optional(),
 	duration: z.number(),
 	track_position: z.number().optional(),
 	disk_number: z.number().optional(),
@@ -44,27 +44,27 @@ export const BaseTrackSchema = z.object({
 export const GenreSchema = z.object({
 	id: z.number(),
 	name: z.string(),
-	picture: z.string().url().optional(),
-	picture_small: z.string().url().optional(),
-	picture_medium: z.string().url().optional(),
-	picture_big: z.string().url().optional(),
-	picture_xl: z.string().url().optional(),
+	picture: z.url().optional(),
+	picture_small: z.url().optional(),
+	picture_medium: z.url().optional(),
+	picture_big: z.url().optional(),
+	picture_xl: z.url().optional(),
 });
 export type Genre = z.infer<typeof GenreSchema>;
 
 export const ContributorSchema = z.object({
 	id: z.number(),
 	name: z.string(),
-	link: z.string().url().optional(),
-	share: z.string().url().optional(),
-	picture: z.string().url().optional(),
-	picture_small: z.string().url().optional(),
-	picture_medium: z.string().url().optional(),
-	picture_big: z.string().url().optional(),
-	picture_xl: z.string().url().optional(),
+	link: z.url().optional(),
+	share: z.url().optional(),
+	picture: z.url().optional(),
+	picture_small: z.url().optional(),
+	picture_medium: z.url().optional(),
+	picture_big: z.url().optional(),
+	picture_xl: z.url().optional(),
 	radio: z.boolean().optional(),
 	role: z.string().optional(),
-	tracklist: z.string().url(),
+	tracklist: z.url(),
 });
 export type Contributor = z.infer<typeof ContributorSchema>;
 
@@ -191,7 +191,7 @@ const DeezerSchema = z.object({
 		}),
 		output: z.object({
 			data: AlbumSchema.array(),
-			next: z.string().url().optional(),
+			next: z.url().optional(),
 			total: z.number(),
 		}),
 	}),
@@ -202,7 +202,7 @@ const DeezerSchema = z.object({
 		}),
 		output: z.object({
 			data: TrackSchema.array(),
-			next: z.string().url().optional(),
+			next: z.url().optional(),
 			total: z.number(),
 		}),
 	}),
@@ -213,7 +213,7 @@ const DeezerSchema = z.object({
 		}),
 		output: z.object({
 			data: ArtistSchema.array(),
-			next: z.string().url().optional(),
+			next: z.url().optional(),
 			total: z.number(),
 		}),
 	}),
@@ -230,7 +230,7 @@ const DeezerSchema = z.object({
 		}),
 		output: z.object({
 			data: AlbumSchema.array(),
-			next: z.string().url().optional(),
+			next: z.url().optional(),
 			total: z.number(),
 		}),
 	}),
