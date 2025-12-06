@@ -39,8 +39,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		[
 			"@sentry/react-native/expo",
 			{
-				organization: "recordscratch",
+				url: "https://sentry.io/",
 				project: "recordscratch",
+				organization: "recordscratch",
 			},
 		],
 		[

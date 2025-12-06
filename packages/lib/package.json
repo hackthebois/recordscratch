@@ -5,7 +5,7 @@
 		"@recordscratch/types": "workspace:*",
 		"clsx": "^2.1.1",
 		"dayjs": "^1.11.19",
-		"react": "^19.2.1",
+		"react": "19.1.0",
 		"tailwind-merge": "^3.4.0",
 		"zod": "^4.1.13",
 		"zustand": "^5.0.9"

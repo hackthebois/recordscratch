@@ -63,10 +63,8 @@ const navigationIntegration = Sentry.reactNavigationIntegration({
 
 Sentry.init({
 	dsn: "https://2648bda3885c4f3b7ab58671e8a9d44f@o4508287201312768.ingest.us.sentry.io/4508287205441536",
-	debug: false,
-	tracesSampleRate: 1.0,
-	integrations: [navigationIntegration],
-	enableNativeFramesTracking: !isRunningInExpoGo(),
+	sendDefaultPii: true,
+	enableLogs: true,
 });
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.

@@ -5,17 +5,17 @@
     "type-check": "tsc",
     "dev": "dotenv -- turbo dev",
     "studio": "dotenv -- turbo studio",
-    "clean": "rm -rf node_modules && turbo clean && rm -rf bun.lockb",
+    "clean": "rm -rf node_modules && turbo clean && rm -rf bun.lock",
     "ngrok": "ngrok http --url=humane-cockatoo-instantly.ngrok-free.app 3000"
   },
   "dependencies": {
     "@react-navigation/elements": "^2.9.1",
-    "@types/uuid": "^10.0.0",
-    "dotenv": "^16.4.5",
-    "hono": "^4.6.20",
+    "@types/uuid": "^11.0.0",
+    "dotenv": "^17.2.3",
+    "hono": "^4.10.7",
     "ngrok": "^5.0.0-beta.2",
     "turbo": "^2.6.3",
-    "typescript": "~5.3.3"
+    "typescript": "~5.9.3"
   },
   "workspaces": [
     "apps/*",
@@ -23,7 +23,7 @@
   ],
   "name": "root",
   "devDependencies": {
-    "dotenv-cli": "^7.4.1"
+    "dotenv-cli": "^11.0.0"
   },
   "trustedDependencies": [
     "@parcel/watcher",
