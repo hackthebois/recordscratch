@@ -1,27 +1,54 @@
 import { Text } from "@/components/ui/text";
+import { api } from "@/components/Providers";
 import { Star } from "@/lib/icons/IconsLoader";
 import { cn } from "@recordscratch/lib";
-import { Resource } from "@recordscratch/types";
+import { Resource, ResourceRating } from "@recordscratch/types";
 import { Link } from "expo-router";
 import { Pressable, View } from "react-native";
-import { resourceRatingCollection } from "@/lib/collections/ratings";
-import { eq, useLiveQuery } from "@tanstack/react-db";
+import { Skeleton } from "../ui/skeleton";
 
 export const RatingInfo = ({
+	initialRating,
 	resource,
 	size = "lg",
 }: {
+	initialRating?: ResourceRating | null;
 	resource: Resource;
 	size?: "lg" | "sm";
 }) => {
-	const { data: resourceRating } = useLiveQuery((q) =>
-		q
-			.from({
-				resourceRating: resourceRatingCollection,
-			})
-			.where(({ resourceRating }) => eq(resourceRating.resourceId, resource.resourceId))
-			.findOne()
-	);
+	const { data: rating, isLoading } = api.ratings.get.useQuery(resource, {
+		initialData: initialRating,
+		staleTime: Infinity,
+	});
+
+	if (isLoading)
+		return (
+			<View
+				className={cn(
+					"flex min-h-12 justify-center gap-4",
+					size === "sm" && "min-w-18 h-8",
+					size === "lg" && "h-12 min-w-20"
+				)}>
+				<View className="flex flex-row items-center justify-center gap-2">
+					<Star size={size === "lg" ? 32 : 21} color="#ffb703" />
+					<View className="flex flex-col gap-1">
+						<Skeleton className="w-6">
+							<Text
+								className={cn({
+									"font-semibold text-lg": size === "lg",
+									"text font-semibold": size === "sm",
+								})}
+							/>
+						</Skeleton>
+						{size === "lg" && (
+							<Skeleton className="w-4">
+								<Text className="text-lg text-muted-foreground" />
+							</Skeleton>
+						)}
+					</View>
+				</View>
+			</View>
+		);
 
 	const href =
 		resource.category === "ALBUM"
@@ -38,23 +65,23 @@ export const RatingInfo = ({
 					size === "sm" && "min-w-18 h-8",
 					size === "lg" && "h-12 min-w-20"
 				)}>
-				{!(size === "sm" && !resourceRating?.average) && (
+				{!(size === "sm" && !rating?.average) && (
 					<View className="flex flex-row items-center justify-center gap-2">
 						<Star size={size === "lg" ? 32 : 21} color="#ffb703" fill="#ffb703" />
 						<View className="flex flex-col">
-							{resourceRating?.average && (
+							{rating?.average && (
 								<Text
 									className={cn({
 										"font-semibold text-lg": size === "lg",
 										"text font-semibold": size === "sm",
 									})}>
-									{Number(resourceRating.average).toFixed(1)}
+									{Number(rating.average).toFixed(1)}
 								</Text>
 							)}
 							{size === "lg" && (
 								<Text className="text-lg text-muted-foreground">
-									{resourceRating?.total && Number(resourceRating.total) !== 0
-										? resourceRating.total
+									{rating?.total && Number(rating.total) !== 0
+										? rating.total
 										: resource.category === "ARTIST"
 											? "No ratings yet"
 											: "Be first to rate"}

@@ -8,7 +8,6 @@ import type { ServerEnv } from "@recordscratch/types";
 import { PostHog } from "posthog-node";
 import type { Context } from "hono";
 import { eq, and } from "drizzle-orm";
-import { getPostHog } from "./posthog";
 
 export const createTRPCContext = async ({
 	sessionId,
@@ -23,8 +22,10 @@ export const createTRPCContext = async ({
 		region: "auto",
 	});
 	const db = getDB(c.env.DATABASE_URL);
-	const ph = getPostHog(c);
 
+	const ph = new PostHog(c.env.POSTHOG_KEY, {
+		host: c.env.POSTHOG_HOST,
+	});
 	console.log("PostHog initialized");
 	if (!sessionId) {
 		return {

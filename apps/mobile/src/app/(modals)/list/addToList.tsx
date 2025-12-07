@@ -1,7 +1,7 @@
 import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { View, useWindowDimensions } from "react-native";
-import ListOfLists from "@/components/List/ListOfLists";
+import ListOfList from "@/components/List/ListOfLists";
 import { Link, useLocalSearchParams } from "expo-router";
 import { Category } from "@recordscratch/types";
 import { Button } from "@/components/ui/button";
@@ -40,7 +40,7 @@ const AddToListModal = () => {
 
 	return (
 		<View className="flex flex-1 pb-20">
-			<ListOfLists
+			<ListOfList
 				lists={lists}
 				orientation="vertical"
 				onPress={(listId: string) => {

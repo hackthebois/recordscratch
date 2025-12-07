@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@react-navigation/elements": "^2.9.1",
-    "@tanstack/react-form": "^1.27.1",
     "@types/uuid": "^11.0.0",
     "dotenv": "^17.2.3",
     "hono": "^4.10.7",

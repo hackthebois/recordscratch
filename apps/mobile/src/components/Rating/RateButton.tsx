@@ -1,11 +1,12 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
+import { api } from "@/components/Providers";
+import { useAuth } from "@/lib/auth";
 import { Star } from "@/lib/icons/IconsLoader";
-import { Resource } from "@recordscratch/types";
+import { Rating, Resource } from "@recordscratch/types";
 import { Link } from "expo-router";
 import React from "react";
 import { Button } from "../ui/button";
-import { eq, useLiveQuery } from "@tanstack/react-db";
-import { userRatingCollection } from "@/lib/collections/ratings";
 
 const iconSize = {
 	lg: 27,
@@ -14,31 +15,37 @@ const iconSize = {
 };
 
 const RateButton = ({
+	initialUserRating,
 	resource,
 	imageUrl,
 	name,
 	size = "default",
 }: {
+	initialUserRating?: Rating | null;
 	resource: Resource;
 	imageUrl?: string | null | undefined;
 	name?: string;
 	size?: "lg" | "default" | "sm";
 }) => {
-	const { data: userRating } = useLiveQuery((q) =>
-		q
-			.from({
-				userRating: userRatingCollection,
-			})
-			.where(({ userRating }) => eq(userRating.resourceId, resource.resourceId))
-			.findOne()
+	const userId = useAuth((s) => s.profile!.userId);
+	const { data: userRating, isLoading } = api.ratings.user.get.useQuery(
+		{ resourceId: resource.resourceId, userId },
+		{
+			staleTime: Infinity,
+			initialData: initialUserRating,
+		}
 	);
+
+	if (isLoading) {
+		return <Skeleton className="h-[48px] w-[80px]" />;
+	}
 
 	const fill = userRating ? { fill: "#fb8500" } : undefined;
 
 	return (
 		<Link
 			href={{
-				pathname: "/(modals)/rating",
+				pathname: "(modals)/rating",
 				params: {
 					...resource,
 					imageUrl,

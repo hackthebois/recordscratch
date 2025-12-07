@@ -2,16 +2,17 @@ import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
+import { api } from "@/components/Providers";
+import { useAuth } from "@/lib/auth";
 import { Star } from "@/lib/icons/IconsLoader";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { RateForm, RateFormSchema, Resource } from "@recordscratch/types";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { Alert, Pressable, TextInput, View } from "react-native";
+import { Controller, useForm } from "react-hook-form";
+import { Alert, Platform, Pressable, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { eq, useLiveQuery } from "@tanstack/react-db";
-import { resourceRatingCollection, userRatingCollection } from "@/lib/collections/ratings";
-import { useForm } from "@tanstack/react-form";
 
 const RatingInput = ({
 	value: rating,
@@ -56,48 +57,54 @@ const RatingModal = () => {
 		imageUrl?: string;
 		name?: string;
 	}>();
+	const utils = api.useUtils();
+	const userId = useAuth((s) => s.profile!.userId);
 
-	const { data: userRating } = useLiveQuery((q) =>
-		q
-			.from({
-				userRating: userRatingCollection,
-			})
-			.where(({ userRating }) => eq(userRating.resourceId, resource.resourceId))
-			.findOne()
+	const { data: userRating } = api.ratings.user.get.useQuery(
+		{ resourceId: resource.resourceId, userId },
+		{
+			staleTime: Infinity,
+		}
 	);
 
-	const form = useForm({
-		defaultValues: { ...resource, ...userRating } as RateForm,
-		validators: {
-			onSubmit: RateFormSchema,
-		},
-		onSubmit: ({ value }) => {
-			if (userRating) {
-				userRatingCollection.update(resource.resourceId, (draft) => {
-					draft.rating = value.rating ?? 0;
-					draft.content = value.content ?? null;
-				});
-			} else {
-				userRatingCollection.insert({
-					...value,
-					rating: value.rating ?? 0,
-					content: value.content ?? null,
-					userId: "tmp",
-					deactivated: false,
-					createdAt: new Date().toString(),
-					updatedAt: new Date().toString(),
-				});
-			}
-			resourceRatingCollection.utils.refetch();
+	const { control, handleSubmit, formState } = useForm<RateForm>({
+		resolver: zodResolver(RateFormSchema),
+		defaultValues: { ...resource, ...userRating },
+	});
+
+	const { mutate: rateMutation } = api.ratings.rate.useMutation({
+		onSuccess: async () => {
+			await utils.ratings.user.get.invalidate({
+				resourceId: resource.resourceId,
+				userId,
+			});
+			await utils.ratings.get.invalidate({
+				resourceId: resource.resourceId,
+				category: resource.category,
+			});
+			await utils.profiles.distribution.invalidate({
+				userId,
+			});
+			await utils.ratings.feed.invalidate({
+				filters: {
+					profileId: userId,
+				},
+			});
 			router.back();
 		},
 	});
 
+	const onSubmit = async (rate: RateForm) => {
+		rateMutation(rate);
+	};
+
 	const clearRating = () => {
 		if (!userRating) return;
-		userRatingCollection.delete(userRating.resourceId);
-		resourceRatingCollection.utils.refetch();
-		router.back();
+		rateMutation({
+			...resource,
+			content: null,
+			rating: null,
+		});
 	};
 
 	return (
@@ -135,21 +142,20 @@ const RatingModal = () => {
 									? "How would you rate this album?"
 									: "How would you rate this song?"}
 							</Text>
-							<form.Field
+							<Controller
+								control={control}
 								name="rating"
-								children={(field) => (
-									<RatingInput
-										value={field.state.value ?? 0}
-										onChange={field.handleChange}
-									/>
+								render={({ field: { onChange, value } }) => (
+									<RatingInput value={value ?? 0} onChange={onChange} />
 								)}
 							/>
-							<form.Field
+							<Controller
+								control={control}
 								name="content"
-								children={(field) => (
+								render={({ field: { onChange, value } }) => (
 									<TextInput
-										onChangeText={field.handleChange}
-										value={field.state.value ?? undefined}
+										onChangeText={onChange}
+										value={value ?? undefined}
 										className="min-h-32 rounded-xl border border-border p-4 text-lg text-foreground"
 										placeholder="Add review..."
 										multiline
@@ -160,7 +166,8 @@ const RatingModal = () => {
 						</View>
 						<View className="mt-4">
 							<Button
-								onPress={() => form.handleSubmit()}
+								onPress={handleSubmit(onSubmit)}
+								disabled={!formState.isValid}
 								className="mb-4"
 								variant="secondary">
 								<Text>Rate</Text>
@@ -188,9 +195,7 @@ const RatingModal = () => {
 										<Text>Remove rating</Text>
 									</Pressable>
 								) : (
-									<Pressable
-										onPress={() => clearRating()}
-										className="flex items-center">
+									<Pressable onPress={clearRating} className="flex items-center">
 										<Text>Remove rating</Text>
 									</Pressable>
 								))}

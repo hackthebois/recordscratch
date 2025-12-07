@@ -1,8 +1,10 @@
 import { ListsType } from "@recordscratch/types";
-import { FlatList, Platform, Pressable, View } from "react-native";
+import { FlatList, Platform, Pressable, View, useWindowDimensions } from "react-native";
 import ListImage from "./ListImage";
 import React from "react";
 import { Text } from "../ui/text";
+import ReLink from "../ReLink";
+import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 
 const ListsItem = ({
@@ -20,42 +22,44 @@ const ListsItem = ({
 	if (!listsItem.id || !listsItem.profile) return null;
 	const listResources = listsItem.resources;
 
+	const ListItemContent = (
+		<View className="flex flex-col justify-center gap-4">
+			<View
+				style={{
+					width: size,
+					height: size,
+					maxWidth: size,
+					maxHeight: size,
+				}}
+				className="flex items-center justify-center">
+				<ListImage listItems={listResources} category={listsItem.category} size={size} />
+			</View>
+			<Text
+				className={"w-full text-ellipsis font-semibold"}
+				numberOfLines={1}
+				style={{ flexWrap: "wrap" }}>
+				{listsItem.name}
+			</Text>
+		</View>
+	);
+
 	return (
 		<View
 			style={{
 				width: size,
 			}}>
-			<Pressable
-				onPress={() => {
-					if (onPress) {
-						onPress(listsItem.id);
-					}
-					if (showLink) router.push(`/lists/${listsItem.id}`);
-				}}
-				className="flex w-full flex-col">
-				<View className="flex flex-col justify-center gap-4">
-					<View
-						style={{
-							width: size,
-							height: size,
-							maxWidth: size,
-							maxHeight: size,
-						}}
-						className="flex items-center justify-center">
-						<ListImage
-							listItems={listResources}
-							category={listsItem.category}
-							size={size}
-						/>
-					</View>
-					<Text
-						className={"w-full text-ellipsis font-semibold"}
-						numberOfLines={1}
-						style={{ flexWrap: "wrap" }}>
-						{listsItem.name}
-					</Text>
-				</View>
-			</Pressable>
+			{
+				<Pressable
+					onPress={() => {
+						if (onPress) {
+							onPress(listsItem.id);
+						}
+						if (showLink) router.push(`/lists/${listsItem.id}`);
+					}}
+					className="flex w-full flex-col">
+					{ListItemContent}
+				</Pressable>
+			}
 		</View>
 	);
 };
@@ -149,7 +153,7 @@ const ListOfLists = ({
 			}}
 			style={{ marginLeft: -8 }}
 			showsHorizontalScrollIndicator={Platform.OS === "web"}
-			horizontal
+			horizontal={true}
 			ListFooterComponent={() => FooterComponent}
 			ListHeaderComponent={() => HeaderComponent}
 		/>

@@ -33,4 +33,3 @@ export { appRouter, createCaller, createTRPCContext };
 export type { AppRouter, RouterInputs, RouterOutputs };
 
 export * from "../../lib/src/notifications";
-export * from "./hono";

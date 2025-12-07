@@ -28,7 +28,6 @@ import "../global.css";
 import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { defaultScreenOptions } from "@/lib/navigation";
-import { resourceRatingCollection, userRatingCollection } from "@/lib/collections/ratings";
 
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,
@@ -96,12 +95,6 @@ const RootLayout = () => {
 
 	useEffect(() => {
 		const preload = async () => {
-			try {
-				userRatingCollection.preload();
-				resourceRatingCollection.preload();
-			} catch (error) {
-				catchError(error);
-			}
 			if (env.ENV !== "development") {
 				try {
 					const update = await Promise.race([

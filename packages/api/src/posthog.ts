@@ -4,7 +4,6 @@ import type {
 	RateForm,
 	ReviewForm,
 } from "@recordscratch/types";
-import type { Context } from "hono";
 import { PostHog } from "posthog-node";
 
 type PostHogEvent = {
@@ -34,10 +33,4 @@ export const posthog = async <TEvent extends keyof PostHogEvent>(
 		});
 	});
 	await ph.shutdown();
-};
-
-export const getPostHog = (c: Context) => {
-	return new PostHog(c.env.POSTHOG_KEY, {
-		host: c.env.POSTHOG_HOST,
-	});
 };
