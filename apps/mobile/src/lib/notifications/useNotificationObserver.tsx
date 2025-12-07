@@ -2,7 +2,7 @@ import { NotificationData } from "@recordscratch/lib";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
-import { api } from "../api";
+import { api } from "@/components/Providers";
 import { Platform } from "react-native";
 
 export function useNotificationObserver() {

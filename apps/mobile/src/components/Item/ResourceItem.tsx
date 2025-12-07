@@ -3,12 +3,11 @@ import { Text } from "@/components/ui/text";
 import { getQueryOptions } from "@/lib/deezer";
 import { Album, cn } from "@recordscratch/lib";
 import { Resource } from "@recordscratch/types";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Image } from "expo-image";
-import { Link, LinkProps, RelativePathString, useRouter } from "expo-router";
+import { RelativePathString, useRouter } from "expo-router";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
 import { View } from "react-native";
-import ReLink from "../ReLink";
 
 export const ResourceItemSkeleton = ({
 	direction = "horizontal",
@@ -101,12 +100,10 @@ export const ResourceItem = ({
 	if (isLoading || !album || (resource.category === "SONG" && isLoadingTracks)) {
 		return (
 			<ResourceItemSkeleton
-				{...{
-					direction,
-					imageClassName,
-					imageWidthAndHeight,
-					showArtist,
-				}}
+				direction={direction}
+				imageCss={imageClassName}
+				imageWidthAndHeight={imageWidthAndHeight}
+				showArtist={showArtist}
 			/>
 		);
 	}
@@ -116,11 +113,12 @@ export const ResourceItem = ({
 			? tracks?.data.find((track) => track.id === Number(resource.resourceId))?.title
 			: album?.title;
 
-	const link: RelativePathString = (
+	const link = (
 		resource.category === "SONG"
 			? `/albums/${resource.parentId}/songs/${resource.resourceId}`
 			: `/albums/${resource.resourceId}`
 	) as RelativePathString;
+
 	return (
 		<Pressable
 			onPress={() => {
@@ -140,9 +138,9 @@ export const ResourceItem = ({
 					style,
 				]}>
 				<View className="overflow-hidden rounded-xl">
-					{album!.cover_big ? (
+					{album?.cover_big ? (
 						<Image
-							source={album!.cover_big}
+							source={album.cover_big}
 							style={{
 								width: imageWidthAndHeight,
 								height: imageWidthAndHeight,
@@ -180,7 +178,7 @@ export const ResourceItem = ({
 						{showArtist && (
 							<Text className={cn("text-muted-foreground", artistClassName)}>
 								{showType ? "• " : ""}
-								{album!.artist?.name}
+								{album?.artist?.name}
 							</Text>
 						)}
 					</View>

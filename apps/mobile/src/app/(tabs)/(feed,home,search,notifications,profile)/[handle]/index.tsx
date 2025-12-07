@@ -13,18 +13,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Text } from "@/components/ui/text";
 import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
-import { ChevronRight, Hand, Trash, UserCheck, UserMinus } from "@/lib/icons/IconsLoader";
+import { ChevronRight, Hand, UserCheck } from "@/lib/icons/IconsLoader";
 import { Settings } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
-import {
-	Category,
-	ListWithResources,
-	ListsType,
-	Profile,
-	listResourceType,
-} from "@recordscratch/types";
+import { Category, ListWithResources, ListsType, Profile } from "@recordscratch/types";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Shield, ShieldCheck, User, UserX } from "lucide-react-native";
+import { ShieldCheck, UserX } from "lucide-react-native";
 import { Suspense, useState } from "react";
 import { Platform, Pressable, ScrollView, View, useWindowDimensions } from "react-native";
 import {
@@ -113,7 +107,6 @@ const ListsTab = ({
 					<ChevronRight size={30} className="color-muted-foreground" />
 				</View>
 			</Link>
-
 			<ListOfLists lists={lists} orientation="horizontal" size={top6Width} />
 		</View>
 	);
@@ -129,57 +122,54 @@ const TopList = ({
 	isProfile?: boolean;
 }) => {
 	const dimensions = useWindowDimensions();
-
+	const router = useRouter();
 	const resources = list?.resources ?? [];
 	const screenSize = Math.min(dimensions.width, 1024);
 	const numColumns = screenSize === 1024 ? 6 : 3;
 	const top6Width = (Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns;
-	const router = useRouter();
-
-	const renderAddButton = () => (
-		<View className="flex w-full flex-col items-center justify-center gap-6 pt-5">
-			<Text variant="h4" className="capitalize text-muted-foreground">
-				Add Your Top 6 {category.toLocaleLowerCase() + "s"}
-			</Text>
-			<Button
-				className="w-1/3"
-				variant="outline"
-				onPress={() => router.push(`/settings/editprofile`)}>
-				<Text className="w-full text-center capitalize">Add {category.toLowerCase()}</Text>
-			</Button>
-		</View>
-	);
-
-	const renderResourceItem = (resource: listResourceType) => (
-		<View className="relative mt-4" key={resource.resourceId}>
-			{category !== "ARTIST" ? (
-				<ResourceItem
-					resource={{
-						parentId: resource.parentId!,
-						resourceId: resource.resourceId,
-						category,
-					}}
-					direction="vertical"
-					showArtist={false}
-					imageWidthAndHeight={top6Width}
-					style={{ width: top6Width }}
-				/>
-			) : (
-				<ArtistItem
-					artistId={resource.resourceId}
-					direction="vertical"
-					imageWidthAndHeight={top6Width}
-					style={{ width: top6Width }}
-				/>
-			)}
-		</View>
-	);
 
 	return (
 		<View className="flex flex-row flex-wrap gap-4 px-4">
-			{resources.length === 0 && isProfile
-				? renderAddButton()
-				: resources.map(renderResourceItem)}
+			{resources.length === 0 && isProfile ? (
+				<View className="flex w-full flex-col items-center justify-center gap-6 pt-5">
+					<Text variant="h4" className="capitalize text-muted-foreground">
+						Add Your Top 6 {category.toLocaleLowerCase() + "s"}
+					</Text>
+					<Button
+						className="w-1/3"
+						variant="outline"
+						onPress={() => router.push(`/settings/editprofile`)}>
+						<Text className="w-full text-center capitalize">
+							Add {category.toLowerCase()}
+						</Text>
+					</Button>
+				</View>
+			) : (
+				resources.map((resource) => (
+					<View className="relative mt-4" key={resource.resourceId}>
+						{category !== "ARTIST" ? (
+							<ResourceItem
+								resource={{
+									parentId: resource.parentId!,
+									resourceId: resource.resourceId,
+									category,
+								}}
+								direction="vertical"
+								showArtist={false}
+								imageWidthAndHeight={top6Width}
+								style={{ width: top6Width }}
+							/>
+						) : (
+							<ArtistItem
+								artistId={resource.resourceId}
+								direction="vertical"
+								imageWidthAndHeight={top6Width}
+								style={{ width: top6Width }}
+							/>
+						)}
+					</View>
+				))
+			)}
 		</View>
 	);
 };
@@ -199,6 +189,7 @@ const TopListsTab = ({
 }) => {
 	const router = useRouter();
 	const params = useLocalSearchParams<{ tab?: string }>();
+
 	const tab = params.tab && topListTabs.includes(params.tab) ? params.tab : "albums";
 
 	return (
@@ -280,12 +271,6 @@ export const ProfilePage = ({ isProfile }: { isProfile: boolean }) => {
 	const [topLists] = api.lists.topLists.useSuspenseQuery({
 		userId: profile.userId,
 	});
-
-	const { mutate: deactivateProfile } = api.profiles.deactivate.useMutation();
-
-	const deactivateButton = () => {
-		deactivateProfile({ userId: profile!.userId });
-	};
 
 	const options =
 		Platform.OS !== "web"
@@ -442,7 +427,12 @@ export const ProfilePage = ({ isProfile }: { isProfile: boolean }) => {
 							/>
 						</View>
 					</View>
-					<TopListsTab {...topLists} isProfile={isProfile} />
+					<TopListsTab
+						album={topLists.album as ListWithResources | undefined}
+						song={topLists.song as ListWithResources | undefined}
+						artist={topLists.artist as ListWithResources | undefined}
+						isProfile={isProfile}
+					/>
 					<ListsTab handle={profile.handle} lists={lists} isProfile={isProfile} />
 				</WebWrapper>
 			</ScrollView>

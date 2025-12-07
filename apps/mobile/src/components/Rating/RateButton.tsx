@@ -1,12 +1,11 @@
-import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
-import { useAuth } from "@/lib/auth";
 import { Star } from "@/lib/icons/IconsLoader";
-import { Rating, Resource } from "@recordscratch/types";
+import { Resource } from "@recordscratch/types";
 import { Link } from "expo-router";
 import React from "react";
 import { Button } from "../ui/button";
+import { eq, useLiveQuery } from "@tanstack/react-db";
+import { ratingCollection } from "@/lib/collections/ratings";
 
 const iconSize = {
 	lg: 27,
@@ -15,37 +14,33 @@ const iconSize = {
 };
 
 const RateButton = ({
-	initialUserRating,
 	resource,
 	imageUrl,
 	name,
 	size = "default",
 }: {
-	initialUserRating?: Rating | null;
 	resource: Resource;
 	imageUrl?: string | null | undefined;
 	name?: string;
 	size?: "lg" | "default" | "sm";
 }) => {
-	const userId = useAuth((s) => s.profile!.userId);
-	const { data: userRating, isLoading } = api.ratings.user.get.useQuery(
-		{ resourceId: resource.resourceId, userId },
-		{
-			staleTime: Infinity,
-			initialData: initialUserRating,
-		}
+	const { data } = useLiveQuery((q) =>
+		q
+			.from({
+				rating: ratingCollection,
+			})
+			.where(({ rating }) => eq(rating.resourceId, resource.resourceId))
+			.orderBy(({ rating }) => rating.rating)
+			.limit(1)
 	);
+	const rating = data[0];
 
-	if (isLoading) {
-		return <Skeleton className="h-[48px] w-[80px]" />;
-	}
-
-	const fill = userRating ? { fill: "#fb8500" } : undefined;
+	const fill = rating ? { fill: "#fb8500" } : undefined;
 
 	return (
 		<Link
 			href={{
-				pathname: "(modals)/rating",
+				pathname: "/(modals)/rating",
 				params: {
 					...resource,
 					imageUrl,
@@ -55,7 +50,7 @@ const RateButton = ({
 			asChild>
 			<Button variant="secondary" size={size} className="flex-row gap-2">
 				<Star size={iconSize[size]} color="#fb8500" {...fill} />
-				<Text>{userRating ? userRating.rating : "Rate"}</Text>
+				<Text>{rating ? rating.rating : "Rate"}</Text>
 			</Button>
 		</Link>
 	);

@@ -7,8 +7,6 @@ import { Platform, View, useWindowDimensions } from "react-native";
 import { Text } from "@/components/ui/text";
 import { SquarePlus } from "@/lib/icons/IconsLoader";
 import { useAuth } from "@/lib/auth";
-import { WebWrapper } from "@/components/WebWrapper";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const CreateListButton = ({ isProfile }: { isProfile: boolean }) => {
 	return (
@@ -49,7 +47,7 @@ const AllListsPage = () => {
 			/>
 			<ListOfLists
 				HeaderComponent={
-					Platform.OS != "web" ? (
+					Platform.OS !== "web" ? (
 						<View className="pb-4">
 							<CreateListButton isProfile={isProfile} />
 						</View>

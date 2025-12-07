@@ -6,6 +6,7 @@
 	},
 	"dependencies": {
 		"@hono/trpc-server": "^0.4.1",
+		"@hono/zod-validator": "^0.7.5",
 		"@oslojs/encoding": "^1.1.0",
 		"@recordscratch/api": "workspace:*",
 		"@recordscratch/auth": "workspace:*",

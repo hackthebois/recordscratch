@@ -65,7 +65,7 @@ export default function AlbumLayout() {
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
+		<SafeAreaView style={{ flexGrow: 1 }} edges={["left", "right"]}>
 			<Stack.Screen />
 			<View className="flex flex-1">
 				<ScrollView contentContainerClassName="pb-4">
@@ -82,12 +82,13 @@ export default function AlbumLayout() {
 							<View className="flex flex-row items-center justify-center sm:justify-start">
 								{album.contributors?.map((artist, index) => (
 									<Pressable
+										key={artist.id}
 										onPress={() => {
-											router.navigate(`/artists/${artist?.id}`);
+											router.navigate(`/artists/${artist.id}`);
 										}}
 										style={{ maxWidth: "100%" }}>
 										<Text className="text-center text-muted-foreground sm:text-left">
-											{`${artist?.name + (album.contributors?.length === index + 1 ? "" : ",  ")}`}
+											{`${artist.name + (album.contributors?.length === index + 1 ? "" : ",  ")}`}
 										</Text>
 									</Pressable>
 								))}
