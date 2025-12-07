@@ -3,12 +3,11 @@ import { Text } from "@/components/ui/text";
 import { getQueryOptions } from "@/lib/deezer";
 import { Album, cn } from "@recordscratch/lib";
 import { Resource } from "@recordscratch/types";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Image } from "expo-image";
-import { Link, LinkProps, RelativePathString, useRouter } from "expo-router";
+import { RelativePathString, useRouter } from "expo-router";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
 import { View } from "react-native";
-import ReLink from "../ReLink";
 
 export const ResourceItemSkeleton = ({
 	direction = "horizontal",
@@ -101,12 +100,10 @@ export const ResourceItem = ({
 	if (isLoading || !album || (resource.category === "SONG" && isLoadingTracks)) {
 		return (
 			<ResourceItemSkeleton
-				{...{
-					direction,
-					imageClassName,
-					imageWidthAndHeight,
-					showArtist,
-				}}
+				direction={direction}
+				imageCss={imageClassName}
+				imageWidthAndHeight={imageWidthAndHeight}
+				showArtist={showArtist}
 			/>
 		);
 	}
@@ -121,6 +118,7 @@ export const ResourceItem = ({
 			? `/albums/${resource.parentId}/songs/${resource.resourceId}`
 			: `/albums/${resource.resourceId}`
 	) as RelativePathString;
+
 	return (
 		<Pressable
 			onPress={() => {
@@ -154,7 +152,7 @@ export const ResourceItem = ({
 							)}
 						/>
 					) : (
-						<View className="h-full w-full bg-muted"></View>
+						<View className="h-full w-full bg-muted" />
 					)}
 				</View>
 				<View

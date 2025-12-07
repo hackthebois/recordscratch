@@ -129,57 +129,58 @@ const TopList = ({
 	isProfile?: boolean;
 }) => {
 	const dimensions = useWindowDimensions();
+	const router = useRouter();
 
 	const resources = list?.resources ?? [];
+
 	const screenSize = Math.min(dimensions.width, 1024);
 	const numColumns = screenSize === 1024 ? 6 : 3;
 	const top6Width = (Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns;
-	const router = useRouter();
 
-	const renderAddButton = () => (
-		<View className="flex w-full flex-col items-center justify-center gap-6 pt-5">
-			<Text variant="h4" className="capitalize text-muted-foreground">
-				Add Your Top 6 {category.toLocaleLowerCase() + "s"}
-			</Text>
-			<Button
-				className="w-1/3"
-				variant="outline"
-				onPress={() => router.push(`/settings/editprofile`)}>
-				<Text className="w-full text-center capitalize">Add {category.toLowerCase()}</Text>
-			</Button>
-		</View>
-	);
-
-	const renderResourceItem = (resource: listResourceType) => (
-		<View className="relative mt-4" key={resource.resourceId}>
-			{category !== "ARTIST" ? (
-				<ResourceItem
-					resource={{
-						parentId: resource.parentId!,
-						resourceId: resource.resourceId,
-						category,
-					}}
-					direction="vertical"
-					showArtist={false}
-					imageWidthAndHeight={top6Width}
-					style={{ width: top6Width }}
-				/>
-			) : (
-				<ArtistItem
-					artistId={resource.resourceId}
-					direction="vertical"
-					imageWidthAndHeight={top6Width}
-					style={{ width: top6Width }}
-				/>
-			)}
-		</View>
-	);
+	if (resources.length === 0 && isProfile) {
+		return (
+			<View className="flex w-full flex-col items-center justify-center gap-6 pt-5">
+				<Text variant="h4" className="capitalize text-muted-foreground">
+					Add Your Top 6 {category.toLocaleLowerCase() + "s"}
+				</Text>
+				<Button
+					className="w-1/3"
+					variant="outline"
+					onPress={() => router.push(`/settings/editprofile`)}>
+					<Text className="w-full text-center capitalize">
+						Add {category.toLowerCase()}
+					</Text>
+				</Button>
+			</View>
+		);
+	}
 
 	return (
-		<View className="flex flex-row flex-wrap gap-4 px-4">
-			{resources.length === 0 && isProfile
-				? renderAddButton()
-				: resources.map(renderResourceItem)}
+		<View className="flex flex-row gap-4 px-4">
+			{resources.map((resource: listResourceType) => (
+				<View className="relative mt-4 " key={resource.resourceId}>
+					{category !== "ARTIST" ? (
+						<ResourceItem
+							resource={{
+								parentId: resource.parentId!,
+								resourceId: resource.resourceId,
+								category,
+							}}
+							direction="vertical"
+							showArtist={false}
+							imageWidthAndHeight={top6Width}
+							style={{ width: top6Width }}
+						/>
+					) : (
+						<ArtistItem
+							artistId={resource.resourceId}
+							direction="vertical"
+							imageWidthAndHeight={top6Width}
+							style={{ width: top6Width }}
+						/>
+					)}
+				</View>
+			))}
 		</View>
 	);
 };
@@ -442,8 +443,17 @@ export const ProfilePage = ({ isProfile }: { isProfile: boolean }) => {
 							/>
 						</View>
 					</View>
-					<TopListsTab {...topLists} isProfile={isProfile} />
-					<ListsTab handle={profile.handle} lists={lists} isProfile={isProfile} />
+					<TopListsTab
+						album={topLists.album as ListWithResources | undefined}
+						song={topLists.song as ListWithResources | undefined}
+						artist={topLists.artist as ListWithResources | undefined}
+						isProfile={isProfile}
+					/>
+					<ListsTab
+						handle={profile.handle}
+						lists={lists as ListsType[]}
+						isProfile={isProfile}
+					/>
 				</WebWrapper>
 			</ScrollView>
 		</View>
