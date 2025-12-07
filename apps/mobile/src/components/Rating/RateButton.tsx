@@ -5,7 +5,7 @@ import { Link } from "expo-router";
 import React from "react";
 import { Button } from "../ui/button";
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { ratingCollection } from "@/lib/collections/ratings";
+import { userRatingCollection } from "@/lib/collections/ratings";
 
 const iconSize = {
 	lg: 27,
@@ -24,18 +24,16 @@ const RateButton = ({
 	name?: string;
 	size?: "lg" | "default" | "sm";
 }) => {
-	const { data } = useLiveQuery((q) =>
+	const { data: userRating } = useLiveQuery((q) =>
 		q
 			.from({
-				rating: ratingCollection,
+				userRating: userRatingCollection,
 			})
-			.where(({ rating }) => eq(rating.resourceId, resource.resourceId))
-			.orderBy(({ rating }) => rating.rating)
-			.limit(1)
+			.where(({ userRating }) => eq(userRating.resourceId, resource.resourceId))
+			.findOne()
 	);
-	const rating = data[0];
 
-	const fill = rating ? { fill: "#fb8500" } : undefined;
+	const fill = userRating ? { fill: "#fb8500" } : undefined;
 
 	return (
 		<Link
@@ -50,7 +48,7 @@ const RateButton = ({
 			asChild>
 			<Button variant="secondary" size={size} className="flex-row gap-2">
 				<Star size={iconSize[size]} color="#fb8500" {...fill} />
-				<Text>{rating ? rating.rating : "Rate"}</Text>
+				<Text>{userRating ? userRating.rating : "Rate"}</Text>
 			</Button>
 		</Link>
 	);

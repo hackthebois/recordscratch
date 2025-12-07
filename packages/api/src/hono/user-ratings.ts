@@ -11,7 +11,7 @@ import { and, eq } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator";
 import { getPostHog, posthog } from "@recordscratch/api/src/posthog";
 
-export const ratingsHandler = new Hono<{ Bindings: ServerEnv }>()
+export const userRatingsHandler = new Hono<{ Bindings: ServerEnv }>()
 	.get("/", async (c) => {
 		const { user } = await getAuth(c);
 		const db = getDB(c.env.DATABASE_URL);
@@ -70,6 +70,8 @@ export const ratingsHandler = new Hono<{ Bindings: ServerEnv }>()
 					},
 				],
 			]);
+
+			return c.json(null);
 		},
 	)
 	.delete("/", zValidator("json", ResourceSchema), async (c) => {
@@ -88,4 +90,6 @@ export const ratingsHandler = new Hono<{ Bindings: ServerEnv }>()
 					eq(ratings.category, category),
 				),
 			);
+
+		return c.json(null);
 	});

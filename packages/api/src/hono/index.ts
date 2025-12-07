@@ -8,8 +8,9 @@ import { createTRPCContext } from "@recordscratch/api";
 import { cors } from "hono/cors";
 import { googleHandler } from "./auth/google";
 import { appleHandler } from "./auth/apple";
-import { ratingsHandler } from "./ratings";
+import { userRatingsHandler } from "./user-ratings";
 import { authHandler } from "./auth";
+import { resourceRatingsHandler } from "./resource-ratings";
 
 export const honoApp = new Hono<{ Bindings: ServerEnv }>()
 	.use(
@@ -38,7 +39,8 @@ export const honoApp = new Hono<{ Bindings: ServerEnv }>()
 			},
 		}),
 	)
-	.route("/api/ratings", ratingsHandler)
+	.route("/api/resource/ratings", resourceRatingsHandler)
+	.route("/api/user/ratings", userRatingsHandler)
 	.route("/api/auth/google", googleHandler)
 	.route("/api/auth/apple", appleHandler)
 	.route("/api/auth", authHandler)
