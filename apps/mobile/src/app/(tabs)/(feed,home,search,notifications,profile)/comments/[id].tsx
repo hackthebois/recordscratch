@@ -44,7 +44,6 @@ const CommentPage = () => {
 							<View className="h-[1px] bg-muted" />
 						</WebWrapper>
 					)}
-					estimatedItemSize={200}
 					refreshing={isRefetchingByUser}
 					onRefresh={refetchByUser}
 					contentContainerClassName="p-4"

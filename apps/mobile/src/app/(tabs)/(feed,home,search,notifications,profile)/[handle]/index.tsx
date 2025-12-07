@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Text } from "@/components/ui/text";
 import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
-import { ChevronRight, Hand, Trash, UserCheck, UserMinus } from "@/lib/icons/IconsLoader";
+import { ChevronRight, Hand, UserCheck } from "@/lib/icons/IconsLoader";
 import { Settings } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
 import {
@@ -24,7 +24,7 @@ import {
 	listResourceType,
 } from "@recordscratch/types";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Shield, ShieldCheck, User, UserX } from "lucide-react-native";
+import { ShieldCheck, UserX } from "lucide-react-native";
 import { Suspense, useState } from "react";
 import { Platform, Pressable, ScrollView, View, useWindowDimensions } from "react-native";
 import {
@@ -281,11 +281,11 @@ export const ProfilePage = ({ isProfile }: { isProfile: boolean }) => {
 		userId: profile.userId,
 	});
 
-	const { mutate: deactivateProfile } = api.profiles.deactivate.useMutation();
+	//const { mutate: deactivateProfile } = api.profiles.deactivate.useMutation();
 
-	const deactivateButton = () => {
-		deactivateProfile({ userId: profile!.userId });
-	};
+	//const deactivateButton = () => {
+	//	deactivateProfile({ userId: profile!.userId });
+	//};
 
 	const options =
 		Platform.OS !== "web"

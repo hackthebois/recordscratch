@@ -45,7 +45,7 @@ const RateButton = ({
 	return (
 		<Link
 			href={{
-				pathname: "(modals)/rating",
+				pathname: "/(modals)/rating",
 				params: {
 					...resource,
 					imageUrl,

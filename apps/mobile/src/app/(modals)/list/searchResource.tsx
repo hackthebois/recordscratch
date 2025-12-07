@@ -118,7 +118,6 @@ const MusicSearch = ({
 			ItemSeparatorComponent={() => <View className="h-3" />}
 			contentContainerClassName="py-4"
 			keyboardShouldPersistTaps="handled"
-			estimatedItemSize={125}
 		/>
 	);
 };
@@ -207,7 +206,7 @@ const RatingModal = () => {
 											? String(resource.album?.id)
 											: "artist" in resource
 												? String(resource.artist?.id)
-												: null,
+												: undefined,
 									listId,
 								});
 							}}

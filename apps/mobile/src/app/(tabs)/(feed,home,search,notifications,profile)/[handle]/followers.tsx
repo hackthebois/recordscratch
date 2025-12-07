@@ -76,7 +76,6 @@ const Followers = () => {
 							)}
 						</WebWrapper>
 					)}
-					estimatedItemSize={60}
 					ItemSeparatorComponent={() => <View className="h-3" />}
 					className="px-4"
 					contentContainerClassName="py-4"

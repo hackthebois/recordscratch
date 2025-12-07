@@ -42,7 +42,9 @@ export const ReviewsList = (
 					<View className="h-[1px] bg-muted" />
 				</WebWrapper>
 			)}
-			renderItem={({ item }) => <Review {...item} feedInput={{ ...queryInput }} />}
+			renderItem={({ item }) => (
+				<Review {...item} content={item.content ?? ""} feedInput={{ ...queryInput }} />
+			)}
 			ListFooterComponent={() =>
 				hasNextPage ? <ActivityIndicator size="large" color="#ff8500" /> : null
 			}
@@ -66,7 +68,6 @@ export const ReviewsList = (
 			}}
 			refreshing={isRefetchingByUser}
 			onRefresh={refetchByUser}
-			estimatedItemSize={380}
 		/>
 	);
 };

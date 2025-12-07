@@ -10,7 +10,8 @@
 		"test": "jest --watchAll",
 		"clean": "rm -rf node_modules && rm -rf .expo",
 		"format": "prettier --write .",
-		"build": "expo export -p web"
+		"build": "expo export -p web",
+		"typecheck": "tsc"
 	},
 	"jest": {
 		"preset": "jest-expo"

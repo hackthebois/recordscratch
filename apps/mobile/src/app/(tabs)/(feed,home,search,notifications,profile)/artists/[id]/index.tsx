@@ -118,7 +118,6 @@ const ArtistPage = () => {
 									)}
 									horizontal
 									showsHorizontalScrollIndicator={Platform.OS === "web"}
-									estimatedItemSize={160}
 									contentContainerClassName="h-64"
 									ItemSeparatorComponent={() => <View className="w-4" />}
 								/>
@@ -151,7 +150,6 @@ const ArtistPage = () => {
 									showsHorizontalScrollIndicator={Platform.OS === "web"}
 									contentContainerClassName="h-48"
 									ItemSeparatorComponent={() => <View className="w-4" />}
-									estimatedItemSize={105}
 								/>
 							</View>
 						</View>

@@ -83,7 +83,6 @@ const HomePage = () => {
 							horizontal
 							contentContainerClassName="h-64"
 							ItemSeparatorComponent={() => <View className="w-4" />}
-							estimatedItemSize={150}
 							ListEmptyComponent={
 								<ScrollView horizontal contentContainerClassName="gap-4">
 									<ResourceItemSkeleton direction="vertical" />
@@ -105,7 +104,6 @@ const HomePage = () => {
 							horizontal
 							contentContainerClassName="h-64"
 							ItemSeparatorComponent={() => <View className="w-4" />}
-							estimatedItemSize={150}
 							ListEmptyComponent={
 								<ScrollView horizontal contentContainerClassName="gap-4">
 									<ResourceItemSkeleton direction="vertical" />
@@ -127,7 +125,6 @@ const HomePage = () => {
 							horizontal
 							contentContainerClassName="h-64"
 							ItemSeparatorComponent={() => <View className="w-4" />}
-							estimatedItemSize={150}
 							ListEmptyComponent={
 								<ScrollView horizontal contentContainerClassName="gap-4">
 									<ResourceItemSkeleton direction="vertical" />
@@ -156,7 +153,6 @@ const HomePage = () => {
 							showsHorizontalScrollIndicator={Platform.OS === "web"}
 							contentContainerClassName="h-40"
 							ItemSeparatorComponent={() => <View className="w-4" />}
-							estimatedItemSize={105}
 						/>
 					</View>
 				</View>

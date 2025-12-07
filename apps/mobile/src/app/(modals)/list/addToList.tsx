@@ -3,7 +3,7 @@ import { useAuth } from "@/lib/auth";
 import { View, useWindowDimensions } from "react-native";
 import ListOfList from "@/components/List/ListOfLists";
 import { Link, useLocalSearchParams } from "expo-router";
-import { Category } from "@recordscratch/types";
+import { Category, ListsType } from "@recordscratch/types";
 import { Button } from "@/components/ui/button";
 import { SquarePlus } from "@/lib/icons/IconsLoader";
 import { Text } from "@/components/ui/text";
@@ -41,7 +41,7 @@ const AddToListModal = () => {
 	return (
 		<View className="flex flex-1 pb-20">
 			<ListOfList
-				lists={lists}
+				lists={lists as ListsType[]}
 				orientation="vertical"
 				onPress={(listId: string) => {
 					mutate({

@@ -127,8 +127,8 @@ const EditProfile = () => {
 		onSuccess: async (profile, { handle }) => {
 			await utils.profiles.me.invalidate();
 			await utils.profiles.get.invalidate(handle);
-			await setProfile(profile);
-			await form.reset({
+			setProfile(profile);
+			form.reset({
 				bio: profile.bio ?? undefined,
 				image: {
 					uri: getImageUrl(profile),
@@ -165,7 +165,7 @@ const EditProfile = () => {
 	}, [form, handleExists]);
 
 	const onSubmit = async (data: UpdateProfileForm) => {
-		await setLoading(true);
+		setLoading(true);
 		if (data.image) {
 			const url = await getSignedURL({
 				type: data.image.type,
@@ -184,13 +184,12 @@ const EditProfile = () => {
 			});
 		}
 
-		await updateProfile({
+		updateProfile({
 			bio: data.bio ?? null,
 			name: data.name,
 			handle: data.handle,
-			imageUrl: null,
 		});
-		await setLoading(false);
+		setLoading(false);
 	};
 
 	const pageValid = () => {
@@ -334,9 +333,9 @@ const EditProfile = () => {
 					</Button>
 					<TopListTab
 						tab={tab}
-						album={topLists.album}
-						song={topLists.song}
-						artist={topLists.artist}
+						album={topLists.album as ListWithResources | undefined}
+						song={topLists.song as ListWithResources | undefined}
+						artist={topLists.artist as ListWithResources | undefined}
 					/>
 				</View>
 			</WebWrapper>

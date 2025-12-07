@@ -19,7 +19,7 @@ import {
 import { FlashList } from "@shopify/flash-list";
 import { Link, LinkProps, Stack, usePathname } from "expo-router";
 import React, { useEffect } from "react";
-import { Platform, Pressable, View } from "react-native";
+import { Pressable, View } from "react-native";
 
 const NotificationBlock = ({
 	icon,
@@ -146,7 +146,6 @@ export default function Notifications() {
 							<NotificationItem notification={item} />
 						</WebWrapper>
 					)}
-					estimatedItemSize={75}
 					scrollEnabled={true}
 					refreshing={isRefetchingByUser}
 					onRefresh={refetchByUser}

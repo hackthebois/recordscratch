@@ -60,7 +60,6 @@ const GenrePage = () => {
 							renderItem={({ item }) => <AlbumItem resourceId={String(item.id)} />}
 							horizontal
 							showsHorizontalScrollIndicator={Platform.OS === "web"}
-							estimatedItemSize={160}
 							contentContainerClassName="h-64"
 							ItemSeparatorComponent={() => <View className="w-4" />}
 						/>
@@ -80,7 +79,6 @@ const GenrePage = () => {
 							)}
 							horizontal
 							showsHorizontalScrollIndicator={Platform.OS === "web"}
-							estimatedItemSize={115}
 							contentContainerClassName="h-48"
 							ItemSeparatorComponent={() => <View className="w-4" />}
 						/>

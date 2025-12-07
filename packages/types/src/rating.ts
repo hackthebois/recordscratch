@@ -12,7 +12,7 @@ export type ResourceRating = z.infer<typeof ResourceRatingSchema>;
 
 export const RatingSchema = createSelectSchema(ratings, {
 	rating: z.number().min(1).max(10),
-	content: z.string().min(1).max(10000),
+	content: z.string().min(1).max(10000).nullable(),
 });
 export type Rating = z.infer<typeof RatingSchema>;
 

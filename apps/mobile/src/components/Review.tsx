@@ -161,7 +161,6 @@ export const Review = ({
 	category,
 	updatedAt,
 	hideActions = false,
-	deactivated,
 	feedInput,
 }: ReviewType & {
 	hideActions?: boolean;

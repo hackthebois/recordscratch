@@ -139,7 +139,6 @@ export default function AlbumLayout() {
 								contentContainerClassName="h-64"
 								horizontal
 								showsHorizontalScrollIndicator={Platform.OS === "web"}
-								estimatedItemSize={160}
 								ItemSeparatorComponent={() => <View className="w-4" />}
 							/>
 						</View>
