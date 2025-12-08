@@ -9,7 +9,6 @@ import { UserAvatar } from "@/components/UserAvatar";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
 import { Pill } from "@/components/ui/pill";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Text } from "@/components/ui/text";
 import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
@@ -30,6 +29,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@recordscratch/lib";
+import { TopListTab } from "@/components/List/TopList";
 
 const ToggleAccountStatus = ({ isActive, userId }: { isActive: boolean; userId: string }) => {
 	const [open, setOpen] = useState(false);
@@ -113,129 +113,15 @@ const ListsTab = ({
 	);
 };
 
-const TopList = ({
-	category,
-	list,
-	isProfile,
-}: {
-	category: Category;
-	list: ListWithResources | undefined;
-	isProfile?: boolean;
-}) => {
-	const dimensions = useWindowDimensions();
-	const router = useRouter();
-
-	const resources = list?.resources ?? [];
-
-	const screenSize = Math.min(dimensions.width, 1024);
-	const numColumns = screenSize === 1024 ? 6 : 3;
-	const top6Width = (Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns;
-
-	if (resources.length === 0 && isProfile) {
-		return (
-			<View className="flex w-full flex-col items-center justify-center gap-6 pt-5">
-				<Text variant="h4" className="capitalize text-muted-foreground">
-					Add Your Top 6 {category.toLocaleLowerCase() + "s"}
-				</Text>
-				<Button
-					className="w-1/3"
-					variant="outline"
-					onPress={() => router.push(`/settings/editprofile`)}>
-					<Text className="w-full text-center capitalize">
-						Add {category.toLowerCase()}
-					</Text>
-				</Button>
-			</View>
-		);
-	}
-
-	return (
-		<View className="flex flex-row gap-4 px-4">
-			{resources.map((resource) => (
-				<View key={resource.resourceId}>
-					{category !== "ARTIST" ? (
-						<ResourceItem
-							resource={{
-								parentId: resource.parentId!,
-								resourceId: resource.resourceId,
-								category,
-							}}
-							direction="horizontal"
-							showArtist={false}
-							imageWidthAndHeight={top6Width}
-							style={{ width: top6Width }}
-						/>
-					) : (
-						<ArtistItem
-							artistId={resource.resourceId}
-							direction="vertical"
-							imageWidthAndHeight={top6Width}
-							style={{ width: top6Width }}
-						/>
-					)}
-				</View>
-			))}
-		</View>
-	);
-};
-
-const topListTabs = ["albums", "songs", "artists"];
-
-const TopListsTab = ({
-	album,
-	song,
-	artist,
-	isProfile,
-}: {
-	album: ListWithResources | undefined;
-	song: ListWithResources | undefined;
-	artist: ListWithResources | undefined;
-	isProfile: boolean;
-}) => {
-	const router = useRouter();
-	const params = useLocalSearchParams<{ tab?: string }>();
-	const tab = params.tab && topListTabs.includes(params.tab) ? params.tab : "albums";
-
-	return (
-		<Tabs
-			value={tab}
-			onValueChange={(value) =>
-				router.setParams({
-					tab: value === "albums" ? undefined : value,
-				})
-			}
-			className="mt-2">
-			<View className="px-4">
-				<TabsList className="w-full flex-row">
-					<TabsTrigger value="albums" className="flex-1">
-						<Text>Albums</Text>
-					</TabsTrigger>
-					<TabsTrigger value="songs" className="flex-1">
-						<Text>Songs</Text>
-					</TabsTrigger>
-					<TabsTrigger value="artists" className="flex-1">
-						<Text>Artists</Text>
-					</TabsTrigger>
-				</TabsList>
-			</View>
-			<TabsContent value="albums" className="mt-2">
-				<TopList category="ALBUM" list={album} isProfile={isProfile} />
-			</TabsContent>
-			<TabsContent value="songs" className="mt-2">
-				<TopList category="SONG" list={song} isProfile={isProfile} />
-			</TabsContent>
-			<TabsContent value="artists" className="mt-2">
-				<TopList category="ARTIST" list={artist} isProfile={isProfile} />
-			</TabsContent>
-		</Tabs>
-	);
-};
+const topListTabs = ["ALBUM", "SONG", "ARTIST"];
 
 export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 	const router = useRouter();
 	const userProfile = useAuth((s) => s.profile);
-	const params = useLocalSearchParams<{ handle: string }>();
+	const params = useLocalSearchParams<{ handle: string; tab?: string }>();
 	const handle = params.handle ?? customHandle;
+	const tab = params.tab ? (topListTabs.includes(params.tab) ? params.tab : "ALBUM") : "ALBUM";
+	console.log(tab);
 
 	const [profile] = api.profiles.get.useSuspenseQuery(handle);
 
@@ -251,9 +137,9 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 		userId: profile.userId,
 	});
 
-	//const [topLists] = api.lists.topLists.useSuspenseQuery({
-	//	userId: profile.userId,
-	//});
+	const [topLists] = api.lists.topLists.useSuspenseQuery({
+		userId: profile.userId,
+	});
 
 	//const { mutate: deactivateProfile } = api.profiles.deactivate.useMutation();
 
@@ -417,12 +303,15 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 							/>
 						</View>
 					</View>
-					{/*<TopListsTab
-						album={topLists.album as ListWithResources | undefined}
-						song={topLists.song as ListWithResources | undefined}
-						artist={topLists.artist as ListWithResources | undefined}
-						isProfile={isProfile}
-					/>*/}
+					<View className="px-4">
+						<TopListTab
+							isUser={isProfile}
+							tab={tab}
+							album={topLists.album as ListWithResources | undefined}
+							song={topLists.song as ListWithResources | undefined}
+							artist={topLists.artist as ListWithResources | undefined}
+						/>
+					</View>
 					<ListsTab
 						handle={profile.handle}
 						lists={lists as ListsType[]}

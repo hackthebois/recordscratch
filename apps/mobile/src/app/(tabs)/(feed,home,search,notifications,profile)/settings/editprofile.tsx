@@ -1,16 +1,12 @@
 import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
-import { TopList } from "@/components/List/TopList";
 import { UserAvatar } from "@/components/UserAvatar";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Text } from "@/components/ui/text";
 import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
-import { AtSign, Eraser } from "@/lib/icons/IconsLoader";
+import { AtSign } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useDebounce } from "@recordscratch/lib";
 import {
 	ListWithResources,
 	UpdateProfileForm,
@@ -18,85 +14,10 @@ import {
 } from "@recordscratch/types";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TextInput, View } from "react-native";
 import { useForm, useStore } from "@tanstack/react-form";
-
-const TopListTab = ({
-	tab = "ALBUM",
-	album,
-	song,
-	artist,
-}: {
-	tab: string;
-	album: ListWithResources | undefined;
-	song: ListWithResources | undefined;
-	artist: ListWithResources | undefined;
-}) => {
-	const [value, setValue] = useState(tab);
-	const [editMode, setEditMode] = useState(false);
-
-	return (
-		<View>
-			<Text variant="h4" className="text-center">
-				My Top 6
-			</Text>
-
-			<Tabs value={value} onValueChange={setValue}>
-				<View className="mt-2">
-					<TabsList className="w-full flex-row">
-						<TabsTrigger value="ALBUM" className="flex-1">
-							<Text>Albums</Text>
-						</TabsTrigger>
-						<TabsTrigger value="SONG" className="flex-1">
-							<Text>Songs</Text>
-						</TabsTrigger>
-						<TabsTrigger value="ARTIST" className="flex-1">
-							<Text>Artists</Text>
-						</TabsTrigger>
-					</TabsList>
-				</View>
-				<TabsContent value="ALBUM">
-					<TopList
-						category="ALBUM"
-						setEditMode={setEditMode}
-						editMode={editMode}
-						list={album}
-						isUser={true}
-					/>
-				</TabsContent>
-				<TabsContent value="SONG">
-					<TopList
-						category="SONG"
-						setEditMode={setEditMode}
-						editMode={editMode}
-						list={song}
-						isUser={true}
-					/>
-				</TabsContent>
-				<TabsContent value="ARTIST">
-					<TopList
-						category="ARTIST"
-						setEditMode={setEditMode}
-						editMode={editMode}
-						list={artist}
-						isUser={true}
-					/>
-				</TabsContent>
-			</Tabs>
-
-			<Button
-				className="flex w-full items-center"
-				variant={editMode ? "destructive" : "outline"}
-				onPress={() => {
-					setEditMode(!editMode);
-				}}>
-				<Eraser size={20} className="text-foreground" />
-			</Button>
-			<View className="h-28"></View>
-		</View>
-	);
-};
+import { TopListTab } from "@/components/List/TopList";
 
 const EditProfile = () => {
 	const { tab } = useLocalSearchParams<{ tab: string }>();
@@ -172,26 +93,8 @@ const EditProfile = () => {
 	const { mutateAsync: getSignedURL } = api.profiles.getSignedURL.useMutation();
 
 	const image = useStore(form.store, (state) => state.values.image);
-	const handle = useStore(form.store, (state) => state.values.handle);
-	const name = useStore(form.store, (state) => state.values.name);
 
-	const debouncedHandle = useDebounce(handle, 500);
-	const { data: handleExists } = api.profiles.handleExists.useQuery(debouncedHandle, {
-		enabled: debouncedHandle.length > 0 && debouncedHandle !== profile.handle,
-	});
-
-	//useEffect(() => {
-	//	if (handleExists) {
-	//		form.setError("handle", {
-	//			type: "validate",
-	//			message: "Handle already exists",
-	//		});
-	//	} else {
-	//		if (form.formState.errors.handle?.message === "Handle already exists") {
-	//			form.clearErrors("handle");
-	//		}
-	//	}
-	//}, [form, handleExists]);
+	const handleExists = api.profiles.handleExists.useMutation();
 
 	return (
 		<KeyboardAvoidingScrollView>
@@ -266,6 +169,16 @@ const EditProfile = () => {
 					/>
 					<form.Field
 						name="handle"
+						validators={{
+							onChangeAsyncDebounceMs: 500,
+							onChangeAsync: async ({ value }) => {
+								if (value.length === 0) return;
+								const exists = await handleExists.mutateAsync(value);
+								if (exists) {
+									return { message: "Handle already exists" };
+								}
+							},
+						}}
 						children={(field) => (
 							<View className="gap-2">
 								<Text>Handle</Text>
@@ -319,7 +232,11 @@ const EditProfile = () => {
 						variant="secondary">
 						{loading ? <Text>Loading...</Text> : <Text>Save</Text>}
 					</Button>
+					<Text variant="h4" className="text-center">
+						My Top 6
+					</Text>
 					<TopListTab
+						isUser
 						tab={tab}
 						album={topLists.album as ListWithResources | undefined}
 						song={topLists.song as ListWithResources | undefined}

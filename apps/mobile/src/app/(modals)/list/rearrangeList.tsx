@@ -17,7 +17,7 @@ import Animated, {
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { api } from "@/components/Providers";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { AlignJustify, Save, Trash2 } from "@/lib/icons/IconsLoader";
+import { AlignJustify, Trash2 } from "@/lib/icons/IconsLoader";
 import ReText from "@/components/ui/retext";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -328,7 +328,7 @@ const RearrangeListModal = () => {
 		userId: list!.userId,
 	});
 
-	const [resourcesState, setResourcesState] = useState<ListItem[]>(listItems);
+	const [resourcesState, setResourcesState] = useState<ListItem[]>(listItems as ListItem[]);
 	const [deletedResources, setDeletedResources] = useState<ListItem[]>([]);
 	const hasListChanged = useSharedValue<boolean>(false);
 	const resourcesSharedMap = useDerivedValue(() => setMap(resourcesState), [resourcesState]);

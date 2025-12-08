@@ -12,14 +12,14 @@ import {
 } from "@/components/ui/select";
 import { Text } from "@/components/ui/text";
 import { api } from "@/components/Providers";
-import { Category, InsertList, insertListSchema } from "@recordscratch/types";
+import { InsertList, insertListSchema } from "@recordscratch/types";
 import { useState } from "react";
 import { Platform, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React from "react";
 import { useAuth } from "@/lib/auth";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
 
 const CUSTOM_PORTAL_HOST_NAME = "modal-create-list";
 const WindowOverlay = Platform.OS === "ios" ? FullWindowOverlay : React.Fragment;
@@ -95,12 +95,13 @@ const CreateListModal = () => {
 						<View className="flex flex-col gap-2">
 							<Text>Category</Text>
 							<Select
-								{...field}
 								value={{
 									label: field.state.value,
 									value: field.state.value,
 								}}
-								onValueChange={(option) => field.handleChange(option?.value)}>
+								onValueChange={(option) =>
+									field.handleChange(option?.value as InsertList["category"])
+								}>
 								<SelectTrigger>
 									<SelectValue
 										className="text-muted-foreground"
@@ -145,7 +146,7 @@ const CreateListModal = () => {
 							multiline
 							autoComplete="off"
 							onChangeText={field.handleChange}
-							value={field.state.value}
+							value={field.state.value ?? ""}
 						/>
 						{field.state.meta.errors.map((error) => (
 							<Text className="mt-2 text-destructive" key={error?.message}>

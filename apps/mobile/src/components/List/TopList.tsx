@@ -3,12 +3,14 @@ import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@recordscratch/lib";
 import { Category, ListWithResources, UserListItem } from "@recordscratch/types";
-import { Link, Stack, useRouter } from "expo-router";
-import { Dimensions, View, useWindowDimensions } from "react-native";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useRouter } from "expo-router";
+import { View, useWindowDimensions } from "react-native";
 import { ArtistItem } from "../Item/ArtistItem";
 import { ResourceItem } from "../Item/ResourceItem";
 import { Button } from "../ui/button";
-import { Trash2 } from "@/lib/icons/IconsLoader";
+import { Eraser, Trash2 } from "@/lib/icons/IconsLoader";
+import { useState } from "react";
 
 export const DeleteButton = ({
 	isVisible = false,
@@ -158,6 +160,80 @@ export const TopList = ({
 					</Text>
 				</Button>
 			)}
+		</View>
+	);
+};
+
+export const TopListTab = ({
+	tab = "ALBUM",
+	album,
+	song,
+	artist,
+	isUser,
+}: {
+	tab: string;
+	album: ListWithResources | undefined;
+	song: ListWithResources | undefined;
+	artist: ListWithResources | undefined;
+	isUser: boolean;
+}) => {
+	const [value, setValue] = useState(tab);
+	const [editMode, setEditMode] = useState(false);
+
+	return (
+		<View>
+			<Tabs value={value} onValueChange={setValue}>
+				<View className="mt-2">
+					<TabsList className="w-full flex-row">
+						<TabsTrigger value="ALBUM" className="flex-1">
+							<Text>Albums</Text>
+						</TabsTrigger>
+						<TabsTrigger value="SONG" className="flex-1">
+							<Text>Songs</Text>
+						</TabsTrigger>
+						<TabsTrigger value="ARTIST" className="flex-1">
+							<Text>Artists</Text>
+						</TabsTrigger>
+					</TabsList>
+				</View>
+				<TabsContent value="ALBUM">
+					<TopList
+						category="ALBUM"
+						setEditMode={setEditMode}
+						editMode={editMode}
+						list={album}
+						isUser={isUser}
+					/>
+				</TabsContent>
+				<TabsContent value="SONG">
+					<TopList
+						category="SONG"
+						setEditMode={setEditMode}
+						editMode={editMode}
+						list={song}
+						isUser={isUser}
+					/>
+				</TabsContent>
+				<TabsContent value="ARTIST">
+					<TopList
+						category="ARTIST"
+						setEditMode={setEditMode}
+						editMode={editMode}
+						list={artist}
+						isUser={isUser}
+					/>
+				</TabsContent>
+			</Tabs>
+			{isUser ? (
+				<Button
+					className="flex w-full items-center"
+					variant={editMode ? "destructive" : "outline"}
+					onPress={() => {
+						setEditMode(!editMode);
+					}}>
+					<Eraser size={20} className="text-foreground" />
+				</Button>
+			) : null}
 		</View>
 	);
 };

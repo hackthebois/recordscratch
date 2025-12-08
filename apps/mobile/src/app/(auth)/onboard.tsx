@@ -206,11 +206,10 @@ const OnboardPage = () => {
 							name="handle"
 							validators={{
 								onChangeAsync: async ({ value }) => {
-									if (value?.length > 0) {
-										const exists = await handleExists.mutateAsync(value);
-										if (exists) {
-											return { message: "Handle already exists" };
-										}
+									if (value.length === 0) return;
+									const exists = await handleExists.mutateAsync(value);
+									if (exists) {
+										return { message: "Handle already exists" };
 									}
 								},
 								onChangeAsyncDebounceMs: 500,
