@@ -5,16 +5,16 @@ import { api } from "@/components/Providers";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { Platform, View, useWindowDimensions } from "react-native";
 import { Text } from "@/components/ui/text";
-import { SquarePlus } from "@/lib/icons/IconsLoader";
+import { Plus } from "@/lib/icons/IconsLoader";
 import { useAuth } from "@/lib/auth";
 import { ListsType } from "@recordscratch/types";
 
 const CreateListButton = ({ isProfile }: { isProfile: boolean }) => {
 	return (
 		isProfile && (
-			<Link asChild href="/(modals)/list/createList">
-				<Button variant="outline" className="my-2 flex flex-row items-center gap-3">
-					<SquarePlus className="text-foreground" />
+			<Link asChild href="/(modals)/list/create">
+				<Button variant="outline" className="flex-row items-center gap-2">
+					<Plus className="text-foreground" size={18} />
 					<Text>Create A List</Text>
 				</Button>
 			</Link>

@@ -4,12 +4,11 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/components/Providers";
 import { UpdateList, updateFormSchema } from "@recordscratch/types";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Controller, useForm } from "react-hook-form";
 import { Switch, TextInput, View } from "react-native";
 import { Text } from "@/components/ui/text";
 import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/lib/auth";
+import { useForm } from "@tanstack/react-form";
 
 const SettingsPage = () => {
 	const router = useRouter();
@@ -22,16 +21,25 @@ const SettingsPage = () => {
 
 	const utils = api.useUtils();
 
-	const form = useForm<UpdateList>({
-		resolver: zodResolver(updateFormSchema),
+	const form = useForm({
+		validators: {
+			onSubmit: updateFormSchema,
+		},
 		defaultValues: {
-			description: list!.description ?? "",
-			name: list!.name,
-			onProfile: list!.onProfile,
+			description: list?.description ?? "",
+			name: list?.name,
+			onProfile: list?.onProfile,
+		} as UpdateList,
+		onSubmit: async ({ value }) => {
+			setLoading(true);
+			updateList({
+				id,
+				...value,
+			});
+			setLoading(false);
+			router.back();
 		},
 	});
-
-	const name = form.watch("name");
 
 	const { mutate: updateList } = api.lists.update.useMutation({
 		onSuccess: () => {
@@ -52,27 +60,6 @@ const SettingsPage = () => {
 		return <NotFoundScreen />;
 	}
 
-	const onSubmit = async ({ name, description, onProfile }: UpdateList) => {
-		setLoading(true);
-		updateList({
-			id,
-			name,
-			description,
-			onProfile,
-		});
-		setLoading(false);
-	};
-
-	const pageValid = () => {
-		return (
-			!form.getFieldState("name").invalid &&
-			name?.length > 0 &&
-			!form.getFieldState("description").invalid &&
-			!form.getFieldState("onProfile").invalid &&
-			!loading
-		);
-	};
-
 	const handleDelete = () => {
 		if (!loading) {
 			deleteResource({ id: listId });
@@ -91,71 +78,60 @@ const SettingsPage = () => {
 					title: `Edit List`,
 				}}
 			/>
-			<Controller
-				control={form.control}
+			<form.Field
 				name="onProfile"
-				render={({ field }) => (
+				children={(field) => (
 					<View className="flex flex-row items-center gap-3">
-						<Text className="mt-2">Show as Top 6?</Text>
-						<Switch {...field} onValueChange={field.onChange} />
-						{form.formState.errors.onProfile && (
-							<Text className="mt-2 text-destructive">
-								{form.formState.errors.onProfile.message}
+						<Switch onValueChange={field.handleChange} value={field.state.value} />
+						<Text>Show as Top 6</Text>
+						{field.state.meta.errors.map((error) => (
+							<Text className="mt-2 text-destructive" key={error?.message}>
+								{error?.message}
 							</Text>
-						)}
+						))}
 					</View>
 				)}
 			/>
-
-			<Controller
-				control={form.control}
+			<form.Field
 				name="name"
-				render={({ field }) => (
+				children={(field) => (
 					<View className="gap-2">
 						<Text>Name</Text>
 						<TextInput
-							{...field}
-							placeholder="Name"
 							className="self-stretch rounded-md border border-border px-4 py-3 text-foreground"
 							autoComplete="off"
-							onChangeText={field.onChange}
+							onChangeText={field.handleChange}
+							value={field.state.value}
 						/>
-						{form.formState.errors.name && (
-							<Text className="mt-2 text-destructive">
-								{form.formState.errors.name.message}
+						{field.state.meta.errors.map((error) => (
+							<Text className="mt-2 text-destructive" key={error?.message}>
+								{error?.message}
 							</Text>
-						)}
+						))}
 					</View>
 				)}
 			/>
-			<Controller
-				control={form.control}
+			<form.Field
 				name="description"
-				render={({ field }) => (
+				children={(field) => (
 					<View className="gap-2">
 						<Text>Description</Text>
 						<TextInput
-							{...field}
-							placeholder="description"
 							className="h-40 self-stretch rounded-md border border-border p-4 text-foreground"
 							multiline
 							autoComplete="off"
-							onChangeText={field.onChange}
-							value={field.value ?? ""}
+							onChangeText={field.handleChange}
+							value={field.state.value}
 						/>
-						{form.formState.errors.description && (
-							<Text className="mt-2 text-destructive">
-								{form.formState.errors.description.message}
+						{field.state.meta.errors.map((error) => (
+							<Text className="mt-2 text-destructive" key={error?.message}>
+								{error?.message}
 							</Text>
-						)}
+						))}
 					</View>
 				)}
 			/>
-			<Button
-				onPress={form.handleSubmit(onSubmit)}
-				disabled={!pageValid()}
-				className="self-stretch"
-				variant="secondary">
+			<Button onPress={form.handleSubmit} className="self-stretch" variant="secondary">
 				<Text>{loading ? "Loading..." : "Save"}</Text>
 			</Button>
 			<Button disabled={loading} variant="destructive" onPress={handleDelete}>

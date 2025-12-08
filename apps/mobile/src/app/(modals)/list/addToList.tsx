@@ -57,7 +57,7 @@ const AddToListModal = () => {
 						<Link
 							asChild
 							href={{
-								pathname: "/(modals)/list/createList",
+								pathname: "/(modals)/list/create",
 								params: { categoryProp: category },
 							}}>
 							<Button

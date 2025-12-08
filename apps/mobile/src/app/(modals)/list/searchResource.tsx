@@ -6,15 +6,14 @@ import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { deezerHelpers } from "@/lib/deezer";
 import { Search } from "@/lib/icons/IconsLoader";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Album, Artist, Track, useDebounce } from "@recordscratch/lib";
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, Platform, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
+import { useForm, useStore } from "@tanstack/react-form";
 
 const MusicSearch = ({
 	query,
@@ -132,12 +131,14 @@ const RatingModal = () => {
 	const utils = api.useUtils();
 	const myProfile = useAuth((s) => s.profile);
 
-	const { control, watch } = useForm<{ query: string }>({
-		resolver: zodResolver(z.object({ query: z.string().min(1) })),
+	const form = useForm({
+		validators: {
+			onSubmit: z.object({ query: z.string().min(1) }),
+		},
 		defaultValues: { query: "" },
 	});
 
-	const query = watch("query");
+	const query = useStore(form.store, (state) => state.values.query);
 	const debouncedQuery = useDebounce(query, 500);
 
 	const list = api.useUtils().lists.resources.get;
@@ -171,14 +172,13 @@ const RatingModal = () => {
 						<View className="flex-row items-center">
 							<View className="h-14 flex-1 flex-row items-center rounded-xl border border-border pr-4">
 								<Search size={20} className="mx-4 text-foreground" />
-								<Controller
-									control={control}
+								<form.Field
 									name="query"
-									render={({ field: { onChange, value } }) => (
+									children={(field) => (
 										<TextInput
 											autoComplete="off"
 											placeholder={`Search for a ${category.toLowerCase()}`}
-											value={value}
+											value={field.state.value}
 											cursorColor={"#ffb703"}
 											style={{
 												paddingTop: 0,
@@ -188,7 +188,7 @@ const RatingModal = () => {
 											autoCorrect={false}
 											autoFocus
 											className="h-full w-full flex-1 p-0 text-xl text-foreground outline-none"
-											onChangeText={(text) => onChange(text)}
+											onChangeText={field.handleChange}
 											keyboardType="default"
 										/>
 									)}

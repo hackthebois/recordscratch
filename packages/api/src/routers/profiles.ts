@@ -333,7 +333,7 @@ export const profilesRouter = router({
 		}),
 	handleExists: publicProcedure
 		.input(z.string())
-		.query(async ({ ctx: { db }, input: handle }) => {
+		.mutation(async ({ ctx: { db }, input: handle }) => {
 			return !!(await db.query.profile.findFirst({
 				where: eq(profile.handle, handle),
 			}));

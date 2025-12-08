@@ -214,7 +214,7 @@ const RootLayout = () => {
 								}}
 							/>
 							<Stack.Screen
-								name="(modals)/list/createList"
+								name="(modals)/list/create"
 								options={{
 									title: "Create List",
 									presentation: "modal",

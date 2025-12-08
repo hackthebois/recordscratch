@@ -5,12 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { api } from "@/components/Providers";
 import { Send } from "@/lib/icons/IconsLoader";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { Controller, useForm } from "react-hook-form";
 import { TextInput, View, Platform, useWindowDimensions } from "react-native";
 import { z } from "zod";
+import { useForm } from "@tanstack/react-form";
 
 const CommentModal = () => {
 	const { width } = useWindowDimensions();
@@ -26,21 +25,10 @@ const CommentModal = () => {
 	if (!comment) return null;
 
 	const utils = api.useUtils();
-	const form = useForm<{ content: string }>({
-		resolver: zodResolver(z.object({ content: z.string() })),
-		defaultValues: {
-			content: "",
-		},
-	});
 
 	const { mutate, isPending } = api.comments.create.useMutation({
 		onSuccess: async () => {
-			await form.reset();
-			await router.back();
-			// await router.navigate({
-			// 	pathname: "/comments/[id]",
-			// 	params: { id },
-			// });
+			router.back();
 		},
 		onSettled: async () => {
 			await utils.comments.get.invalidate({
@@ -61,17 +49,24 @@ const CommentModal = () => {
 		},
 	});
 
-	const markSeen = api.notifications.markSeen.useMutation();
-
-	const onSubmit = async ({ content }: { content: string }) => {
-		mutate({
-			content,
-			resourceId: comment.resourceId,
-			authorId: comment.authorId,
-			rootId: comment.rootId ?? comment.id,
-			parentId: comment.id,
-		});
-	};
+	const form = useForm({
+		validators: {
+			onSubmit: z.object({ content: z.string() }),
+		},
+		defaultValues: {
+			content: "",
+		},
+		onSubmit: async ({ value, formApi }) => {
+			mutate({
+				content: value.content,
+				resourceId: comment.resourceId,
+				authorId: comment.authorId,
+				rootId: comment.rootId ?? comment.id,
+				parentId: comment.id,
+			});
+			formApi.reset();
+		},
+	});
 
 	return (
 		<KeyboardAvoidingScrollView modal>
@@ -82,7 +77,7 @@ const CommentModal = () => {
 							title: `Reply`,
 							headerRight: () => (
 								<Button
-									onPress={form.handleSubmit(onSubmit)}
+									onPress={form.handleSubmit}
 									disabled={isPending}
 									variant="secondary"
 									style={{
@@ -102,10 +97,9 @@ const CommentModal = () => {
 					/>
 					<Comment comment={comment} hideActions />
 					<View className="h-[1px] bg-muted" />
-					<Controller
-						control={form.control}
+					<form.Field
 						name="content"
-						render={({ field }) => (
+						children={(field) => (
 							<View className="flex-1 p-4">
 								<TextInput
 									placeholder="Create a new comment..."
@@ -113,8 +107,8 @@ const CommentModal = () => {
 									multiline
 									className="text-lg text-foreground outline-none"
 									scrollEnabled={false}
-									onChangeText={field.onChange}
-									{...field}
+									onChangeText={field.handleChange}
+									value={field.state.value}
 								/>
 							</View>
 						)}
@@ -122,7 +116,7 @@ const CommentModal = () => {
 
 					{Platform.OS === "web" ? (
 						<Button
-							onPress={form.handleSubmit(onSubmit)}
+							onPress={form.handleSubmit}
 							disabled={isPending}
 							variant="secondary"
 							size="sm">

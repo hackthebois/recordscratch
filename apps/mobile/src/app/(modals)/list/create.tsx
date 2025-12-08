@@ -7,21 +7,19 @@ import {
 	SelectContent,
 	SelectGroup,
 	SelectItem,
-	SelectLabel,
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
 import { Text } from "@/components/ui/text";
 import { api } from "@/components/Providers";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Category, InsertList, insertListSchema } from "@recordscratch/types";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
 import { Platform, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React from "react";
 import { useAuth } from "@/lib/auth";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useForm, useStore } from "@tanstack/react-form";
 
 const CUSTOM_PORTAL_HOST_NAME = "modal-create-list";
 const WindowOverlay = Platform.OS === "ios" ? FullWindowOverlay : React.Fragment;
@@ -35,15 +33,22 @@ const CreateListModal = () => {
 	const utils = api.useUtils();
 	const [loading, setLoading] = useState(false);
 
-	const form = useForm<InsertList>({
-		resolver: zodResolver(insertListSchema),
+	const form = useForm({
+		validators: {
+			onSubmit: insertListSchema,
+		},
 		defaultValues: {
-			category: categoryProp as Category,
+			name: "",
+			description: "",
+			category: categoryProp,
+		} as InsertList,
+		onSubmit: async ({ value }) => {
+			setLoading(true);
+			createList(value);
+			setLoading(false);
+			router.back();
 		},
 	});
-
-	const name = form.watch("name");
-	const category = form.watch("category");
 
 	const profile = useAuth((s) => s.profile);
 
@@ -52,28 +57,6 @@ const CreateListModal = () => {
 			utils.lists.getUser.invalidate({ userId: profile!.userId });
 		},
 	});
-
-	const onSubmit = async ({ name, category, description }: InsertList) => {
-		setLoading(true);
-		createList({
-			name,
-			category,
-			description,
-		});
-		setLoading(false);
-		router.back();
-	};
-
-	const pageValid = () => {
-		return (
-			!form.getFieldState("name").invalid &&
-			name?.length > 0 &&
-			!form.getFieldState("description").invalid &&
-			!form.getFieldState("category").invalid &&
-			category?.length > 0 &&
-			!loading
-		);
-	};
 
 	const insets = useSafeAreaInsets();
 	const contentInsets = {
@@ -84,42 +67,40 @@ const CreateListModal = () => {
 	};
 
 	return (
-		<KeyboardAvoidingScrollView contentContainerClassName="p-4 gap-8">
-			<Controller
-				control={form.control}
+		<KeyboardAvoidingScrollView contentContainerClassName="p-4 gap-4">
+			<form.Field
 				name="name"
-				render={({ field }) => (
+				children={(field) => (
 					<View className="gap-2">
 						<Text>Name</Text>
 						<TextInput
-							{...field}
 							placeholder="Name"
 							className="self-stretch rounded-md border border-border px-4 py-3 text-muted-foreground"
 							autoComplete="off"
-							onChangeText={field.onChange}
+							onChangeText={field.handleChange}
+							value={field.state.value}
 						/>
-						{form.formState.errors.name && (
-							<Text className="mt-2 text-destructive">
-								{form.formState.errors.name.message}
+						{field.state.meta.errors.map((error) => (
+							<Text className="mt-2 text-destructive" key={error?.message}>
+								{error?.message}
 							</Text>
-						)}
+						))}
 					</View>
 				)}
 			/>
 			{!categoryProp && (
-				<Controller
-					control={form.control}
+				<form.Field
 					name="category"
-					render={({ field }) => (
-						<View>
+					children={(field) => (
+						<View className="flex flex-col gap-2">
 							<Text>Category</Text>
 							<Select
 								{...field}
 								value={{
-									label: field.value,
-									value: field.value,
+									label: field.state.value,
+									value: field.state.value,
 								}}
-								onValueChange={(option) => field.onChange(option?.value)}>
+								onValueChange={(option) => field.handleChange(option?.value)}>
 								<SelectTrigger>
 									<SelectValue
 										className="text-muted-foreground"
@@ -144,46 +125,38 @@ const CreateListModal = () => {
 									</SelectGroup>
 								</SelectContent>
 							</Select>
-							{form.formState.errors.category && (
-								<Text className="mt-2 text-destructive">
-									{form.formState.errors.category.message}
+							{field.state.meta.errors.map((error) => (
+								<Text className="mt-2 text-destructive" key={error?.message}>
+									{error?.message}
 								</Text>
-							)}
+							))}
 						</View>
 					)}
 				/>
 			)}
-			<Controller
-				control={form.control}
+			<form.Field
 				name="description"
-				render={({ field }) => (
+				children={(field) => (
 					<View className="gap-2">
 						<Text>Description</Text>
 						<TextInput
-							{...field}
 							placeholder="description"
 							className="h-40 self-stretch rounded-md border border-border p-4 text-muted-foreground"
 							multiline
 							autoComplete="off"
-							onChangeText={field.onChange}
-							value={field.value ?? ""}
+							onChangeText={field.handleChange}
+							value={field.state.value}
 						/>
-						{form.formState.errors.description && (
-							<Text className="mt-2 text-destructive">
-								{form.formState.errors.description.message}
+						{field.state.meta.errors.map((error) => (
+							<Text className="mt-2 text-destructive" key={error?.message}>
+								{error?.message}
 							</Text>
-						)}
+						))}
 					</View>
 				)}
 			/>
 
-			<Button
-				onPress={() => {
-					form.handleSubmit(onSubmit)();
-				}}
-				disabled={!pageValid()}
-				className="self-stretch"
-				variant="secondary">
+			<Button onPress={form.handleSubmit} className="self-stretch" variant="secondary">
 				{loading ? <Text>Loading...</Text> : <Text>Save</Text>}
 			</Button>
 			<WindowOverlay>

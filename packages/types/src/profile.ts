@@ -31,12 +31,13 @@ export const ProfileNameSchema = z
 	.min(1, "Must be at least 1 character")
 	.max(50, "Must be less than 50 characters");
 
-export const handleRegex = /^[a-zA-Z0-9_]+$/i;
+export const invalidHandleRegex = /[^a-zA-Z0-9_]/g;
+export const validHandleRegex = /^[a-zA-Z0-9_]+$/i;
 export const ProfileHandleSchema = z
 	.string()
 	.min(1, "Must be at least 1 character")
 	.max(20, "Must be less than 20 characters")
-	.regex(handleRegex, "Must be letters, numbers, or _")
+	.regex(validHandleRegex, "Must be letters, numbers, or _")
 	.refine((handle) => {
 		if (reserved.includes(handle.toLowerCase())) {
 			return "Handle is reserved";
@@ -80,6 +81,8 @@ export const ProfilePhotoSchema = z
 	);
 
 export const OnboardSchema = CreateProfileSchema.extend({
+	name: z.string().min(1, "Must be at least 1 character"),
+	handle: z.string().min(1, "Must be at least 1 character"),
 	bio: z.string().optional(),
 	image: ProfilePhotoSchema.optional(),
 });

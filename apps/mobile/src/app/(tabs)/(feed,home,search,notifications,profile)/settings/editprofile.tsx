@@ -19,8 +19,8 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
 import { TextInput, View } from "react-native";
+import { useForm, useStore } from "@tanstack/react-form";
 
 const TopListTab = ({
 	tab = "ALBUM",
@@ -109,8 +109,10 @@ const EditProfile = () => {
 	const utils = api.useUtils();
 	const [loading, setLoading] = useState(false);
 
-	const form = useForm<UpdateProfileForm>({
-		resolver: zodResolver(UpdateProfileFormSchema),
+	const form = useForm({
+		validators: {
+			onSubmit: UpdateProfileFormSchema,
+		},
 		defaultValues: {
 			bio: profile.bio ?? undefined,
 			image: {
@@ -120,6 +122,33 @@ const EditProfile = () => {
 			},
 			name: profile.name,
 			handle: profile.handle,
+		} as UpdateProfileForm,
+		onSubmit: async ({ value }) => {
+			setLoading(true);
+			if (value.image) {
+				const url = await getSignedURL({
+					type: value.image.type,
+					size: value.image.size,
+				});
+
+				const response = await fetch(value.image.uri);
+				const blob = await response.blob();
+
+				await fetch(url, {
+					method: "PUT",
+					body: blob,
+					headers: {
+						"Content-Type": value.image.type,
+					},
+				});
+			}
+
+			updateProfile({
+				bio: value.bio ?? null,
+				name: value.name,
+				handle: value.handle,
+			});
+			setLoading(false);
 		},
 	});
 
@@ -142,72 +171,32 @@ const EditProfile = () => {
 	});
 	const { mutateAsync: getSignedURL } = api.profiles.getSignedURL.useMutation();
 
-	const image = form.watch("image");
-	const handle = form.watch("handle");
-	const name = form.watch("name");
+	const image = useStore(form.store, (state) => state.values.image);
+	const handle = useStore(form.store, (state) => state.values.handle);
+	const name = useStore(form.store, (state) => state.values.name);
 
 	const debouncedHandle = useDebounce(handle, 500);
 	const { data: handleExists } = api.profiles.handleExists.useQuery(debouncedHandle, {
 		enabled: debouncedHandle.length > 0 && debouncedHandle !== profile.handle,
 	});
 
-	useEffect(() => {
-		if (handleExists) {
-			form.setError("handle", {
-				type: "validate",
-				message: "Handle already exists",
-			});
-		} else {
-			if (form.formState.errors.handle?.message === "Handle already exists") {
-				form.clearErrors("handle");
-			}
-		}
-	}, [form, handleExists]);
-
-	const onSubmit = async (data: UpdateProfileForm) => {
-		setLoading(true);
-		if (data.image) {
-			const url = await getSignedURL({
-				type: data.image.type,
-				size: data.image.size,
-			});
-
-			const response = await fetch(data.image.uri);
-			const blob = await response.blob();
-
-			await fetch(url, {
-				method: "PUT",
-				body: blob,
-				headers: {
-					"Content-Type": data.image.type,
-				},
-			});
-		}
-
-		updateProfile({
-			bio: data.bio ?? null,
-			name: data.name,
-			handle: data.handle,
-		});
-		setLoading(false);
-	};
-
-	const pageValid = () => {
-		return (
-			!form.getFieldState("name").invalid &&
-			name?.length > 0 &&
-			!form.getFieldState("handle").invalid &&
-			handle?.length > 0 &&
-			!form.getFieldState("bio").invalid &&
-			!form.getFieldState("image").invalid &&
-			!loading
-		);
-	};
+	//useEffect(() => {
+	//	if (handleExists) {
+	//		form.setError("handle", {
+	//			type: "validate",
+	//			message: "Handle already exists",
+	//		});
+	//	} else {
+	//		if (form.formState.errors.handle?.message === "Handle already exists") {
+	//			form.clearErrors("handle");
+	//		}
+	//	}
+	//}, [form, handleExists]);
 
 	return (
 		<KeyboardAvoidingScrollView>
 			<WebWrapper>
-				<View className="gap-3 p-4">
+				<View className="gap-4 p-4">
 					<Stack.Screen
 						options={{
 							title: "Edit Profile",
@@ -215,10 +204,9 @@ const EditProfile = () => {
 					/>
 					<View className="flex flex-row items-center gap-4">
 						<UserAvatar imageUrl={image?.uri} size={100} />
-						<Controller
-							control={form.control}
+						<form.Field
 							name="image"
-							render={({ field: { onChange } }) => (
+							children={(field) => (
 								<View>
 									<Button
 										variant="secondary"
@@ -236,49 +224,49 @@ const EditProfile = () => {
 												result.assets.length > 0
 											) {
 												const asset = result.assets[0]!;
-												onChange({
+												field.handleChange({
 													uri: asset.uri,
 													type: asset.type ?? "image/jpeg",
-													size: asset.fileSize,
+													size: asset.fileSize!,
 												});
 											}
 										}}>
 										<Text>Pick an image</Text>
 									</Button>
-									{form.formState.errors.image && (
-										<Text className="mt-2 text-destructive">
-											{form.formState.errors.image.message}
+									{field.state.meta.errors.map((error) => (
+										<Text
+											className="mt-2 text-destructive"
+											key={error?.message}>
+											{error?.message}
 										</Text>
-									)}
+									))}
 								</View>
 							)}
 						/>
 					</View>
-					<Controller
-						control={form.control}
+					<form.Field
 						name="name"
-						render={({ field }) => (
+						children={(field) => (
 							<View className="gap-2">
 								<Text>Name</Text>
 								<TextInput
-									{...field}
 									placeholder="Name"
 									className="self-stretch rounded-md border border-border px-4 py-3 text-foreground"
 									autoComplete="off"
-									onChangeText={field.onChange}
+									onChangeText={field.handleChange}
+									value={field.state.value}
 								/>
-								{form.formState.errors.name && (
-									<Text className="mt-2 text-destructive">
-										{form.formState.errors.name.message}
+								{field.state.meta.errors.map((error) => (
+									<Text className="mt-2 text-destructive" key={error?.message}>
+										{error?.message}
 									</Text>
-								)}
+								))}
 							</View>
 						)}
 					/>
-					<Controller
-						control={form.control}
+					<form.Field
 						name="handle"
-						render={({ field }) => (
+						children={(field) => (
 							<View className="gap-2">
 								<Text>Handle</Text>
 								<View>
@@ -287,46 +275,46 @@ const EditProfile = () => {
 										size={16}
 									/>
 									<TextInput
-										{...field}
 										placeholder="Handle"
 										className="self-stretch rounded-md border border-border py-3 pl-9 pr-4 text-foreground"
 										autoComplete="off"
-										onChangeText={field.onChange}
+										onChangeText={field.handleChange}
+										value={field.state.value}
 									/>
-									{form.formState.errors.handle && (
-										<Text className="mt-2 text-destructive">
-											{form.formState.errors.handle.message}
+									{field.state.meta.errors.map((error) => (
+										<Text
+											className="mt-2 text-destructive"
+											key={error?.message}>
+											{error?.message}
 										</Text>
-									)}
+									))}
 								</View>
 							</View>
 						)}
 					/>
-					<Controller
-						control={form.control}
+					<form.Field
 						name="bio"
-						render={({ field }) => (
+						children={(field) => (
 							<View className="gap-2">
 								<Text>Bio</Text>
 								<TextInput
-									{...field}
 									placeholder="Bio"
 									className="h-40 self-stretch rounded-md border border-border p-4 text-foreground"
 									multiline
 									autoComplete="off"
-									onChangeText={field.onChange}
+									onChangeText={field.handleChange}
+									value={field.state.value}
 								/>
-								{form.formState.errors.bio && (
-									<Text className="mt-2 text-destructive">
-										{form.formState.errors.bio.message}
+								{field.state.meta.errors.map((error) => (
+									<Text className="mt-2 text-destructive" key={error?.message}>
+										{error?.message}
 									</Text>
-								)}
+								))}
 							</View>
 						)}
 					/>
 					<Button
-						onPress={form.handleSubmit(onSubmit)}
-						disabled={!pageValid()}
+						onPress={form.handleSubmit}
 						className="self-stretch"
 						variant="secondary">
 						{loading ? <Text>Loading...</Text> : <Text>Save</Text>}
