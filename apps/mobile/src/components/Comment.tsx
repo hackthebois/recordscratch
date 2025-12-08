@@ -1,6 +1,5 @@
 import { UserAvatar } from "@/components/UserAvatar";
 import { Text } from "@/components/ui/text";
-import { RouterOutputs, api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { Heart, MessageCircle } from "@/lib/icons/IconsLoader";
 import { cn } from "@recordscratch/lib";
@@ -20,9 +19,14 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "./ui/dialog";
-import { CommentAndProfile, Comment as CommentType, Profile } from "@recordscratch/types";
+import { CommentAndProfile } from "@recordscratch/types";
 import React from "react";
 import { Skeleton } from "./ui/skeleton";
+
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const DeactivateButton = ({ onPress }: { onPress: () => void }) => {
 	const [open, setOpen] = useState(false);
@@ -56,27 +60,33 @@ const DeactivateButton = ({ onPress }: { onPress: () => void }) => {
 };
 
 const LikeButton = (props: { commentId: string }) => {
-	const utils = api.useUtils();
-	const { data: likeQuery } = api.comments.likes.get.useQuery(props);
-	const { data: likesQuery } = api.comments.likes.getLikes.useQuery(props);
+	const queryClient = useQueryClient();
+	const { data: likeQuery } = useQuery(api.comments.likes.get.queryOptions(props));
+	const { data: likesQuery } = useQuery(api.comments.likes.getLikes.queryOptions(props));
 
 	const like = likeQuery ?? false;
 	const likes = likesQuery ?? 0;
 	const isLoading = likeQuery === undefined || likesQuery === undefined;
-	const { mutate: likeMutation, isPending: isLiking } = api.comments.likes.like.useMutation({
-		onSettled: async () => {
-			await utils.comments.likes.get.invalidate(props);
-			await utils.comments.likes.getLikes.invalidate(props);
-		},
-	});
-
-	const { mutate: unlikeMutation, isPending: isUnLiking } = api.comments.likes.unlike.useMutation(
-		{
+	const { mutate: likeMutation, isPending: isLiking } = useMutation(
+		api.comments.likes.like.mutationOptions({
 			onSettled: async () => {
-				await utils.comments.likes.get.invalidate(props);
-				await utils.comments.likes.getLikes.invalidate(props);
+				await Promise.all([
+					queryClient.invalidateQueries(api.comments.likes.get.queryOptions(props)),
+					queryClient.invalidateQueries(api.comments.likes.getLikes.queryOptions(props)),
+				]);
 			},
-		}
+		})
+	);
+
+	const { mutate: unlikeMutation, isPending: isUnLiking } = useMutation(
+		api.comments.likes.unlike.mutationOptions({
+			onSettled: async () => {
+				await Promise.all([
+					queryClient.invalidateQueries(api.comments.likes.get.queryOptions(props)),
+					queryClient.invalidateQueries(api.comments.likes.getLikes.queryOptions(props)),
+				]);
+			},
+		})
 	);
 
 	const liked = isLiking ? true : isUnLiking ? false : like;
@@ -115,9 +125,11 @@ const LikeButton = (props: { commentId: string }) => {
 };
 
 const CommentButton = ({ id, onPress }: { id: string; onPress?: () => void }) => {
-	const [comments] = api.comments.count.reply.useSuspenseQuery({
-		id,
-	});
+	const { data: comments } = useSuspenseQuery(
+		api.comments.count.reply.queryOptions({
+			id,
+		})
+	);
 
 	return (
 		<Button variant="ghost" size={"sm"} className="flex-row gap-2" onPress={onPress}>
@@ -138,34 +150,50 @@ export const Comment = ({
 }) => {
 	const router = useRouter();
 	const myProfile = useAuth((s) => s.profile);
-	const utils = api.useUtils();
+	const queryClient = useQueryClient();
 
-	const { mutate: deleteComment } = api.comments.delete.useMutation({
-		onSettled: async () => {
-			await utils.comments.list.invalidate({ resourceId, authorId });
-			await utils.comments.count.rating.invalidate({
-				resourceId,
-				authorId,
-			});
-			if (rootId) await utils.comments.count.reply.invalidate({ id: rootId });
-		},
-	});
+	const { mutate: deleteComment } = useMutation(
+		api.comments.delete.mutationOptions({
+			onSettled: async () => {
+				await Promise.all([
+					queryClient.invalidateQueries(
+						api.comments.list.queryOptions({ resourceId, authorId })
+					),
+					queryClient.invalidateQueries(
+						api.comments.count.rating.queryOptions({ resourceId, authorId })
+					),
+					rootId &&
+						queryClient.invalidateQueries(
+							api.comments.count.reply.queryOptions({ id: rootId })
+						),
+				]);
+			},
+		})
+	);
 
-	const { mutate: deactivateComment } = api.comments.deactivate.useMutation({
-		onSuccess: () => {
-			if (!rootId) {
-				router.back();
-			}
-		},
-		onSettled: async () => {
-			await utils.comments.list.invalidate({ resourceId, authorId });
-			await utils.comments.count.rating.invalidate({
-				resourceId,
-				authorId,
-			});
-			if (rootId) await utils.comments.count.reply.invalidate({ id: rootId });
-		},
-	});
+	const { mutate: deactivateComment } = useMutation(
+		api.comments.deactivate.mutationOptions({
+			onSuccess: () => {
+				if (!rootId) {
+					router.back();
+				}
+			},
+			onSettled: async () => {
+				await Promise.all([
+					queryClient.invalidateQueries(
+						api.comments.list.queryOptions({ resourceId, authorId })
+					),
+					queryClient.invalidateQueries(
+						api.comments.count.rating.queryOptions({ resourceId, authorId })
+					),
+					rootId &&
+						queryClient.invalidateQueries(
+							api.comments.count.reply.queryOptions({ id: rootId })
+						),
+				]);
+			},
+		})
+	);
 	if (deactivated) return null;
 
 	return (

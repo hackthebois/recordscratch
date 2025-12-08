@@ -2,20 +2,17 @@ import NotFoundScreen from "@/app/+not-found";
 import StatBlock from "@/components/CoreComponents/StatBlock";
 import DistributionChart from "@/components/DistributionChart";
 import { FollowButton } from "@/components/Followers/FollowButton";
-import { ArtistItem } from "@/components/Item/ArtistItem";
-import { ResourceItem } from "@/components/Item/ResourceItem";
 import ListOfLists from "@/components/List/ListOfLists";
 import { UserAvatar } from "@/components/UserAvatar";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
 import { Pill } from "@/components/ui/pill";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { ChevronRight, Hand, UserCheck } from "@/lib/icons/IconsLoader";
 import { Settings } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
-import { Category, ListWithResources, ListsType } from "@recordscratch/types";
+import { ListWithResources, ListsType } from "@recordscratch/types";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { ShieldCheck, UserX } from "lucide-react-native";
 import { Suspense, useState } from "react";
@@ -31,11 +28,16 @@ import {
 import { cn } from "@recordscratch/lib";
 import { TopListTab } from "@/components/List/TopList";
 
+import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+
 const ToggleAccountStatus = ({ isActive, userId }: { isActive: boolean; userId: string }) => {
 	const [open, setOpen] = useState(false);
 
-	const { mutate: deactivateProfile } = api.profiles.deactivate.useMutation();
-	const { mutate: activateProfile } = api.profiles.activate.useMutation();
+	const { mutate: deactivateProfile } = useMutation(api.profiles.deactivate.mutationOptions());
+	const { mutate: activateProfile } = useMutation(api.profiles.activate.mutationOptions());
 
 	return (
 		<Dialog open={open}>
@@ -121,25 +123,30 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 	const params = useLocalSearchParams<{ handle: string; tab?: string }>();
 	const handle = params.handle ?? customHandle;
 	const tab = params.tab ? (topListTabs.includes(params.tab) ? params.tab : "ALBUM") : "ALBUM";
-	console.log(tab);
 
-	const [profile] = api.profiles.get.useSuspenseQuery(handle);
+	const { data: profile } = useSuspenseQuery(api.profiles.get.queryOptions(handle));
 
 	if (!profile) return <NotFoundScreen />;
 
 	const isProfile = profile.userId === userProfile?.userId;
 
-	const [lists] = api.lists.getUser.useSuspenseQuery({
-		userId: profile.userId,
-	});
+	const { data: lists } = useSuspenseQuery(
+		api.lists.getUser.queryOptions({
+			userId: profile.userId,
+		})
+	);
 
-	const { data: values } = api.profiles.distribution.useQuery({
-		userId: profile.userId,
-	});
+	const { data: values } = useQuery(
+		api.profiles.distribution.queryOptions({
+			userId: profile.userId,
+		})
+	);
 
-	const [topLists] = api.lists.topLists.useSuspenseQuery({
-		userId: profile.userId,
-	});
+	const { data: topLists } = useSuspenseQuery(
+		api.lists.topLists.queryOptions({
+			userId: profile.userId,
+		})
+	);
 
 	//const { mutate: deactivateProfile } = api.profiles.deactivate.useMutation();
 

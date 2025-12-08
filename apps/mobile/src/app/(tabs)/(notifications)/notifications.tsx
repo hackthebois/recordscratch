@@ -1,7 +1,6 @@
 import { Text } from "@/components/ui/text";
 import { UserAvatar } from "@/components/UserAvatar";
 import { WebWrapper } from "@/components/WebWrapper";
-import { api, RouterOutputs } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { BellOff } from "@/lib/icons/IconsLoader";
 import { Heart } from "@/lib/icons/IconsLoader";
@@ -21,6 +20,10 @@ import { Link, LinkProps, Stack, usePathname } from "expo-router";
 import React, { useEffect } from "react";
 import { Pressable, View } from "react-native";
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api, RouterOutputs } from "@/lib/api";
+
 const NotificationBlock = ({
 	icon,
 	data,
@@ -28,13 +31,15 @@ const NotificationBlock = ({
 	content,
 	profile,
 }: Notification & { icon: React.ReactNode }) => {
-	const utils = api.useUtils();
 	const pathname = usePathname();
-	const { mutate } = api.notifications.markSeen.useMutation({
-		onSettled: () => {
-			utils.notifications.getUnseen.invalidate();
-		},
-	});
+	const queryClient = useQueryClient();
+	const { mutate } = useMutation(
+		api.notifications.markSeen.mutationOptions({
+			onSettled: async () => {
+				await queryClient.invalidateQueries(api.notifications.getUnseen.queryOptions());
+			},
+		})
+	);
 
 	useEffect(() => {
 		if (pathname === "/" && !data.notification.data.seen) {
@@ -118,7 +123,7 @@ const NotificationItem = ({
 };
 
 export default function Notifications() {
-	const { data: allNotifications, refetch } = api.notifications.get.useQuery();
+	const { data: allNotifications, refetch } = useQuery(api.notifications.get.queryOptions());
 
 	const { refetchByUser, isRefetchingByUser } = useRefreshByUser(refetch);
 

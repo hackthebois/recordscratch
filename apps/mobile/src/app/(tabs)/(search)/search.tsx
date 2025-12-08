@@ -4,17 +4,17 @@ import { ResourceItem } from "@/components/Item/ResourceItem";
 import { SearchOptions, useDebounce } from "@recordscratch/lib";
 import { useQuery } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { ActivityIndicator, Platform, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { deezerHelpers } from "@/lib/deezer";
 import { Search } from "@/lib/icons/IconsLoader";
 import { WebWrapper } from "@/components/WebWrapper";
 import { useAuth } from "@/lib/auth";
+import { api } from "@/lib/api";
 
 type TabsType = Omit<SearchOptions, "query"> & {
 	label: string;
@@ -75,13 +75,16 @@ export default function SearchPage() {
 			["all", "songs", "albums", "artists"].includes(tab.value),
 	});
 
-	const { data: profiles, isLoading: isLoadingProfiles } = api.profiles.search.useQuery(
-		{ query: debouncedQuery, ...tab },
-		{
-			gcTime: 0,
-			refetchOnMount: false,
-			enabled: debouncedQuery.trim().length > 0 && ["profiles", "all"].includes(tab.value),
-		}
+	const { data: profiles, isLoading: isLoadingProfiles } = useQuery(
+		api.profiles.search.queryOptions(
+			{ query: debouncedQuery, ...tab },
+			{
+				gcTime: 0,
+				refetchOnMount: false,
+				enabled:
+					debouncedQuery.trim().length > 0 && ["profiles", "all"].includes(tab.value),
+			}
+		)
 	);
 
 	const userProfile = useAuth((s) => s.profile);

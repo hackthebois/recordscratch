@@ -1,5 +1,4 @@
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { Bell } from "@/lib/icons/IconsLoader";
 import { Home } from "@/lib/icons/IconsLoader";
@@ -13,11 +12,16 @@ import React from "react";
 import { Pressable } from "react-native";
 import { Platform } from "react-native";
 
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+
 export default function TabLayout() {
 	const sessionId = useAuth((s) => s.sessionId);
-	const { data: notifications } = api.notifications.getUnseen.useQuery(undefined, {
-		enabled: !!sessionId,
-	});
+	const { data: notifications } = useQuery(
+		api.notifications.getUnseen.queryOptions(undefined, {
+			enabled: !!sessionId,
+		})
+	);
 
 	useNotificationObserver();
 

@@ -4,11 +4,14 @@ import { ReviewsList } from "@/components/ReviewsList";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { keepPreviousData } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { Platform, View } from "react-native";
+
+import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 type RatingCategory = "all" | "ALBUM" | "SONG";
 
@@ -23,14 +26,16 @@ const Reviews = () => {
 	const rating =
 		params.rating && params.rating !== "undefined" ? parseInt(params.rating) : undefined;
 	const tab = (params.tab && params.tab !== "undefined" ? params.tab : "all") as RatingCategory;
-	const [profile] = api.profiles.get.useSuspenseQuery(handle);
+	const { data: profile } = useSuspenseQuery(api.profiles.get.queryOptions(handle));
 
-	const { data: values } = api.profiles.distribution.useQuery(
-		{ userId: profile!.userId, category: tab !== "all" ? tab : undefined },
-		{
-			enabled: !!profile,
-			placeholderData: keepPreviousData,
-		}
+	const { data: values } = useQuery(
+		api.profiles.distribution.queryOptions(
+			{ userId: profile!.userId, category: tab !== "all" ? tab : undefined },
+			{
+				enabled: !!profile,
+				placeholderData: keepPreviousData,
+			}
+		)
 	);
 
 	useEffect(() => {

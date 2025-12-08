@@ -1,4 +1,3 @@
-import { api } from "@/components/Providers";
 import { useRefreshByUser } from "@/lib/refresh";
 import { RouterInputs } from "@recordscratch/api";
 import { ReviewType } from "@recordscratch/types";
@@ -9,6 +8,9 @@ import { Review } from "./Review";
 import { Text } from "./ui/text";
 import { WebWrapper } from "./WebWrapper";
 
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+
 export const ReviewsList = (
 	input: RouterInputs["ratings"]["feed"] & {
 		ListHeaderComponent?: FlashListProps<ReviewType>["ListHeaderComponent"];
@@ -16,15 +18,11 @@ export const ReviewsList = (
 	}
 ) => {
 	const { ListHeaderComponent, emptyText, ...queryInput } = input;
-	const { data, fetchNextPage, hasNextPage, refetch, isLoading } =
-		api.ratings.feed.useInfiniteQuery(
-			{
-				...queryInput,
-			},
-			{
-				getNextPageParam: (lastPage: { nextCursor: any }) => lastPage.nextCursor,
-			}
-		);
+	const { data, fetchNextPage, hasNextPage, refetch, isLoading } = useInfiniteQuery(
+		api.ratings.feed.infiniteQueryOptions(queryInput, {
+			getNextPageParam: (lastPage: { nextCursor: any }) => lastPage.nextCursor,
+		})
+	);
 
 	const { refetchByUser, isRefetchingByUser } = useRefreshByUser(refetch);
 
@@ -43,7 +41,7 @@ export const ReviewsList = (
 				</WebWrapper>
 			)}
 			renderItem={({ item }) => (
-				<Review {...item} content={item.content ?? ""} feedInput={{ ...queryInput }} />
+				<Review {...item} content={item.content ?? ""} feedInput={queryInput} />
 			)}
 			ListFooterComponent={() =>
 				hasNextPage ? <ActivityIndicator size="large" color="#ff8500" /> : null

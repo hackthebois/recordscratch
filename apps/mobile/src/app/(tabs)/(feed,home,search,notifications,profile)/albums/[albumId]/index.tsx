@@ -8,7 +8,7 @@ import { RatingInfo } from "@/components/Rating/RatingInfo";
 import SongTable from "@/components/SongTable";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
+import { api } from "@/lib/api";
 import { getQueryOptions } from "@/lib/deezer";
 import { ChevronRight } from "@/lib/icons/IconsLoader";
 import { formatDuration } from "@recordscratch/lib";
@@ -24,10 +24,12 @@ export default function AlbumLayout() {
 	const { albumId } = useLocalSearchParams<{ albumId: string }>();
 	const id = albumId!;
 
-	const [total] = api.ratings.count.useSuspenseQuery({
-		resourceId: id,
-		category: "ALBUM",
-	});
+	const { data: rating } = useSuspenseQuery(
+		api.ratings.get.queryOptions({
+			resourceId: id,
+			category: "ALBUM",
+		})
+	);
 
 	const { data: album } = useSuspenseQuery(
 		getQueryOptions({
@@ -82,6 +84,7 @@ export default function AlbumLayout() {
 							<View className="flex flex-row items-center justify-center sm:justify-start">
 								{album.contributors?.map((artist, index) => (
 									<Pressable
+										key={artist?.id}
 										onPress={() => {
 											router.navigate(`/artists/${artist?.id}`);
 										}}
@@ -108,7 +111,10 @@ export default function AlbumLayout() {
 							</View>
 							<Link href={`/albums/${album.id}/reviews`} asChild>
 								<Pressable>
-									<StatBlock title="Ratings" description={String(total)} />
+									<StatBlock
+										title="Ratings"
+										description={String(rating?.total)}
+									/>
 								</Pressable>
 							</Link>
 						</Metadata>

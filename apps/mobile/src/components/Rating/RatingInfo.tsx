@@ -1,11 +1,13 @@
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { Star } from "@/lib/icons/IconsLoader";
 import { cn } from "@recordscratch/lib";
 import { Resource, ResourceRating } from "@recordscratch/types";
 import { Link } from "expo-router";
 import { Pressable, View } from "react-native";
 import { Skeleton } from "../ui/skeleton";
+
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 export const RatingInfo = ({
 	initialRating,
@@ -16,10 +18,12 @@ export const RatingInfo = ({
 	resource: Resource;
 	size?: "lg" | "sm";
 }) => {
-	const { data: rating, isLoading } = api.ratings.get.useQuery(resource, {
-		initialData: initialRating,
-		staleTime: Infinity,
-	});
+	const { data: rating, isLoading } = useQuery(
+		api.ratings.get.queryOptions(resource, {
+			initialData: initialRating,
+			staleTime: Infinity,
+		})
+	);
 
 	if (isLoading)
 		return (

@@ -15,7 +15,6 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { api } from "@/components/Providers";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { AlignJustify, Trash2 } from "@/lib/icons/IconsLoader";
 import ReText from "@/components/ui/retext";
@@ -27,6 +26,10 @@ import color from "color";
 import { View, Platform } from "react-native";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Text } from "@/components/ui/text";
+
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const SONG_HEIGHT = 70;
 const MARGIN_TOP_OFFSET = 20;
@@ -321,21 +324,27 @@ const SortableList = ({
 
 const RearrangeListModal = () => {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { listId } = useLocalSearchParams<{ listId: string }>();
-	const [list] = api.lists.get.useSuspenseQuery({ id: listId });
-	const [listItems] = api.lists.resources.get.useSuspenseQuery({
-		listId,
-		userId: list!.userId,
-	});
+	const { data: list } = useSuspenseQuery(api.lists.get.queryOptions({ id: listId }));
+	const { data: listItems } = useSuspenseQuery(
+		api.lists.resources.get.queryOptions({
+			listId,
+			userId: list!.userId,
+		})
+	);
 
 	const [resourcesState, setResourcesState] = useState<ListItem[]>(listItems as ListItem[]);
 	const [deletedResources, setDeletedResources] = useState<ListItem[]>([]);
 	const hasListChanged = useSharedValue<boolean>(false);
 	const resourcesSharedMap = useDerivedValue(() => setMap(resourcesState), [resourcesState]);
 
-	const utils = api.useUtils();
-	const { mutateAsync: updatePositions } = api.lists.resources.updatePositions.useMutation();
-	const { mutateAsync: deletePositions } = api.lists.resources.multipleDelete.useMutation();
+	const { mutateAsync: updatePositions } = useMutation(
+		api.lists.resources.updatePositions.mutationOptions()
+	);
+	const { mutateAsync: deletePositions } = useMutation(
+		api.lists.resources.multipleDelete.mutationOptions()
+	);
 
 	const handleSave = async () => {
 		router.back();
@@ -354,21 +363,25 @@ const RearrangeListModal = () => {
 				resources: deletedResources,
 			});
 		}
-		await invalidate();
-	};
-
-	const invalidate = async () => {
-		await utils.lists.resources.get.invalidate({
-			listId,
-		});
-		await utils.lists.getUser.invalidate({
-			userId: list?.profile.userId,
-		});
-		if (list?.onProfile) {
-			await utils.lists.topLists.invalidate({
-				userId: list?.userId,
-			});
-		}
+		await Promise.all([
+			queryClient.invalidateQueries(
+				api.lists.resources.get.queryOptions({
+					listId,
+					userId: list?.profile.userId!,
+				})
+			),
+			queryClient.invalidateQueries(
+				api.lists.getUser.queryOptions({
+					userId: list?.userId!,
+				})
+			),
+			list?.onProfile &&
+				queryClient.invalidateQueries(
+					api.lists.topLists.queryOptions({
+						userId: list?.userId,
+					})
+				),
+		]);
 	};
 
 	return (

@@ -1,4 +1,3 @@
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { View, useWindowDimensions } from "react-native";
 import ListOfList from "@/components/List/ListOfLists";
@@ -8,6 +7,10 @@ import { Button } from "@/components/ui/button";
 import { SquarePlus } from "@/lib/icons/IconsLoader";
 import { Text } from "@/components/ui/text";
 
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+
 const AddToListModal = () => {
 	const { resourceId, parentId, category } = useLocalSearchParams<{
 		resourceId: string;
@@ -15,26 +18,32 @@ const AddToListModal = () => {
 		category: string;
 	}>();
 	if (!resourceId || !(category as Category)) return null;
+	const queryClient = useQueryClient();
 	const profile = useAuth((s) => s.profile);
-	const [lists] = api.lists.getUser.useSuspenseQuery({
-		userId: profile!.userId,
-		category: category as Category,
-	});
+	const { data: lists } = useSuspenseQuery(
+		api.lists.getUser.queryOptions({
+			userId: profile!.userId,
+			category: category as Category,
+		})
+	);
 
-	const utils = api.useUtils();
-	const { mutate } = api.lists.resources.create.useMutation({
-		onSettled: (_data, _error, variables) => {
-			if (variables) {
-				utils.lists.resources.get.invalidate({
-					listId: variables.listId,
-				});
-			}
-			utils.lists.getUser.invalidate({
-				userId: profile!.userId,
-				category: category as Category,
-			});
-		},
-	});
+	const { mutate } = useMutation(
+		api.lists.resources.create.mutationOptions({
+			onSettled: (_data, _error, variables) => {
+				if (variables) {
+					queryClient.invalidateQueries(
+						api.lists.resources.get.queryOptions({
+							userId: profile!.userId,
+							listId: variables.listId,
+						})
+					);
+				}
+				queryClient.invalidateQueries(
+					api.lists.getUser.queryOptions({ userId: profile!.userId })
+				);
+			},
+		})
+	);
 
 	const dimensions = useWindowDimensions();
 

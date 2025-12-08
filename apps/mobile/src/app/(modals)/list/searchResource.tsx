@@ -2,18 +2,20 @@ import { ArtistItem } from "@/components/Item/ArtistItem";
 import { ResourceItem } from "@/components/Item/ResourceItem";
 import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
 import { WebWrapper } from "@/components/WebWrapper";
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { deezerHelpers } from "@/lib/deezer";
 import { Search } from "@/lib/icons/IconsLoader";
 import { Album, Artist, Track, useDebounce } from "@recordscratch/lib";
 import { FlashList } from "@shopify/flash-list";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { ActivityIndicator, Platform, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 import { useForm, useStore } from "@tanstack/react-form";
+
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const MusicSearch = ({
 	query,
@@ -128,8 +130,8 @@ const RatingModal = () => {
 		listId: string;
 		isTopList: "true" | "false";
 	}>();
-	const utils = api.useUtils();
 	const myProfile = useAuth((s) => s.profile);
+	const queryClient = useQueryClient();
 
 	const form = useForm({
 		validators: {
@@ -141,23 +143,34 @@ const RatingModal = () => {
 	const query = useStore(form.store, (state) => state.values.query);
 	const debouncedQuery = useDebounce(query, 500);
 
-	const list = api.useUtils().lists.resources.get;
-	const { mutate } = api.lists.resources.create.useMutation({
-		onSettled: async (_data, _error, variables) => {
-			if (variables) {
-				await list.invalidate({
-					listId: variables.listId,
-				});
-				if (isTopList === "true") {
-					utils.lists.topLists.invalidate({
-						userId: myProfile!.userId,
-					});
+	const { mutate } = useMutation(
+		api.lists.resources.create.mutationOptions({
+			onSettled: async (_data, _error, variables) => {
+				if (variables) {
+					await Promise.all([
+						queryClient.invalidateQueries(
+							api.lists.resources.get.queryOptions({
+								userId: myProfile!.userId,
+								listId: variables.listId,
+							})
+						),
+						isTopList === "true" &&
+							queryClient.invalidateQueries(
+								api.lists.topLists.queryOptions({
+									userId: myProfile!.userId,
+								})
+							),
+						queryClient.invalidateQueries(
+							api.lists.getUser.queryOptions({
+								userId: myProfile!.userId,
+							})
+						),
+					]);
+					router.back();
 				}
-				utils.lists.getUser.invalidate({ userId: myProfile!.userId });
-				router.back();
-			}
-		},
-	});
+			},
+		})
+	);
 
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={["left", "right", "top"]}>

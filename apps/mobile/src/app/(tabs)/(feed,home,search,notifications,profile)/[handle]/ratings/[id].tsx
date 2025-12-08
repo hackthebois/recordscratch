@@ -2,7 +2,6 @@ import NotFoundScreen from "@/app/+not-found";
 import { Comment } from "@/components/Comment";
 import { Review } from "@/components/Review";
 import { WebWrapper } from "@/components/WebWrapper";
-import { api } from "@/components/Providers";
 import { useRefreshByUser } from "@/lib/refresh";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
@@ -10,22 +9,29 @@ import { ScrollView, SectionList, View } from "react-native";
 import { cn } from "@recordscratch/lib";
 import { CommentAndProfile } from "@recordscratch/types";
 
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+
 const RatingPage = () => {
 	const { id, handle } = useLocalSearchParams<{
 		id: string;
 		handle: string;
 	}>();
 
-	const [profile] = api.profiles.get.useSuspenseQuery(handle!);
+	const { data: profile } = useSuspenseQuery(api.profiles.get.queryOptions(handle!));
 
-	const [rating] = api.ratings.user.get.useSuspenseQuery({
-		userId: profile!.userId,
-		resourceId: id!,
-	});
-	const [comments, { refetch }] = api.comments.list.useSuspenseQuery({
-		resourceId: id!,
-		authorId: profile!.userId,
-	});
+	const { data: rating } = useSuspenseQuery(
+		api.ratings.user.get.queryOptions({
+			userId: profile!.userId,
+			resourceId: id!,
+		})
+	);
+	const { data: comments, refetch } = useSuspenseQuery(
+		api.comments.list.queryOptions({
+			resourceId: id!,
+			authorId: profile!.userId,
+		})
+	);
 
 	const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 

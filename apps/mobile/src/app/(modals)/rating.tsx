@@ -2,7 +2,6 @@ import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { Star } from "@/lib/icons/IconsLoader";
 import { RateForm, RateFormSchema, Resource } from "@recordscratch/types";
@@ -12,6 +11,10 @@ import React from "react";
 import { Alert, Pressable, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm } from "@tanstack/react-form";
+
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const RatingInput = ({
 	value: rating,
@@ -49,6 +52,7 @@ const RatingInput = ({
 
 const RatingModal = () => {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { imageUrl, name, ...resource } = useLocalSearchParams<{
 		parentId: Resource["parentId"];
 		resourceId: Resource["resourceId"];
@@ -56,37 +60,50 @@ const RatingModal = () => {
 		imageUrl?: string;
 		name?: string;
 	}>();
-	const utils = api.useUtils();
 	const userId = useAuth((s) => s.profile!.userId);
 
-	const { data: userRating } = api.ratings.user.get.useQuery(
-		{ resourceId: resource.resourceId, userId },
-		{
-			staleTime: Infinity,
-		}
+	const { data: userRating } = useQuery(
+		api.ratings.user.get.queryOptions(
+			{ resourceId: resource.resourceId, userId },
+			{
+				staleTime: Infinity,
+			}
+		)
 	);
 
-	const { mutate: rateMutation } = api.ratings.rate.useMutation({
-		onSuccess: async () => {
-			await utils.ratings.user.get.invalidate({
-				resourceId: resource.resourceId,
-				userId,
-			});
-			await utils.ratings.get.invalidate({
-				resourceId: resource.resourceId,
-				category: resource.category,
-			});
-			await utils.profiles.distribution.invalidate({
-				userId,
-			});
-			await utils.ratings.feed.invalidate({
-				filters: {
-					profileId: userId,
-				},
-			});
-			router.back();
-		},
-	});
+	const { mutate: rateMutation } = useMutation(
+		api.ratings.rate.mutationOptions({
+			onSuccess: async () => {
+				await Promise.all([
+					queryClient.invalidateQueries(
+						api.ratings.user.get.queryOptions({
+							resourceId: resource.resourceId,
+							userId,
+						})
+					),
+					queryClient.invalidateQueries(
+						api.ratings.get.queryOptions({
+							resourceId: resource.resourceId,
+							category: resource.category,
+						})
+					),
+					queryClient.invalidateQueries(
+						api.profiles.distribution.queryOptions({
+							userId,
+						})
+					),
+					queryClient.invalidateQueries(
+						api.ratings.feed.queryOptions({
+							filters: {
+								profileId: userId,
+							},
+						})
+					),
+				]);
+				router.back();
+			},
+		})
+	);
 
 	const form = useForm({
 		validators: {

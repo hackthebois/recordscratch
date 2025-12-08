@@ -1,18 +1,22 @@
 import NotFoundScreen from "@/app/+not-found";
 import { Comment } from "@/components/Comment";
 import { WebWrapper } from "@/components/WebWrapper";
-import { api } from "@/components/Providers";
 import { useRefreshByUser } from "@/lib/refresh";
 import { FlashList } from "@shopify/flash-list";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { View } from "react-native";
 
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+
 const CommentPage = () => {
 	const { id } = useLocalSearchParams<{ id: string }>();
 
-	const [comment, { refetch }] = api.comments.get.useSuspenseQuery({
-		id,
-	});
+	const { data: comment, refetch } = useSuspenseQuery(
+		api.comments.get.queryOptions({
+			id,
+		})
+	);
 
 	const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 

@@ -2,7 +2,6 @@ import { ResourceItem } from "@/components/Item/ResourceItem";
 import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { RouterInputs, api } from "@/components/Providers";
 import { Heart, MessageCircle, Reply, Star, Trash } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
 import { cn, timeAgo } from "@recordscratch/lib";
@@ -21,6 +20,10 @@ import {
 } from "./ui/dialog";
 import { useAuth } from "@/lib/auth";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { api, RouterInputs } from "@/lib/api";
+
 const DeactivateButton = ({
 	resourceId,
 	userId,
@@ -32,15 +35,23 @@ const DeactivateButton = ({
 	category: Category;
 	feedInput?: RouterInputs["ratings"]["feed"];
 }) => {
-	const utils = api.useUtils();
-	const { mutate: deactivateRating } = api.ratings.deactivate.useMutation({
-		onSettled: async () => {
-			await utils.ratings.get.invalidate({ resourceId, category });
-			await utils.ratings.user.get.invalidate({ resourceId, userId });
-			await utils.ratings.user.total.invalidate({ userId });
-			if (feedInput) await utils.ratings.feed.invalidate({ ...feedInput });
-		},
-	});
+	const queryClient = useQueryClient();
+	const { mutate: deactivateRating } = useMutation(
+		api.ratings.deactivate.mutationOptions({
+			onSettled: async () => {
+				await queryClient.invalidateQueries(
+					api.ratings.get.queryOptions({ resourceId, category })
+				);
+				await queryClient.invalidateQueries(
+					api.ratings.user.get.queryOptions({ resourceId, userId })
+				);
+				if (feedInput)
+					await queryClient.invalidateQueries(
+						api.ratings.feed.queryOptions({ ...feedInput })
+					);
+			},
+		})
+	);
 	const [open, setOpen] = useState(false);
 	return (
 		<Dialog open={open}>
@@ -77,23 +88,27 @@ const DeactivateButton = ({
 };
 
 const LikeButton = (props: SelectLike) => {
-	const utils = api.useUtils();
-	const [likes] = api.likes.getLikes.useSuspenseQuery(props);
-	const [like] = api.likes.get.useSuspenseQuery(props);
+	const queryClient = useQueryClient();
+	const { data: likes } = useSuspenseQuery(api.likes.getLikes.queryOptions(props));
+	const { data: like } = useSuspenseQuery(api.likes.get.queryOptions(props));
 
-	const { mutate: likeMutation, isPending: isLiking } = api.likes.like.useMutation({
-		onSettled: async () => {
-			await utils.likes.get.invalidate(props);
-			await utils.likes.getLikes.invalidate(props);
-		},
-	});
+	const { mutate: likeMutation, isPending: isLiking } = useMutation(
+		api.likes.like.mutationOptions({
+			onSettled: async () => {
+				await queryClient.invalidateQueries(api.likes.get.queryOptions(props));
+				await queryClient.invalidateQueries(api.likes.getLikes.queryOptions(props));
+			},
+		})
+	);
 
-	const { mutate: unlikeMutation, isPending: isUnLiking } = api.likes.unlike.useMutation({
-		onSettled: async () => {
-			await utils.likes.get.invalidate(props);
-			await utils.likes.getLikes.invalidate(props);
-		},
-	});
+	const { mutate: unlikeMutation, isPending: isUnLiking } = useMutation(
+		api.likes.unlike.mutationOptions({
+			onSettled: async () => {
+				await queryClient.invalidateQueries(api.likes.get.queryOptions(props));
+				await queryClient.invalidateQueries(api.likes.getLikes.queryOptions(props));
+			},
+		})
+	);
 
 	const liked = isLiking ? true : isUnLiking ? false : like;
 	const likesCount = isLiking ? likes + 1 : isUnLiking ? likes - 1 : likes;
@@ -131,10 +146,12 @@ const CommentsButton = ({
 }: SelectComment & {
 	handle: string;
 }) => {
-	const [comments] = api.comments.count.rating.useSuspenseQuery({
-		resourceId,
-		authorId,
-	});
+	const { data: comments } = useSuspenseQuery(
+		api.comments.count.rating.queryOptions({
+			resourceId,
+			authorId,
+		})
+	);
 
 	return (
 		<Link

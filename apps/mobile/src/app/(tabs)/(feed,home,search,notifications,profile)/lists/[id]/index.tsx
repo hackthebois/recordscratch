@@ -8,7 +8,6 @@ import { UserAvatar } from "@/components/UserAvatar";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { ListPlus, Pencil, Settings } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
@@ -17,6 +16,9 @@ import { Category, ListItem } from "@recordscratch/types";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { Platform, ScrollView, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const ListResources = ({
 	items,
@@ -88,17 +90,19 @@ const ListPage = () => {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const listId = id!;
 
-	const [list] = api.lists.get.useSuspenseQuery({ id: listId });
+	const { data: list } = useSuspenseQuery(api.lists.get.queryOptions({ id: listId }));
 
 	if (!list) return <NotFoundScreen />;
 
 	const profile = useAuth((s) => s.profile!);
 	const isProfile = profile.userId === list?.userId;
 
-	const [listItems] = api.lists.resources.get.useSuspenseQuery({
-		listId,
-		userId: list!.userId,
-	});
+	const { data: listItems } = useSuspenseQuery(
+		api.lists.resources.get.queryOptions({
+			listId,
+			userId: list!.userId,
+		})
+	);
 	const dimensions = useWindowDimensions();
 
 	const options =
@@ -128,7 +132,11 @@ const ListPage = () => {
 						type={`${list.category} LIST`}
 						title={list.name}
 						cover={
-							<ListImage listItems={listItems} category={list!.category} size={200} />
+							<ListImage
+								listItems={listItems as ListItem[]}
+								category={list!.category}
+								size={200}
+							/>
 						}
 						size="sm">
 						<View className="flex flex-col items-center sm:items-start">
@@ -195,7 +203,7 @@ const ListPage = () => {
 							</Link>
 						</View>
 					)}
-					<ListResources items={listItems} category={list!.category} />
+					<ListResources items={listItems as ListItem[]} category={list!.category} />
 					{Platform.OS != "web" && listItems?.length == 0 && isProfile && (
 						<View className="flex h-56 flex-col items-center justify-center gap-2">
 							<ListPlus size={30} />

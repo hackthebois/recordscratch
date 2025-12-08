@@ -4,13 +4,16 @@ import { Review } from "@/components/Review";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Platform, TextInput, View } from "react-native";
 import { z } from "zod";
 import { useWindowDimensions } from "react-native";
 import { Send } from "@/lib/icons/IconsLoader";
 import { useForm } from "@tanstack/react-form";
+
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const Reply = () => {
 	const { width } = useWindowDimensions();
@@ -19,15 +22,17 @@ const Reply = () => {
 		resourceId: string;
 		handle: string;
 	}>();
-	const [profile] = api.profiles.get.useSuspenseQuery(handle);
-	const [rating] = api.ratings.user.get.useSuspenseQuery({
-		userId: profile!.userId,
-		resourceId,
-	});
+	const queryClient = useQueryClient();
+	const { data: profile } = useSuspenseQuery(api.profiles.get.queryOptions(handle));
+	const { data: rating } = useSuspenseQuery(
+		api.ratings.user.get.queryOptions({
+			userId: profile!.userId,
+			resourceId,
+		})
+	);
 
 	if (!profile || !rating) return <NotFoundScreen />;
 
-	const utils = api.useUtils();
 	const form = useForm({
 		validators: {
 			onSubmit: z.object({ content: z.string() }),
@@ -47,25 +52,33 @@ const Reply = () => {
 		},
 	});
 
-	const { mutate, isPending } = api.comments.create.useMutation({
-		onSuccess: async () => {
-			router.back();
-			router.navigate({
-				pathname: "/[handle]/ratings/[id]",
-				params: { handle, id: resourceId },
-			});
-		},
-		onSettled: () => {
-			utils.comments.list.invalidate({
-				authorId: profile.userId,
-				resourceId,
-			});
-			utils.comments.count.rating.invalidate({
-				authorId: profile.userId,
-				resourceId,
-			});
-		},
-	});
+	const { mutate, isPending } = useMutation(
+		api.comments.create.mutationOptions({
+			onSuccess: async () => {
+				router.back();
+				router.navigate({
+					pathname: "/[handle]/ratings/[id]",
+					params: { handle, id: resourceId },
+				});
+			},
+			onSettled: async () => {
+				await Promise.all([
+					queryClient.invalidateQueries(
+						api.comments.list.queryOptions({
+							authorId: profile.userId,
+							resourceId,
+						})
+					),
+					queryClient.invalidateQueries(
+						api.comments.count.rating.queryOptions({
+							authorId: profile.userId,
+							resourceId,
+						})
+					),
+				]);
+			},
+		})
+	);
 
 	return (
 		<KeyboardAvoidingScrollView modal>

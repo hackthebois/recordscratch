@@ -4,7 +4,6 @@ import { ResourceItemSkeleton } from "@/components/Item/ResourceItem";
 import Metadata from "@/components/Metadata";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { getQueryOptions } from "@/lib/deezer";
 import { formatDuration } from "@recordscratch/lib";
 import { FlashList } from "@shopify/flash-list";
@@ -16,8 +15,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import NotFound from "../../+not-found";
 import { WebHeaderRight } from "@/components/WebHeaderRight";
 
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+
 const AlbumOfTheDay = () => {
-	const [albumOfTheDay] = api.misc.albumOfTheDay.useSuspenseQuery();
+	const { data: albumOfTheDay } = useSuspenseQuery(api.misc.albumOfTheDay.queryOptions());
 	const { data: album } = useSuspenseQuery(
 		getQueryOptions({
 			route: "/album/{id}",
@@ -51,10 +53,7 @@ const AlbumOfTheDay = () => {
 };
 
 const HomePage = () => {
-	const { data: trending } = api.ratings.trending.useQuery();
-	const { data: top } = api.ratings.top.useQuery();
-	const { data: popular } = api.ratings.popular.useQuery();
-	const { data: topArtists } = api.ratings.topArtists.useQuery();
+	const { data: charts } = useQuery(api.ratings.charts.queryOptions());
 
 	useEffect(() => {
 		SplashScreen.hide();
@@ -78,8 +77,8 @@ const HomePage = () => {
 							Trending Albums
 						</Text>
 						<FlashList
-							data={trending}
-							renderItem={({ item }) => <AlbumItem {...item} />}
+							data={charts?.albums.trending}
+							renderItem={({ item }) => <AlbumItem resourceId={item} />}
 							horizontal
 							contentContainerClassName="h-64"
 							ItemSeparatorComponent={() => <View className="w-4" />}
@@ -99,8 +98,8 @@ const HomePage = () => {
 							Top Albums
 						</Text>
 						<FlashList
-							data={top}
-							renderItem={({ item }) => <AlbumItem {...item} />}
+							data={charts?.albums.top}
+							renderItem={({ item }) => <AlbumItem resourceId={item} />}
 							horizontal
 							contentContainerClassName="h-64"
 							ItemSeparatorComponent={() => <View className="w-4" />}
@@ -120,8 +119,8 @@ const HomePage = () => {
 							Most Popular Albums
 						</Text>
 						<FlashList
-							data={popular}
-							renderItem={({ item }) => <AlbumItem {...item} />}
+							data={charts?.albums.popular}
+							renderItem={({ item }) => <AlbumItem resourceId={item} />}
 							horizontal
 							contentContainerClassName="h-64"
 							ItemSeparatorComponent={() => <View className="w-4" />}
@@ -141,10 +140,10 @@ const HomePage = () => {
 							Top Artists
 						</Text>
 						<FlashList
-							data={topArtists}
-							renderItem={({ item: { artistId } }) => (
+							data={charts?.artists.top}
+							renderItem={({ item }) => (
 								<ArtistItem
-									artistId={artistId}
+									artistId={item}
 									direction="vertical"
 									imageWidthAndHeight={105}
 								/>

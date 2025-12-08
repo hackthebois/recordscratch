@@ -1,13 +1,15 @@
 import NotFoundScreen from "@/app/+not-found";
 import ListOfLists from "@/components/List/ListOfLists";
 import { Button } from "@/components/ui/button";
-import { api } from "@/components/Providers";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { Platform, View, useWindowDimensions } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Plus } from "@/lib/icons/IconsLoader";
 import { useAuth } from "@/lib/auth";
 import { ListsType } from "@recordscratch/types";
+
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const CreateListButton = ({ isProfile }: { isProfile: boolean }) => {
 	return (
@@ -25,7 +27,7 @@ const CreateListButton = ({ isProfile }: { isProfile: boolean }) => {
 const AllListsPage = () => {
 	const { handle } = useLocalSearchParams<{ handle: string }>();
 
-	const [profile] = api.profiles.get.useSuspenseQuery(handle);
+	const { data: profile } = useSuspenseQuery(api.profiles.get.queryOptions(handle));
 	const userProfile = useAuth((s) => s.profile);
 	const isProfile = profile?.userId == userProfile?.userId;
 	const dimensions = useWindowDimensions();
@@ -35,9 +37,11 @@ const AllListsPage = () => {
 
 	if (!profile) return <NotFoundScreen />;
 
-	const [lists] = api.lists.getUser.useSuspenseQuery({
-		userId: profile.userId,
-	});
+	const { data: lists } = useSuspenseQuery(
+		api.lists.getUser.queryOptions({
+			userId: profile.userId,
+		})
+	);
 
 	return (
 		<>

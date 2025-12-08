@@ -1,5 +1,5 @@
 import env from "@/env";
-import { AuthProvider, TRPCProvider } from "@/components/Providers";
+import { AuthProvider, QueryProvider } from "@/components/Providers";
 import { PrefetchProfile } from "@/components/Prefetch";
 import { NAV_THEME } from "@/lib/constants";
 import { catchError } from "@/lib/errors";
@@ -28,6 +28,7 @@ import "../global.css";
 import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { defaultScreenOptions } from "@/lib/navigation";
+import { api, queryClient } from "@/lib/api";
 
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,
@@ -146,7 +147,7 @@ const RootLayout = () => {
 
 	return (
 		<AuthProvider>
-			<TRPCProvider>
+			<QueryProvider>
 				<SafeAreaProvider>
 					<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
 						<PrefetchProfile />
@@ -181,14 +182,6 @@ const RootLayout = () => {
 									headerShown: false,
 								}}
 							/>
-							{/* <Stack.Screen
-								name="(modals)"
-								options={{
-									title: "",
-									presentation: "modal",
-									animation: "slide_from_bottom",
-								}}
-							/> */}
 							<Stack.Screen
 								name="(modals)/rating"
 								options={{
@@ -249,7 +242,7 @@ const RootLayout = () => {
 						<PortalHost />
 					</ThemeProvider>
 				</SafeAreaProvider>
-			</TRPCProvider>
+			</QueryProvider>
 		</AuthProvider>
 	);
 };

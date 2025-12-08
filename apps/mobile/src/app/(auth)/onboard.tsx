@@ -3,7 +3,7 @@ import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
 import { Pill } from "@/components/ui/pill";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
+import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { AtSign } from "@/lib/icons/IconsLoader";
 import type { Onboard } from "@recordscratch/types";
@@ -16,6 +16,8 @@ import { ActivityIndicator, TextInput, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, useStore } from "@tanstack/react-form";
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const SlideWrapper = ({
 	page,
@@ -58,22 +60,24 @@ const pages = [
 ] as const;
 
 const OnboardPage = () => {
-	const utils = api.useUtils();
 	const [page, setPage] = useState(0);
 	const [isLoading, setIsLoading] = useState(false);
 	const status = useAuth((s) => s.status);
+	const queryClient = useQueryClient();
 	const setStatus = useAuth((s) => s.setStatus);
 	const setProfile = useAuth((s) => s.setProfile);
 
-	const { mutateAsync: createProfile } = api.profiles.create.useMutation({
-		onSuccess: (profile) => {
-			utils.profiles.me.invalidate();
-			setProfile(profile);
-			router.navigate("/(tabs)");
-			setStatus("authenticated");
-		},
-	});
-	const { mutateAsync: getSignedURL } = api.profiles.getSignedURL.useMutation();
+	const { mutateAsync: createProfile } = useMutation(
+		api.profiles.create.mutationOptions({
+			onSuccess: (profile) => {
+				queryClient.invalidateQueries(api.profiles.me.queryOptions());
+				setProfile(profile);
+				router.navigate("/(tabs)");
+				setStatus("authenticated");
+			},
+		})
+	);
+	const { mutateAsync: getSignedURL } = useMutation(api.profiles.getSignedURL.mutationOptions());
 
 	const form = useForm({
 		validators: { onSubmit: OnboardSchema },
@@ -138,7 +142,7 @@ const OnboardPage = () => {
 		}
 	}, [status, router]);
 
-	const handleExists = api.profiles.handleExists.useMutation();
+	const handleExists = useMutation(api.profiles.handleExists.mutationOptions());
 
 	useEffect(() => {
 		if (!handlePristine) {

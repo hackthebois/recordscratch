@@ -3,7 +3,6 @@ import { UserAvatar } from "@/components/UserAvatar";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { AtSign } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
@@ -19,15 +18,21 @@ import { TextInput, View } from "react-native";
 import { useForm, useStore } from "@tanstack/react-form";
 import { TopListTab } from "@/components/List/TopList";
 
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+
 const EditProfile = () => {
 	const { tab } = useLocalSearchParams<{ tab: string }>();
+	const queryClient = useQueryClient();
 	const profile = useAuth((s) => s.profile!);
-	const [topLists] = api.lists.topLists.useSuspenseQuery({
-		userId: profile!.userId,
-	});
+	const { data: topLists } = useSuspenseQuery(
+		api.lists.topLists.queryOptions({
+			userId: profile!.userId,
+		})
+	);
 
 	const setProfile = useAuth((s) => s.setProfile);
-	const utils = api.useUtils();
 	const [loading, setLoading] = useState(false);
 
 	const form = useForm({
@@ -73,28 +78,32 @@ const EditProfile = () => {
 		},
 	});
 
-	const { mutate: updateProfile } = api.profiles.update.useMutation({
-		onSuccess: async (profile, { handle }) => {
-			await utils.profiles.me.invalidate();
-			await utils.profiles.get.invalidate(handle);
-			setProfile(profile);
-			form.reset({
-				bio: profile.bio ?? undefined,
-				image: {
-					uri: getImageUrl(profile),
-					type: "image/jpeg",
-					size: 0,
-				},
-				name: profile.name,
-				handle: handle,
-			});
-		},
-	});
-	const { mutateAsync: getSignedURL } = api.profiles.getSignedURL.useMutation();
+	const { mutate: updateProfile } = useMutation(
+		api.profiles.update.mutationOptions({
+			onSuccess: async (profile, { handle }) => {
+				await Promise.all([
+					queryClient.invalidateQueries(api.profiles.me.queryOptions()),
+					queryClient.invalidateQueries(api.profiles.get.queryOptions(handle)),
+				]);
+				setProfile(profile);
+				form.reset({
+					bio: profile.bio ?? undefined,
+					image: {
+						uri: getImageUrl(profile),
+						type: "image/jpeg",
+						size: 0,
+					},
+					name: profile.name,
+					handle: handle,
+				});
+			},
+		})
+	);
+	const { mutateAsync: getSignedURL } = useMutation(api.profiles.getSignedURL.mutationOptions());
 
 	const image = useStore(form.store, (state) => state.values.image);
 
-	const handleExists = api.profiles.handleExists.useMutation();
+	const handleExists = useMutation(api.profiles.handleExists.mutationOptions());
 
 	return (
 		<KeyboardAvoidingScrollView>

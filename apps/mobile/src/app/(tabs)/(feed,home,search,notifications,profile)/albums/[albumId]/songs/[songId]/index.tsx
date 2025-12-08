@@ -7,7 +7,7 @@ import { RatingInfo } from "@/components/Rating/RatingInfo";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
+import { api } from "@/lib/api";
 import { getQueryOptions } from "@/lib/deezer";
 import { formatDuration } from "@recordscratch/lib";
 import { Resource } from "@recordscratch/types";
@@ -22,10 +22,12 @@ const SongPage = () => {
 		songId: string;
 	}>();
 
-	const [total] = api.ratings.count.useSuspenseQuery({
-		resourceId: songId,
-		category: "SONG",
-	});
+	const { data: rating } = useSuspenseQuery(
+		api.ratings.get.queryOptions({
+			resourceId: songId,
+			category: "SONG",
+		})
+	);
 
 	const { data: album } = useSuspenseQuery(
 		getQueryOptions({
@@ -104,7 +106,10 @@ const SongPage = () => {
 									asChild
 									style={{ width: "100%" }}>
 									<Pressable>
-										<StatBlock title="Ratings" description={String(total)} />
+										<StatBlock
+											title="Ratings"
+											description={String(rating?.total)}
+										/>
 									</Pressable>
 								</Link>
 							</View>

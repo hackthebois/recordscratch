@@ -3,7 +3,6 @@ import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { Send } from "@/lib/icons/IconsLoader";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
@@ -11,43 +10,59 @@ import { TextInput, View, Platform, useWindowDimensions } from "react-native";
 import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
 
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+
 const CommentModal = () => {
 	const { width } = useWindowDimensions();
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { id } = useLocalSearchParams<{
 		id: string;
 	}>();
 
-	const [comment] = api.comments.get.useSuspenseQuery({
-		id,
-	});
+	const { data: comment } = useSuspenseQuery(
+		api.comments.get.queryOptions({
+			id,
+		})
+	);
 
 	if (!comment) return null;
 
-	const utils = api.useUtils();
-
-	const { mutate, isPending } = api.comments.create.useMutation({
-		onSuccess: async () => {
-			router.back();
-		},
-		onSettled: async () => {
-			await utils.comments.get.invalidate({
-				id,
-			});
-			await utils.comments.list.invalidate({
-				resourceId: comment.resourceId,
-				authorId: comment.authorId,
-			});
-			await utils.comments.count.rating.invalidate({
-				resourceId: comment.resourceId,
-				authorId: comment.authorId,
-			});
-
-			await utils.comments.count.reply.invalidate({
-				id: comment.rootId ?? comment.id,
-			});
-		},
-	});
+	const { mutate, isPending } = useMutation(
+		api.comments.create.mutationOptions({
+			onSuccess: async () => {
+				router.back();
+			},
+			onSettled: async () => {
+				await Promise.all([
+					queryClient.invalidateQueries(
+						api.comments.get.queryOptions({
+							id,
+						})
+					),
+					queryClient.invalidateQueries(
+						api.comments.list.queryOptions({
+							resourceId: comment.resourceId,
+							authorId: comment.authorId,
+						})
+					),
+					queryClient.invalidateQueries(
+						api.comments.count.rating.queryOptions({
+							resourceId: comment.resourceId,
+							authorId: comment.authorId,
+						})
+					),
+					queryClient.invalidateQueries(
+						api.comments.count.reply.queryOptions({
+							id: comment.rootId ?? comment.id,
+						})
+					),
+				]);
+			},
+		})
+	);
 
 	const form = useForm({
 		validators: {

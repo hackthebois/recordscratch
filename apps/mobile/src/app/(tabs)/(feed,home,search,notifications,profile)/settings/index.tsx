@@ -1,7 +1,6 @@
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { BellOff } from "@/lib/icons/IconsLoader";
 import { BellRing } from "@/lib/icons/IconsLoader";
@@ -14,20 +13,26 @@ import { ReceiptText } from "@/lib/icons/IconsLoader";
 import { ShieldCheck } from "@/lib/icons/IconsLoader";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { reloadAppAsync } from "expo";
-import { Link, Redirect, Stack } from "expo-router";
+import { Link, Stack } from "expo-router";
 import { ScrollView, View } from "react-native";
+
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const SettingsPage = () => {
 	const logout = useAuth((s) => s.logout);
 	const { setColorScheme, colorScheme } = useColorScheme();
-	const utils = api.useUtils();
+	const queryClient = useQueryClient();
 
-	const { data: user } = api.users.me.useQuery();
-	const updateUser = api.users.update.useMutation({
-		onSuccess: () => {
-			utils.users.me.invalidate();
-		},
-	});
+	const { data: user } = useQuery(api.users.me.queryOptions());
+	const updateUser = useMutation(
+		api.users.update.mutationOptions({
+			onSuccess: async () => {
+				await queryClient.invalidateQueries(api.users.me.queryOptions());
+			},
+		})
+	);
 
 	return (
 		<ScrollView>

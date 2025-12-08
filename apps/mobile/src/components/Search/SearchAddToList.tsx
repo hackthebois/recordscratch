@@ -1,10 +1,13 @@
 import Dialog from "@/components/CoreComponents/Dialog";
-import { api } from "@/components/Providers";
 import { Search } from "@/lib/icons/IconsLoader";
 import { useDebounce } from "@recordscratch/lib";
 import { useState } from "react";
 import { TextInput, View } from "react-native";
 import MusicSearch from "./MusicSearch";
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
 
 export const SearchAddToList = ({
 	category,
@@ -22,18 +25,24 @@ export const SearchAddToList = ({
 	const [open, setOpen] = useState<boolean>(openMenu ?? false);
 	const [query, setQuery] = useState("");
 	const debouncedQuery = useDebounce(query, 500);
+	const queryClient = useQueryClient();
+	const profile = useAuth((s) => s.profile);
 
-	const list = api.useUtils().lists.resources.get;
-	const { mutate } = api.lists.resources.create.useMutation({
-		onSettled: async (_data, _error, variables) => {
-			if (variables) {
-				await list.invalidate({
-					listId: variables.listId,
-				});
-				if (onPress) onPress();
-			}
-		},
-	});
+	const { mutate } = useMutation(
+		api.lists.resources.create.mutationOptions({
+			onSettled: async (_data, _error, variables) => {
+				if (variables) {
+					await queryClient.invalidateQueries(
+						api.lists.resources.get.queryOptions({
+							userId: profile!.userId,
+							listId: variables.listId,
+						})
+					);
+					if (onPress) onPress();
+				}
+			},
+		})
+	);
 
 	const AddToList = ({
 		resourceId,

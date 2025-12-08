@@ -11,7 +11,6 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { InsertList, insertListSchema } from "@recordscratch/types";
 import { useState } from "react";
 import { Platform, TextInput, View } from "react-native";
@@ -20,6 +19,9 @@ import React from "react";
 import { useAuth } from "@/lib/auth";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useForm } from "@tanstack/react-form";
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const CUSTOM_PORTAL_HOST_NAME = "modal-create-list";
 const WindowOverlay = Platform.OS === "ios" ? FullWindowOverlay : React.Fragment;
@@ -30,8 +32,8 @@ const CreateListModal = () => {
 	}>();
 
 	const router = useRouter();
-	const utils = api.useUtils();
 	const [loading, setLoading] = useState(false);
+	const queryClient = useQueryClient();
 
 	const form = useForm({
 		validators: {
@@ -52,11 +54,15 @@ const CreateListModal = () => {
 
 	const profile = useAuth((s) => s.profile);
 
-	const { mutate: createList } = api.lists.create.useMutation({
-		onSuccess: () => {
-			utils.lists.getUser.invalidate({ userId: profile!.userId });
-		},
-	});
+	const { mutate: createList } = useMutation(
+		api.lists.create.mutationOptions({
+			onSuccess: () => {
+				queryClient.invalidateQueries(
+					api.lists.getUser.queryOptions({ userId: profile!.userId })
+				);
+			},
+		})
+	);
 
 	const insets = useSafeAreaInsets();
 	const contentInsets = {

@@ -1,5 +1,4 @@
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@recordscratch/lib";
 import { Category, ListWithResources, UserListItem } from "@recordscratch/types";
@@ -11,6 +10,9 @@ import { ResourceItem } from "../Item/ResourceItem";
 import { Button } from "../ui/button";
 import { Eraser, Trash2 } from "@/lib/icons/IconsLoader";
 import { useState } from "react";
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 export const DeleteButton = ({
 	isVisible = false,
@@ -80,34 +82,39 @@ export const TopList = ({
 	setEditMode: (edit: boolean) => void;
 }) => {
 	const { id: listId, resources = [] } = list || {};
-	const utils = api.useUtils();
 	const userId = useAuth((s) => s.profile!.userId);
+	const router = useRouter();
+	const queryClient = useQueryClient();
+
 	const screenSize = Math.min(useWindowDimensions().width, 1024);
 	const numColumns = screenSize === 1024 ? 6 : 3;
 	const top6Width = (Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns;
-	const router = useRouter();
 
-	const { mutate: deleteResource } = api.lists.resources.delete.useMutation({
-		onSuccess: () => {
-			utils.lists.topLists.invalidate({ userId });
-			utils.lists.getUser.invalidate({ userId });
-		},
-	});
-	const { mutate: createList } = api.lists.create.useMutation({
-		onSuccess: (id) => {
-			utils.lists.topLists.invalidate({ userId });
-			utils.lists.getUser.invalidate({ userId });
+	const { mutate: deleteResource } = useMutation(
+		api.lists.resources.delete.mutationOptions({
+			onSuccess: () => {
+				queryClient.invalidateQueries(api.lists.topLists.queryOptions({ userId }));
+				queryClient.invalidateQueries(api.lists.getUser.queryOptions({ userId }));
+			},
+		})
+	);
+	const { mutate: createList } = useMutation(
+		api.lists.create.mutationOptions({
+			onSuccess: (id) => {
+				queryClient.invalidateQueries(api.lists.topLists.queryOptions({ userId }));
+				queryClient.invalidateQueries(api.lists.getUser.queryOptions({ userId }));
 
-			router.push({
-				pathname: "/(modals)/list/searchResource",
-				params: {
-					category: category,
-					listId: id,
-					isTopList: "true",
-				},
-			});
-		},
-	});
+				router.push({
+					pathname: "/(modals)/list/searchResource",
+					params: {
+						category: category,
+						listId: id,
+						isTopList: "true",
+					},
+				});
+			},
+		})
+	);
 	const className = "relative mb-1 h-auto overflow-hidden mt-2";
 	return (
 		<View className="flex flex-row flex-wrap gap-3 px-2">

@@ -1,12 +1,14 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { Star } from "@/lib/icons/IconsLoader";
 import { Rating, Resource } from "@recordscratch/types";
 import { Link } from "expo-router";
 import React from "react";
 import { Button } from "../ui/button";
+
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const iconSize = {
 	lg: 27,
@@ -28,12 +30,14 @@ const RateButton = ({
 	size?: "lg" | "default" | "sm";
 }) => {
 	const userId = useAuth((s) => s.profile!.userId);
-	const { data: userRating, isLoading } = api.ratings.user.get.useQuery(
-		{ resourceId: resource.resourceId, userId },
-		{
-			staleTime: Infinity,
-			initialData: initialUserRating,
-		}
+	const { data: userRating, isLoading } = useQuery(
+		api.ratings.user.get.queryOptions(
+			{ resourceId: resource.resourceId, userId },
+			{
+				staleTime: Infinity,
+				initialData: initialUserRating,
+			}
+		)
 	);
 
 	if (isLoading) {

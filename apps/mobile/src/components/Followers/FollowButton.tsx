@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
-import { useAuth } from "@/lib/auth";
+import { api } from "@/lib/api";
+
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 export const FollowButton = ({
 	profileId,
@@ -10,37 +12,40 @@ export const FollowButton = ({
 	profileId: string;
 	size?: "sm" | "default";
 }) => {
-	const utils = api.useUtils();
-	const profile = useAuth((s) => s.profile);
-	const [isFollowing] = api.profiles.isFollowing.useSuspenseQuery(profileId);
+	const { data: isFollowing } = useSuspenseQuery(
+		api.profiles.isFollowing.queryOptions(profileId)
+	);
+	const queryClient = useQueryClient();
 
 	const revalidate = async () => {
-		await utils.profiles.isFollowing.invalidate(profileId);
-		await utils.profiles.get.invalidate(profileId);
+		await queryClient.invalidateQueries(api.profiles.isFollowing.queryOptions(profileId));
+		await queryClient.invalidateQueries(api.profiles.get.queryOptions(profileId));
 
 		// Invalidate profiles followers
-		utils.profiles.followProfiles.invalidate({
-			profileId,
-			type: "followers",
-		});
+		await queryClient.invalidateQueries(
+			api.profiles.followProfiles.queryOptions({ profileId, type: "followers" })
+		);
 
 		// Invalidate user following
-		utils.profiles.followProfiles.invalidate({
-			profileId: profile!.userId!,
-			type: "following",
-		});
+		await queryClient.invalidateQueries(
+			api.profiles.followProfiles.queryOptions({ profileId, type: "following" })
+		);
 	};
 
-	const { mutate: followUser, isPending: isFollow } = api.profiles.follow.useMutation({
-		onSettled: async () => {
-			await revalidate();
-		},
-	});
-	const { mutate: unFollowUser, isPending: isUnFollow } = api.profiles.unFollow.useMutation({
-		onSettled: async () => {
-			await revalidate();
-		},
-	});
+	const { mutate: followUser, isPending: isFollow } = useMutation(
+		api.profiles.follow.mutationOptions({
+			onSettled: async () => {
+				await revalidate();
+			},
+		})
+	);
+	const { mutate: unFollowUser, isPending: isUnFollow } = useMutation(
+		api.profiles.unFollow.mutationOptions({
+			onSettled: async () => {
+				await revalidate();
+			},
+		})
+	);
 
 	const following = isFollow ? true : isUnFollow ? false : isFollowing;
 

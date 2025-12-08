@@ -3,13 +3,15 @@ import { ReviewsList } from "@/components/ReviewsList";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { getQueryOptions } from "@/lib/deezer";
 import { Resource } from "@recordscratch/types";
 import { keepPreviousData, useSuspenseQuery } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { Platform, View } from "react-native";
+
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const tabs = ["everyone", "friends"];
 const ratingTabs = ["all", "REVIEW", "RATING"];
@@ -41,17 +43,19 @@ const Reviews = () => {
 		})
 	);
 
-	const { data: values } = api.ratings.distribution.useQuery(
-		{
-			resourceId: albumId,
-			filters: {
-				reviewType: ratingTab === "all" ? undefined : ratingTab,
-				following: tab === "friends",
+	const { data: values } = useQuery(
+		api.ratings.distribution.queryOptions(
+			{
+				resourceId: albumId,
+				filters: {
+					reviewType: ratingTab === "all" ? undefined : ratingTab,
+					following: tab === "friends",
+				},
 			},
-		},
-		{
-			placeholderData: keepPreviousData,
-		}
+			{
+				placeholderData: keepPreviousData,
+			}
+		)
 	);
 
 	useEffect(() => {
