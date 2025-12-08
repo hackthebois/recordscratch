@@ -16,22 +16,15 @@ export const FollowButton = ({
 
 	const revalidate = async () => {
 		await utils.profiles.isFollowing.invalidate(profileId);
+		await utils.profiles.get.invalidate(profileId);
 
 		// Invalidate profiles followers
-		utils.profiles.followCount.invalidate({
-			profileId: profileId,
-			type: "followers",
-		});
 		utils.profiles.followProfiles.invalidate({
 			profileId,
 			type: "followers",
 		});
 
 		// Invalidate user following
-		utils.profiles.followCount.invalidate({
-			profileId: profile!.userId!,
-			type: "following",
-		});
 		utils.profiles.followProfiles.invalidate({
 			profileId: profile!.userId!,
 			type: "following",

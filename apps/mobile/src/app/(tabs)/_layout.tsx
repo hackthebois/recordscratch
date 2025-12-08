@@ -47,25 +47,6 @@ export default function TabLayout() {
 						{props.children}
 					</Pressable>
 				),
-				// TODO: Add blur background when bug is fixed: Unimplemented component <ViewManagerAdapter...
-				// tabBarBackground: () => (
-				// 	<BlurView
-				// 		tint={colorScheme === "dark" ? "dark" : "light"}
-				// 		intensity={20}
-				// 		style={{
-				// 			position: "absolute",
-				// 			top: 0,
-				// 			left: 0,
-				// 			right: 0,
-				// 			bottom: 0,
-				// 		}}
-				// 	/>
-				// ),
-				//headerLeft: () => (
-				//  <Pressable onPress={() => router.back()} >
-				//    <ArrowLeft size={28} className="text-primary" />
-				//  </Pressable>
-				//),
 			}}>
 			<Tabs.Screen
 				name="(home)"

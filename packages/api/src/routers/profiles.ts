@@ -17,17 +17,49 @@ import { RatingSchema } from "@recordscratch/types";
 import { createFollowNotification } from "../notifications";
 import { posthog } from "../posthog";
 import { PaginatedInput } from "../utils";
-import { alias } from "drizzle-orm/pg-core";
+import {
+	getStreak,
+	getTotalFollowers,
+	getTotalFollowing,
+	getTotalLikes,
+	getTotalRatings,
+} from "../lib/profile";
 
 export const profilesRouter = router({
 	get: publicProcedure
 		.input(z.string())
 		.query(async ({ ctx: { db }, input: handle }) => {
-			return (
-				(await db.query.profile.findFirst({
-					where: eq(profile.handle, handle),
-				})) ?? null
-			);
+			const p = await db.query.profile.findFirst({
+				where: eq(profile.handle, handle),
+			});
+
+			if (!p) return null;
+
+			const metaInput = { db, userId: p.userId };
+			const [
+				totalLikes,
+				streak,
+				totalFollowers,
+				totalFollowing,
+				totalRatings,
+			] = await Promise.all([
+				getTotalLikes(metaInput),
+				getStreak(metaInput),
+				getTotalFollowers(metaInput),
+				getTotalFollowing(metaInput),
+				getTotalRatings(metaInput),
+			]);
+
+			return {
+				...p,
+				meta: {
+					streak,
+					totalLikes,
+					totalFollowers,
+					totalFollowing,
+					totalRatings,
+				},
+			};
 		}),
 	me: publicProcedure.query(async ({ ctx: { db, userId } }) => {
 		if (!userId) return null;
@@ -79,71 +111,6 @@ export const profilesRouter = router({
 			);
 
 			return outputList;
-		}),
-	getTotalRatings: publicProcedure
-		.input(
-			z.object({
-				userId: z.string(),
-			}),
-		)
-		.query(async ({ ctx: { db }, input: { userId } }) => {
-			const total = await db
-				.select({ total: count(ratings.rating) })
-				.from(ratings)
-				.where(eq(ratings.userId, userId));
-
-			if (total) return total[0].total;
-			else 0;
-		}),
-	followCount: publicProcedure
-		.input(
-			z.object({
-				profileId: z.string(),
-				type: z.literal("followers").or(z.literal("following")),
-			}),
-		)
-		.query(async ({ ctx: { db }, input: { profileId, type } }) => {
-			const userExists = await db.query.profile
-				.findFirst({
-					where: eq(profile.userId, profileId),
-				})
-				.then((result) => !!result);
-
-			if (!userExists) throw new Error("User Doesn't Exist");
-
-			let count: number;
-			if (type === "followers") {
-				count = await db
-					.select({
-						count: sql<number>`count(*)`.mapWith(Number),
-					})
-					.from(followers)
-					.innerJoin(
-						profile,
-						and(
-							eq(profile.deactivated, false),
-							eq(followers.userId, profile.userId),
-						),
-					)
-					.where(and(eq(followers.followingId, profileId)))
-					.then((result) => (result ? result[0].count : 0));
-			} else {
-				count = await db
-					.select({
-						count: sql<number>`count(*)`.mapWith(Number),
-					})
-					.from(followers)
-					.innerJoin(
-						profile,
-						and(
-							eq(profile.deactivated, false),
-							eq(followers.userId, profile.userId),
-						),
-					)
-					.where(and(eq(followers.userId, profileId)))
-					.then((result) => (result ? result[0].count : 0));
-			}
-			return count;
 		}),
 	isFollowing: protectedProcedure
 		.input(z.string())

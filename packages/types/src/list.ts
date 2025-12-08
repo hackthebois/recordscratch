@@ -47,13 +47,16 @@ export const listResourcesSchema = createInsertSchema(listResources, {
 	parentId: z.string().optional(),
 });
 
-export type listResourceType = z.infer<typeof listResourcesSchema>;
+export type ListResourceType = z.infer<typeof listResourcesSchema>;
 
-export type ListItem = Pick<listResourceType, "parentId" | "listId" | "resourceId" | "position"> & {
+export type ListItem = Pick<
+	ListResourceType,
+	"parentId" | "listId" | "resourceId" | "position"
+> & {
 	rating: number | null;
 };
 
-export type UserListItem = listResourceType;
+export type UserListItem = ListResourceType;
 
 export const getUserSchema = z.object({
 	lists: listSchema,
@@ -85,7 +88,7 @@ export const listOfResourcesSchema = z.object({
 				parentId: true,
 			}).shape,
 			rating: z.number().nullable(),
-		})
+		}),
 	),
 });
 

@@ -16,13 +16,7 @@ import { useAuth } from "@/lib/auth";
 import { ChevronRight, Hand, UserCheck } from "@/lib/icons/IconsLoader";
 import { Settings } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
-import {
-	Category,
-	ListWithResources,
-	ListsType,
-	Profile,
-	listResourceType,
-} from "@recordscratch/types";
+import { Category, ListWithResources, ListsType } from "@recordscratch/types";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { ShieldCheck, UserX } from "lucide-react-native";
 import { Suspense, useState } from "react";
@@ -157,8 +151,8 @@ const TopList = ({
 
 	return (
 		<View className="flex flex-row gap-4 px-4">
-			{resources.map((resource: listResourceType) => (
-				<View className="relative mt-4 " key={resource.resourceId}>
+			{resources.map((resource) => (
+				<View key={resource.resourceId}>
 					{category !== "ARTIST" ? (
 						<ResourceItem
 							resource={{
@@ -166,7 +160,7 @@ const TopList = ({
 								resourceId: resource.resourceId,
 								category,
 							}}
-							direction="vertical"
+							direction="horizontal"
 							showArtist={false}
 							imageWidthAndHeight={top6Width}
 							style={{ width: top6Width }}
@@ -203,84 +197,63 @@ const TopListsTab = ({
 	const tab = params.tab && topListTabs.includes(params.tab) ? params.tab : "albums";
 
 	return (
-		<>
-			<Tabs
-				value={tab}
-				onValueChange={(value) =>
-					router.setParams({
-						tab: value === "albums" ? undefined : value,
-					})
-				}
-				className="mt-2">
-				<View className="px-4">
-					<TabsList className="w-full flex-row">
-						<TabsTrigger value="albums" className="flex-1">
-							<Text>Albums</Text>
-						</TabsTrigger>
-						<TabsTrigger value="songs" className="flex-1">
-							<Text>Songs</Text>
-						</TabsTrigger>
-						<TabsTrigger value="artists" className="flex-1">
-							<Text>Artists</Text>
-						</TabsTrigger>
-					</TabsList>
-				</View>
-				<TabsContent value="albums" className="mt-2">
-					<TopList category="ALBUM" list={album} isProfile={isProfile} />
-				</TabsContent>
-				<TabsContent value="songs" className="mt-2">
-					<TopList category="SONG" list={song} isProfile={isProfile} />
-				</TabsContent>
-				<TabsContent value="artists" className="mt-2">
-					<TopList category="ARTIST" list={artist} isProfile={isProfile} />
-				</TabsContent>
-			</Tabs>
-		</>
+		<Tabs
+			value={tab}
+			onValueChange={(value) =>
+				router.setParams({
+					tab: value === "albums" ? undefined : value,
+				})
+			}
+			className="mt-2">
+			<View className="px-4">
+				<TabsList className="w-full flex-row">
+					<TabsTrigger value="albums" className="flex-1">
+						<Text>Albums</Text>
+					</TabsTrigger>
+					<TabsTrigger value="songs" className="flex-1">
+						<Text>Songs</Text>
+					</TabsTrigger>
+					<TabsTrigger value="artists" className="flex-1">
+						<Text>Artists</Text>
+					</TabsTrigger>
+				</TabsList>
+			</View>
+			<TabsContent value="albums" className="mt-2">
+				<TopList category="ALBUM" list={album} isProfile={isProfile} />
+			</TabsContent>
+			<TabsContent value="songs" className="mt-2">
+				<TopList category="SONG" list={song} isProfile={isProfile} />
+			</TabsContent>
+			<TabsContent value="artists" className="mt-2">
+				<TopList category="ARTIST" list={artist} isProfile={isProfile} />
+			</TabsContent>
+		</Tabs>
 	);
 };
 
-export const ProfilePage = ({ isProfile }: { isProfile: boolean }) => {
+export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 	const router = useRouter();
 	const userProfile = useAuth((s) => s.profile);
-	let profile: Profile | null = null;
-	if (isProfile) {
-		profile = userProfile;
-	} else {
-		const { handle } = useLocalSearchParams<{ handle: string }>();
-		[profile] = api.profiles.get.useSuspenseQuery(handle);
-		isProfile = profile?.userId === useAuth((s) => s.profile?.userId);
-	}
+	const params = useLocalSearchParams<{ handle: string }>();
+	const handle = params.handle ?? customHandle;
+
+	const [profile] = api.profiles.get.useSuspenseQuery(handle);
 
 	if (!profile) return <NotFoundScreen />;
+
+	const isProfile = profile.userId === userProfile?.userId;
 
 	const [lists] = api.lists.getUser.useSuspenseQuery({
 		userId: profile.userId,
 	});
 
-	const { data: streak } = api.ratings.user.streak.useQuery({
-		userId: profile.userId,
-	});
-	const { data: likes } = api.ratings.user.totalLikes.useQuery({
-		userId: profile.userId,
-	});
 	const { data: values } = api.profiles.distribution.useQuery({
 		userId: profile.userId,
 	});
-	const { data: totalRatings, isLoading: isLR } = api.profiles.getTotalRatings.useQuery({
-		userId: profile.userId,
-	});
-	const { data: followerCount, isLoading: isLFRC } = api.profiles.followCount.useQuery({
-		profileId: profile.userId,
-		type: "followers",
-	});
-	const { data: followingCount, isLoading: isLFGC } = api.profiles.followCount.useQuery({
-		profileId: profile.userId,
-		type: "following",
-	});
 
-	const [topLists] = api.lists.topLists.useSuspenseQuery({
-		userId: profile.userId,
-	});
+	//const [topLists] = api.lists.topLists.useSuspenseQuery({
+	//	userId: profile.userId,
+	//});
 
 	//const { mutate: deactivateProfile } = api.profiles.deactivate.useMutation();
 
@@ -346,8 +319,8 @@ export const ProfilePage = ({ isProfile }: { isProfile: boolean }) => {
 										</Text>
 										<View className="flex flex-row flex-wrap items-center gap-3">
 											<Pill>{`@${profile.handle}`}</Pill>
-											<Pill>{`Streak: ${streak ?? ""}`}</Pill>
-											<Pill>{`Likes: ${likes ?? ""}`}</Pill>
+											<Pill>{`Streak: ${profile.meta.streak ?? ""}`}</Pill>
+											<Pill>{`Likes: ${profile.meta.totalLikes ?? ""}`}</Pill>
 											{profile.role === "MOD" && (
 												<Pill className="bg-red-300">
 													<View className="flex flex-row items-center">
@@ -395,9 +368,8 @@ export const ProfilePage = ({ isProfile }: { isProfile: boolean }) => {
 											<Pressable className="flex-1">
 												<StatBlock
 													title={"Ratings"}
-													description={String(totalRatings)}
+													description={String(profile.meta.totalRatings)}
 													size="sm"
-													loading={isLR}
 												/>
 											</Pressable>
 										</Link>
@@ -405,9 +377,10 @@ export const ProfilePage = ({ isProfile }: { isProfile: boolean }) => {
 											<Pressable className="flex-1">
 												<StatBlock
 													title={"Followers"}
-													description={String(followerCount)}
+													description={String(
+														profile.meta.totalFollowers
+													)}
 													size="sm"
-													loading={isLFRC}
 												/>
 											</Pressable>
 										</Link>
@@ -417,9 +390,10 @@ export const ProfilePage = ({ isProfile }: { isProfile: boolean }) => {
 											<Pressable className="flex-1">
 												<StatBlock
 													title={"Following"}
-													description={String(followingCount)}
+													description={String(
+														profile.meta.totalFollowing
+													)}
 													size="sm"
-													loading={isLFGC}
 												/>
 											</Pressable>
 										</Link>
@@ -443,12 +417,12 @@ export const ProfilePage = ({ isProfile }: { isProfile: boolean }) => {
 							/>
 						</View>
 					</View>
-					<TopListsTab
+					{/*<TopListsTab
 						album={topLists.album as ListWithResources | undefined}
 						song={topLists.song as ListWithResources | undefined}
 						artist={topLists.artist as ListWithResources | undefined}
 						isProfile={isProfile}
-					/>
+					/>*/}
 					<ListsTab
 						handle={profile.handle}
 						lists={lists as ListsType[]}
