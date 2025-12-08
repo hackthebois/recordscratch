@@ -28,9 +28,7 @@ const SettingsPage = () => {
 	const { data: user } = useQuery(api.users.me.queryOptions());
 	const updateUser = useMutation(
 		api.users.update.mutationOptions({
-			onSuccess: async () => {
-				await queryClient.invalidateQueries(api.users.me.queryOptions());
-			},
+			onSuccess: () => queryClient.invalidateQueries(api.users.me.queryOptions()),
 		})
 	);
 

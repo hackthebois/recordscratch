@@ -29,19 +29,19 @@ const AddToListModal = () => {
 
 	const { mutate } = useMutation(
 		api.lists.resources.create.mutationOptions({
-			onSettled: (_data, _error, variables) => {
-				if (variables) {
+			onSettled: (_data, _error, variables) =>
+				Promise.all([
+					variables &&
+						queryClient.invalidateQueries(
+							api.lists.resources.get.queryOptions({
+								userId: profile!.userId,
+								listId: variables.listId,
+							})
+						),
 					queryClient.invalidateQueries(
-						api.lists.resources.get.queryOptions({
-							userId: profile!.userId,
-							listId: variables.listId,
-						})
-					);
-				}
-				queryClient.invalidateQueries(
-					api.lists.getUser.queryOptions({ userId: profile!.userId })
-				);
-			},
+						api.lists.getUser.queryOptions({ userId: profile!.userId })
+					),
+				]),
 		})
 	);
 

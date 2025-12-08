@@ -44,21 +44,20 @@ const SettingsPage = () => {
 
 	const { mutate: updateList } = useMutation(
 		api.lists.update.mutationOptions({
-			onSuccess: async () => {
-				await Promise.all([
+			onSuccess: () =>
+				Promise.all([
 					queryClient.invalidateQueries(api.lists.get.queryOptions({ id })),
 					queryClient.invalidateQueries(
 						api.lists.getUser.queryOptions({ userId: list!.userId })
 					),
-				]);
-			},
+				]),
 		})
 	);
 
 	const deleteResource = useMutation(
 		api.lists.delete.mutationOptions({
-			onSettled: async () => {
-				await Promise.all([
+			onSettled: () =>
+				Promise.all([
 					queryClient.invalidateQueries(api.lists.get.queryOptions({ id: listId })),
 					queryClient.invalidateQueries(
 						api.lists.getUser.queryOptions({ userId: list!.userId })
@@ -67,8 +66,7 @@ const SettingsPage = () => {
 						queryClient.invalidateQueries(
 							api.lists.topLists.queryOptions({ userId: list!.userId })
 						),
-				]);
-			},
+				]),
 		})
 	).mutate;
 

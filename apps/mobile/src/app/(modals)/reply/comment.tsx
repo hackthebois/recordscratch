@@ -35,8 +35,8 @@ const CommentModal = () => {
 			onSuccess: async () => {
 				router.back();
 			},
-			onSettled: async () => {
-				await Promise.all([
+			onSettled: () =>
+				Promise.all([
 					queryClient.invalidateQueries(
 						api.comments.get.queryOptions({
 							id,
@@ -59,8 +59,7 @@ const CommentModal = () => {
 							id: comment.rootId ?? comment.id,
 						})
 					),
-				]);
-			},
+				]),
 		})
 	);
 

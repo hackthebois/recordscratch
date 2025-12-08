@@ -61,8 +61,8 @@ const Reply = () => {
 					params: { handle, id: resourceId },
 				});
 			},
-			onSettled: async () => {
-				await Promise.all([
+			onSettled: () =>
+				Promise.all([
 					queryClient.invalidateQueries(
 						api.comments.list.queryOptions({
 							authorId: profile.userId,
@@ -75,8 +75,7 @@ const Reply = () => {
 							resourceId,
 						})
 					),
-				]);
-			},
+				]),
 		})
 	);
 

@@ -69,23 +69,21 @@ const LikeButton = (props: { commentId: string }) => {
 	const isLoading = likeQuery === undefined || likesQuery === undefined;
 	const { mutate: likeMutation, isPending: isLiking } = useMutation(
 		api.comments.likes.like.mutationOptions({
-			onSettled: async () => {
-				await Promise.all([
+			onSettled: () =>
+				Promise.all([
 					queryClient.invalidateQueries(api.comments.likes.get.queryOptions(props)),
 					queryClient.invalidateQueries(api.comments.likes.getLikes.queryOptions(props)),
-				]);
-			},
+				]),
 		})
 	);
 
 	const { mutate: unlikeMutation, isPending: isUnLiking } = useMutation(
 		api.comments.likes.unlike.mutationOptions({
-			onSettled: async () => {
-				await Promise.all([
+			onSettled: () =>
+				Promise.all([
 					queryClient.invalidateQueries(api.comments.likes.get.queryOptions(props)),
 					queryClient.invalidateQueries(api.comments.likes.getLikes.queryOptions(props)),
-				]);
-			},
+				]),
 		})
 	);
 
@@ -154,8 +152,8 @@ export const Comment = ({
 
 	const { mutate: deleteComment } = useMutation(
 		api.comments.delete.mutationOptions({
-			onSettled: async () => {
-				await Promise.all([
+			onSettled: () =>
+				Promise.all([
 					queryClient.invalidateQueries(
 						api.comments.list.queryOptions({ resourceId, authorId })
 					),
@@ -166,8 +164,7 @@ export const Comment = ({
 						queryClient.invalidateQueries(
 							api.comments.count.reply.queryOptions({ id: rootId })
 						),
-				]);
-			},
+				]),
 		})
 	);
 
@@ -178,8 +175,8 @@ export const Comment = ({
 					router.back();
 				}
 			},
-			onSettled: async () => {
-				await Promise.all([
+			onSettled: () =>
+				Promise.all([
 					queryClient.invalidateQueries(
 						api.comments.list.queryOptions({ resourceId, authorId })
 					),
@@ -190,8 +187,7 @@ export const Comment = ({
 						queryClient.invalidateQueries(
 							api.comments.count.reply.queryOptions({ id: rootId })
 						),
-				]);
-			},
+				]),
 		})
 	);
 	if (deactivated) return null;

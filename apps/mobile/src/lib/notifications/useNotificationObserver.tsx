@@ -13,10 +13,11 @@ export function useNotificationObserver() {
 	const queryClient = useQueryClient();
 	const markSeen = useMutation(
 		api.notifications.markSeen.mutationOptions({
-			onSuccess: () => {
-				queryClient.invalidateQueries(api.notifications.get.queryOptions());
-				queryClient.invalidateQueries(api.notifications.getUnseen.queryOptions());
-			},
+			onSuccess: () =>
+				Promise.all([
+					queryClient.invalidateQueries(api.notifications.get.queryOptions()),
+					queryClient.invalidateQueries(api.notifications.getUnseen.queryOptions()),
+				]),
 		})
 	);
 

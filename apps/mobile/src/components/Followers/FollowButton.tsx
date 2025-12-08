@@ -17,33 +17,30 @@ export const FollowButton = ({
 	);
 	const queryClient = useQueryClient();
 
-	const revalidate = async () => {
-		await queryClient.invalidateQueries(api.profiles.isFollowing.queryOptions(profileId));
-		await queryClient.invalidateQueries(api.profiles.get.queryOptions(profileId));
+	const invalidate = () =>
+		Promise.all([
+			queryClient.invalidateQueries(api.profiles.isFollowing.queryOptions(profileId)),
+			queryClient.invalidateQueries(api.profiles.get.queryOptions(profileId)),
 
-		// Invalidate profiles followers
-		await queryClient.invalidateQueries(
-			api.profiles.followProfiles.queryOptions({ profileId, type: "followers" })
-		);
+			// Invalidate profiles followers
+			queryClient.invalidateQueries(
+				api.profiles.followProfiles.queryOptions({ profileId, type: "followers" })
+			),
 
-		// Invalidate user following
-		await queryClient.invalidateQueries(
-			api.profiles.followProfiles.queryOptions({ profileId, type: "following" })
-		);
-	};
+			// Invalidate user following
+			queryClient.invalidateQueries(
+				api.profiles.followProfiles.queryOptions({ profileId, type: "following" })
+			),
+		]);
 
 	const { mutate: followUser, isPending: isFollow } = useMutation(
 		api.profiles.follow.mutationOptions({
-			onSettled: async () => {
-				await revalidate();
-			},
+			onSettled: () => invalidate(),
 		})
 	);
 	const { mutate: unFollowUser, isPending: isUnFollow } = useMutation(
 		api.profiles.unFollow.mutationOptions({
-			onSettled: async () => {
-				await revalidate();
-			},
+			onSettled: () => invalidate(),
 		})
 	);
 

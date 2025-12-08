@@ -38,18 +38,19 @@ const DeactivateButton = ({
 	const queryClient = useQueryClient();
 	const { mutate: deactivateRating } = useMutation(
 		api.ratings.deactivate.mutationOptions({
-			onSettled: async () => {
-				await queryClient.invalidateQueries(
-					api.ratings.get.queryOptions({ resourceId, category })
-				);
-				await queryClient.invalidateQueries(
-					api.ratings.user.get.queryOptions({ resourceId, userId })
-				);
-				if (feedInput)
-					await queryClient.invalidateQueries(
-						api.ratings.feed.queryOptions({ ...feedInput })
-					);
-			},
+			onSettled: () =>
+				Promise.all([
+					queryClient.invalidateQueries(
+						api.ratings.get.queryOptions({ resourceId, category })
+					),
+					queryClient.invalidateQueries(
+						api.ratings.user.get.queryOptions({ resourceId, userId })
+					),
+					feedInput &&
+						queryClient.invalidateQueries(
+							api.ratings.feed.queryOptions({ ...feedInput })
+						),
+				]),
 		})
 	);
 	const [open, setOpen] = useState(false);
@@ -94,19 +95,21 @@ const LikeButton = (props: SelectLike) => {
 
 	const { mutate: likeMutation, isPending: isLiking } = useMutation(
 		api.likes.like.mutationOptions({
-			onSettled: async () => {
-				await queryClient.invalidateQueries(api.likes.get.queryOptions(props));
-				await queryClient.invalidateQueries(api.likes.getLikes.queryOptions(props));
-			},
+			onSettled: () =>
+				Promise.all([
+					queryClient.invalidateQueries(api.likes.get.queryOptions(props)),
+					queryClient.invalidateQueries(api.likes.getLikes.queryOptions(props)),
+				]),
 		})
 	);
 
 	const { mutate: unlikeMutation, isPending: isUnLiking } = useMutation(
 		api.likes.unlike.mutationOptions({
-			onSettled: async () => {
-				await queryClient.invalidateQueries(api.likes.get.queryOptions(props));
-				await queryClient.invalidateQueries(api.likes.getLikes.queryOptions(props));
-			},
+			onSettled: () =>
+				Promise.all([
+					queryClient.invalidateQueries(api.likes.get.queryOptions(props)),
+					queryClient.invalidateQueries(api.likes.getLikes.queryOptions(props)),
+				]),
 		})
 	);
 

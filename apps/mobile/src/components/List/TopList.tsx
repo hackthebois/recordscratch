@@ -92,17 +92,20 @@ export const TopList = ({
 
 	const { mutate: deleteResource } = useMutation(
 		api.lists.resources.delete.mutationOptions({
-			onSuccess: () => {
-				queryClient.invalidateQueries(api.lists.topLists.queryOptions({ userId }));
-				queryClient.invalidateQueries(api.lists.getUser.queryOptions({ userId }));
-			},
+			onSuccess: () =>
+				Promise.all([
+					queryClient.invalidateQueries(api.lists.topLists.queryOptions({ userId })),
+					queryClient.invalidateQueries(api.lists.getUser.queryOptions({ userId })),
+				]),
 		})
 	);
 	const { mutate: createList } = useMutation(
 		api.lists.create.mutationOptions({
-			onSuccess: (id) => {
-				queryClient.invalidateQueries(api.lists.topLists.queryOptions({ userId }));
-				queryClient.invalidateQueries(api.lists.getUser.queryOptions({ userId }));
+			onSuccess: async (id) => {
+				await Promise.all([
+					queryClient.invalidateQueries(api.lists.topLists.queryOptions({ userId })),
+					queryClient.invalidateQueries(api.lists.getUser.queryOptions({ userId })),
+				]);
 
 				router.push({
 					pathname: "/(modals)/list/searchResource",

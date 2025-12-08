@@ -35,9 +35,8 @@ const NotificationBlock = ({
 	const queryClient = useQueryClient();
 	const { mutate } = useMutation(
 		api.notifications.markSeen.mutationOptions({
-			onSettled: async () => {
-				await queryClient.invalidateQueries(api.notifications.getUnseen.queryOptions());
-			},
+			onSettled: () =>
+				queryClient.invalidateQueries(api.notifications.getUnseen.queryOptions()),
 		})
 	);
 
