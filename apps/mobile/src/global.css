@@ -47,19 +47,11 @@
 		--ring: 240 4.9% 83.9%;
 	}
 
-
-}
-
-@layer utilities {
-
-	/* Track */
-	::-webkit-scrollbar-track {
-		background: #000;
+	::-webkit-scrollbar {
+		@apply bg-background w-2.5 h-2.5;
 	}
 
-	/* Handle */
 	::-webkit-scrollbar-thumb {
-		background: #888;
-		border-radius: 0px;
+		@apply bg-border rounded-full;
 	}
 }
