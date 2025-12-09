@@ -12,8 +12,9 @@ export { type RouterInputs, type RouterOutputs } from "@recordscratch/api";
 
 export const queryClient = new QueryClient({
 	queryCache: new QueryCache({
-		onError: (error) => {
-			(catchError({ ...error }), reloadAppAsync());
+		onError: async (error) => {
+			await catchError({ ...error });
+			//await reloadAppAsync();
 		},
 	}),
 });

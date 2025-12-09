@@ -19,6 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
 const AlbumOfTheDay = () => {
+	const router = useRouter();
 	const { data: albumOfTheDay } = useSuspenseQuery(api.misc.albumOfTheDay.queryOptions());
 	const { data: album } = useSuspenseQuery(
 		getQueryOptions({
@@ -28,7 +29,6 @@ const AlbumOfTheDay = () => {
 	);
 
 	if (!album) return <NotFound />;
-	const router = useRouter();
 
 	return (
 		<Metadata

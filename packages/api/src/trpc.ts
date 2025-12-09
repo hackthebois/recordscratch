@@ -4,7 +4,6 @@ import { TRPCError, initTRPC } from "@trpc/server";
 import { AwsClient } from "aws4fetch";
 import SuperJSON from "superjson";
 import { ZodError } from "zod";
-import type { ServerEnv } from "@recordscratch/types";
 import { PostHog } from "posthog-node";
 import type { Context } from "hono";
 import { eq, and } from "drizzle-orm";
@@ -17,13 +16,13 @@ export const createTRPCContext = async ({
 	c: Context;
 }) => {
 	const r2 = new AwsClient({
-		accessKeyId: c.env.R2_KEY_ID,
-		secretAccessKey: c.env.R2_ACCESS_KEY,
+		accessKeyId: process.env.R2_KEY_ID!,
+		secretAccessKey: process.env.R2_ACCESS_KEY!,
 		region: "auto",
 	});
 
-	const ph = new PostHog(c.env.POSTHOG_KEY, {
-		host: c.env.POSTHOG_HOST,
+	const ph = new PostHog(process.env.POSTHOG_KEY!, {
+		host: process.env.POSTHOG_HOST,
 	});
 
 	const db = getDB();
@@ -60,23 +59,21 @@ export const createTRPCContext = async ({
 	};
 };
 
-const t = initTRPC
-	.context<typeof createTRPCContext & { env: ServerEnv }>()
-	.create({
-		transformer: SuperJSON,
-		errorFormatter({ shape, error }) {
-			return {
-				...shape,
-				data: {
-					...shape.data,
-					zodError:
-						error.cause instanceof ZodError
-							? error.cause.flatten()
-							: null,
-				},
-			};
-		},
-	});
+const t = initTRPC.context<typeof createTRPCContext>().create({
+	transformer: SuperJSON,
+	errorFormatter({ shape, error }) {
+		return {
+			...shape,
+			data: {
+				...shape.data,
+				zodError:
+					error.cause instanceof ZodError
+						? error.cause.flatten()
+						: null,
+			},
+		};
+	},
+});
 
 export const createCallerFactory = t.createCallerFactory;
 export const router = t.router;

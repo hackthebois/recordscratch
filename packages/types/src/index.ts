@@ -8,4 +8,3 @@ export * from "./pushTokens";
 export * from "./rating";
 export * from "./session";
 export * from "./user";
-export * from "./server";

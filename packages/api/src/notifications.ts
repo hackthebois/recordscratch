@@ -23,9 +23,7 @@ import type {
 import "dotenv/config"; // Ensures env vars are loaded first
 import { and, eq, inArray } from "drizzle-orm";
 import type { ExpoPushMessage, ExpoPushTicket } from "expo-server-sdk";
-import { getContext } from "hono/context-storage";
 import { v4 as uuidv4 } from "uuid";
-import type { ServerEnv } from "@recordscratch/types";
 
 // Custom ExpoClient class to replace Expo SDK
 const Expo = (accessToken?: string) => {
@@ -86,8 +84,7 @@ export const sendPushNotifications = async ({
 	}[];
 	db: DB;
 }) => {
-	const c = getContext<{ Bindings: ServerEnv }>();
-	const expo = Expo(c.env.EXPO_ACCESS_TOKEN);
+	const expo = Expo(process.env.EXPO_ACCESS_TOKEN);
 	// If users is an array of user ids, fetch the users from the database
 	let usersList: (User & {
 		pushTokens: PushToken[];

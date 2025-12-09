@@ -7,9 +7,9 @@ import { setCookie } from "hono/cookie";
 const getGoogle = (c: Context) => {
 	const expoAddress = c.req.query("expoAddress");
 	return new Google(
-		c.env.GOOGLE_CLIENT_ID,
-		c.env.GOOGLE_CLIENT_SECRET,
-		`${c.env.SERVER_URL}/api/auth/google/callback${expoAddress ? `?expoAddress=${expoAddress}` : ""}`,
+		process.env.GOOGLE_CLIENT_ID!,
+		process.env.GOOGLE_CLIENT_SECRET!,
+		`${process.env.SERVER_URL}/api/auth/google/callback${expoAddress ? `?expoAddress=${expoAddress}` : ""}`,
 	);
 };
 
