@@ -5,15 +5,22 @@ import { Star } from "@/lib/icons/IconsLoader";
 import { Rating, Resource } from "@recordscratch/types";
 import { Link } from "expo-router";
 import React from "react";
-import { Button } from "../ui/button";
+import { Button, buttonSizes } from "../ui/button";
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { View } from "react-native";
 
 const iconSize = {
 	lg: 27,
 	default: 24,
 	sm: 21,
+};
+
+const width = {
+	sm: 81,
+	default: 98,
+	lg: 100,
 };
 
 const RateButton = ({
@@ -41,7 +48,11 @@ const RateButton = ({
 	);
 
 	if (isLoading) {
-		return <Skeleton className="h-[48px] w-[80px]" />;
+		return (
+			<Skeleton>
+				<View className={buttonSizes[size]} style={{ width: width[size] }} />
+			</Skeleton>
+		);
 	}
 
 	const fill = userRating ? { fill: "#fb8500" } : undefined;
