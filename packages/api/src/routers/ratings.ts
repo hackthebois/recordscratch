@@ -1,17 +1,16 @@
 import {
 	comments,
 	followers,
-	getDB,
 	likes,
 	profile,
 	ratings,
+	type DB,
 } from "@recordscratch/db";
 import {
 	DeactivateRatingSchema,
 	FeedFiltersSchema,
 	RateFormSchema,
 	ResourceSchema,
-	ReviewFormSchema,
 } from "@recordscratch/types";
 import {
 	and,
@@ -34,16 +33,12 @@ import {
 	router,
 } from "../trpc";
 import { PaginatedInput } from "../utils";
-import { getTotalRatings } from "../lib/rating";
 
 const RatingAlgorithm = (countWeight: number) => {
 	return sql`ROUND(AVG(${ratings.rating}), 1) + ${countWeight} * LN(COUNT(${ratings.rating}))`;
 };
 
-const getFollowingWhere = async (
-	db: ReturnType<typeof getDB>,
-	userId: string,
-) => {
+const getFollowingWhere = async (db: DB, userId: string) => {
 	const following = await db.query.followers.findMany({
 		where: eq(followers.userId, userId),
 	});

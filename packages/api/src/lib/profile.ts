@@ -1,9 +1,9 @@
-import { followers, getDB, likes, profile, ratings } from "@recordscratch/db";
+import { followers, likes, profile, ratings, type DB } from "@recordscratch/db";
 import dayjs from "dayjs";
 import { and, count, desc, eq, isNotNull, sql } from "drizzle-orm";
 
 type MetaInput = {
-	db: ReturnType<typeof getDB>;
+	db: DB;
 	userId: string;
 };
 

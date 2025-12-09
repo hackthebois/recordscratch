@@ -1,9 +1,9 @@
-import { ratings, type getDB } from "@recordscratch/db";
+import { ratings, type DB } from "@recordscratch/db";
 import type { Resource } from "@recordscratch/types";
 import { and, count, eq, isNotNull } from "drizzle-orm";
 
 type MetaInput = {
-	db: ReturnType<typeof getDB>;
+	db: DB;
 	resourceId: Resource["resourceId"];
 	category: Resource["category"];
 	onlyReviews?: boolean;

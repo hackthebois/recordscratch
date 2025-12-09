@@ -3,13 +3,14 @@ import {
 	encodeBase32LowerCaseNoPadding,
 	encodeHexLowerCase,
 } from "@oslojs/encoding";
-import { getDB, sessions, users } from "@recordscratch/db";
+import { sessions, users } from "@recordscratch/db/src/schema";
 import type { Session, User } from "@recordscratch/types";
 import { eq, or } from "drizzle-orm";
 import type { Context } from "hono";
-import {  getCookie, setCookie } from "hono/cookie";
+import { getCookie, setCookie } from "hono/cookie";
 import { generateRandomString, type RandomReader } from "@oslojs/crypto/random";
 import { z } from "zod";
+import { getDB } from "@recordscratch/db";
 
 export const generateSessionToken = (): string => {
 	const bytes = new Uint8Array(20);
@@ -19,11 +20,10 @@ export const generateSessionToken = (): string => {
 };
 
 export const createSession = async (
-	c: Context,
 	token: string,
 	userId: string,
 ): Promise<Session> => {
-	const db = getDB(c.env.DATABASE_URL);
+	const db = getDB();
 	const sessionId = encodeHexLowerCase(
 		sha256(new TextEncoder().encode(token)),
 	);
@@ -37,10 +37,9 @@ export const createSession = async (
 };
 
 export async function validateSessionToken(
-	c: Context,
 	token: string,
 ): Promise<SessionValidationResult> {
-	const db = getDB(c.env.DATABASE_URL);
+	const db = getDB();
 	const sessionId = encodeHexLowerCase(
 		sha256(new TextEncoder().encode(token)),
 	);
@@ -69,11 +68,8 @@ export async function validateSessionToken(
 	return { session, user };
 }
 
-export async function invalidateSession(
-	c: Context,
-	token: string,
-): Promise<void> {
-	const db = getDB(c.env.DATABASE_URL);
+export async function invalidateSession(token: string): Promise<void> {
+	const db = getDB();
 	const sessionId = encodeHexLowerCase(
 		sha256(new TextEncoder().encode(token)),
 	);
@@ -153,8 +149,8 @@ export const handleUser = async (
 		onReturn?: "redirect" | "sessionId";
 	},
 ) => {
+	const db = getDB();
 	const { googleId, appleId, email, onReturn = "redirect" } = options;
-	const db = getDB(c.env.DATABASE_URL);
 	const expoAddress = c.req.query("expoAddress");
 	let userId: string;
 	let redirect: string;
@@ -181,7 +177,7 @@ export const handleUser = async (
 	}
 
 	const token = generateSessionToken();
-	await createSession(c, token, userId);
+	await createSession(token, userId);
 
 	if (expoAddress) redirect = `${expoAddress}?session_id=${token}`;
 

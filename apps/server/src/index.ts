@@ -26,13 +26,12 @@ import { eq, inArray, or } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
 import { getCookie } from "hono/cookie";
 import { contextStorage } from "hono/context-storage";
-import type { ServerEnv } from "@recordscratch/types";
 import { createTRPCContext } from "@recordscratch/api";
 import { cors } from "hono/cors";
 import { googleHandler } from "./auth/google";
 import { appleHandler } from "./auth/apple";
 
-const app = new Hono<{ Bindings: ServerEnv }>();
+const app = new Hono();
 
 app.use(
 	cors({
@@ -86,11 +85,11 @@ const getSession = (c: Context) => {
 };
 
 app.get("/api/auth/me", async (c) => {
-	const db = getDB(c.env.DATABASE_URL);
+	const db = getDB();
 	const sessionId = getSession(c);
 	if (!sessionId) return c.json({ user: null });
 
-	const { user } = await validateSessionToken(c, sessionId);
+	const { user } = await validateSessionToken(sessionId);
 
 	if (!user) {
 		// Invalidate session if user is not found
@@ -133,14 +132,14 @@ app.get("/api/auth/me", async (c) => {
 app.delete("/api/auth/delete", async (c) => {
 	const session = getSession(c);
 	if (!session) throw new HTTPException(401, { message: "Unauthorized" });
-	const { user } = await validateSessionToken(c, session);
+	const { user } = await validateSessionToken(session);
 
 	if (!user) {
 		throw new HTTPException(401, { message: "Unauthorized" });
 	}
 
 	// Delete user ratings and comments
-	const db = getDB(c.env.DATABASE_URL);
+	const db = getDB();
 	await Promise.all([
 		// Delete comments from user or to user
 		db
@@ -224,12 +223,12 @@ app.get("/api/auth/signout", async (c) => {
 	if (!session) throw new HTTPException(401, { message: "Unauthorized" });
 
 	setSessionCookie(c, undefined);
-	await invalidateSession(c, session);
+	await invalidateSession(session);
 
 	const expoPushToken = c.req.header("Expo-Push-Token");
 	// If expo push token, delete it to prevent signed out notifications
 	if (expoPushToken) {
-		const db = getDB(c.env.DATABASE_URL);
+		const db = getDB();
 
 		await db.delete(pushTokens).where(eq(pushTokens.token, expoPushToken));
 	}

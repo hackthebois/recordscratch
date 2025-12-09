@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Discord } from "@/lib/icons/Discord";
 import { socials } from "@recordscratch/lib";
 import { Hand } from "@/lib/icons/IconsLoader";
-import { useRouter } from "expo-router";
 import { reloadAppAsync } from "expo";
 import { useAuth } from "@/lib/auth";
 

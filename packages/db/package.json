@@ -1,6 +1,9 @@
 {
 	"name": "@recordscratch/db",
 	"main": "./src/index.ts",
+	"export": {
+		"schema": "./src/schema.ts"
+	},
 	"type": "module",
 	"scripts": {
 		"build": "tsc",

@@ -21,11 +21,13 @@ export const createTRPCContext = async ({
 		secretAccessKey: c.env.R2_ACCESS_KEY,
 		region: "auto",
 	});
-	const db = getDB(c.env.DATABASE_URL);
 
 	const ph = new PostHog(c.env.POSTHOG_KEY, {
 		host: c.env.POSTHOG_HOST,
 	});
+
+	const db = getDB();
+
 	console.log("PostHog initialized");
 	if (!sessionId) {
 		return {
@@ -37,7 +39,7 @@ export const createTRPCContext = async ({
 		};
 	}
 
-	const { session } = await validateSessionToken(c, sessionId);
+	const { session } = await validateSessionToken(sessionId);
 
 	if (!session) {
 		return {

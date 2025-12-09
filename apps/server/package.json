@@ -1,8 +1,8 @@
 {
 	"name": "server",
 	"scripts": {
-		"dev": "wrangler dev",
-		"deploy": "wrangler deploy --minify"
+		"dev": "bun run --hot src/index.ts",
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@hono/trpc-server": "^0.4.1",
@@ -13,11 +13,8 @@
 		"@recordscratch/types": "workspace:*",
 		"arctic": "^3.7.0",
 		"drizzle-orm": "^0.45.0",
-		"hono": "^4.10.7",
+		"hono": "^4.10.8",
 		"zod": "^4.1.13"
 	},
-	"devDependencies": {
-		"@cloudflare/workers-types": "^4.20251205.0",
-		"wrangler": "^4.53.0"
-	}
+	"packageManager": "bun@1.3.4"
 }
