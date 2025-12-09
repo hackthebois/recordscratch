@@ -1,14 +1,12 @@
 {
 	"name": "@recordscratch/db",
 	"main": "./src/index.ts",
-	"export": {
-		"schema": "./src/schema.ts"
-	},
 	"type": "module",
 	"scripts": {
 		"build": "tsc",
 		"dev": "tsc --watch",
-		"studio": "drizzle-kit studio"
+		"studio": "drizzle-kit studio",
+		"clean": "rm -rf node_modules"
 	},
 	"devDependencies": {
 		"@types/bun": "^1.3.3",

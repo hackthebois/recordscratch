@@ -2,6 +2,9 @@
 	"name": "@recordscratch/api",
 	"type": "module",
 	"main": "./src/index.ts",
+	"scripts": {
+		"clean": "rm -rf node_modules"
+	},
 	"dependencies": {
 		"@recordscratch/auth": "workspace:*",
 		"@recordscratch/db": "workspace:*",

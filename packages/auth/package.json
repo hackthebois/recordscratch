@@ -9,7 +9,8 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsc",
-		"dev": "tsc --watch"
+		"dev": "tsc --watch",
+		"clean": "rm -rf node_modules"
 	},
 	"dependencies": {
 		"@oslojs/crypto": "^1.0.1",

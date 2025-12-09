@@ -2,7 +2,8 @@
 	"name": "server",
 	"scripts": {
 		"dev": "bun run --hot src/index.ts",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"clean": "rm -rf node_modules"
 	},
 	"dependencies": {
 		"@hono/trpc-server": "^0.4.1",
