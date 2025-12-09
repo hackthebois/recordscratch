@@ -46,4 +46,20 @@
 		--input: 240 3.7% 15.9%;
 		--ring: 240 4.9% 83.9%;
 	}
+
+
+}
+
+@layer utilities {
+
+	/* Track */
+	::-webkit-scrollbar-track {
+		background: #000;
+	}
+
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+		background: #888;
+		border-radius: 0px;
+	}
 }

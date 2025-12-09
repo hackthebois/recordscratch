@@ -28,7 +28,6 @@ import "../global.css";
 import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { defaultScreenOptions } from "@/lib/navigation";
-import { api, queryClient } from "@/lib/api";
 
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,

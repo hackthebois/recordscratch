@@ -7,6 +7,7 @@ import superjson from "superjson";
 import * as SecureStore from "expo-secure-store";
 import { catchError } from "./errors";
 import { reloadAppAsync } from "expo";
+import { Platform } from "react-native";
 
 export { type RouterInputs, type RouterOutputs } from "@recordscratch/api";
 
@@ -29,10 +30,12 @@ const trpcClient = createTRPCClient<AppRouter>({
 			transformer: superjson,
 			url: `${env.SITE_URL}/trpc`,
 			async headers() {
-				const sessionId = await SecureStore.getItemAsync("sessionId");
 				const headers = new Map<string, string>();
 				headers.set("x-trpc-source", "expo-react");
-				headers.set("Authorization", `${sessionId}`);
+				if (Platform.OS !== "web") {
+					const sessionId = await SecureStore.getItemAsync("sessionId");
+					headers.set("Authorization", `${sessionId}`);
+				}
 				return Object.fromEntries(headers);
 			},
 			fetch(url, options) {
