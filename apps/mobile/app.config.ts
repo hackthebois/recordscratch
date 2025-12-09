@@ -1,6 +1,6 @@
 import type { ConfigContext, ExpoConfig } from "@expo/config";
 
-const version = "0.0.8";
+const version = "0.1.0";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
 	...config,
@@ -18,6 +18,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		usesAppleSignIn: true,
 		entitlements: {
 			"com.apple.developer.applesignin": ["Default"],
+		},
+		infoPlist: {
+			ITSAppUsesNonExemptEncryption: false,
 		},
 	},
 	newArchEnabled: true,
