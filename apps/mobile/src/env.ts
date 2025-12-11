@@ -12,7 +12,7 @@ let env = {
 if (Platform.OS === "web" && process.env.NODE_ENV !== "development") {
 	env.ENV = "production";
 	env.SCHEME = "https://recordscratch.app";
-	env.SITE_URL = "https://api.recordscratch.app";
+	env.SITE_URL = "https://dev-api.recordscratch.app";
 	env.DEBUG = false;
 }
 
@@ -22,7 +22,7 @@ if (Updates.channel === "production") {
 	env.DEBUG = false;
 } else if (Updates.channel === "staging") {
 	env.ENV = "staging";
-	env.SITE_URL = "https://recordscratch.app"; // No staging site yet
+	env.SITE_URL = "https://dev-api.recordscratch.app"; // No staging site yet
 }
 
 export default env;
