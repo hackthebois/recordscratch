@@ -12,13 +12,13 @@ let env = {
 if (Platform.OS === "web" && process.env.NODE_ENV !== "development") {
 	env.ENV = "production";
 	env.SCHEME = "https://recordscratch.app";
-	env.SITE_URL = "https://prod-api.recordscratch.app";
+	env.SITE_URL = "https://api.recordscratch.app";
 	env.DEBUG = false;
 }
 
 if (Updates.channel === "production") {
 	env.ENV = "production";
-	env.SITE_URL = "https://prod-api.recordscratch.app";
+	env.SITE_URL = "https://api.recordscratch.app";
 	env.DEBUG = false;
 } else if (Updates.channel === "staging") {
 	env.ENV = "staging";

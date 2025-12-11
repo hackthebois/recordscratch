@@ -29,13 +29,10 @@ const AnimatedBar = ({
 		<Animated.View
 			style={{
 				height: heightAnim,
+				backgroundColor: status === "active" ? "#ff8c00" : "#ffb703",
+				opacity: status === "inactive" ? 0.7 : 1.0,
 			}}
-			className={cn(
-				"h-full min-h-0 w-full rounded-t",
-				status === "active" && "bg-[#ff8c00]",
-				status === "normal" && "bg-[#ffb703]",
-				status === "inactive" && "bg-[#ffb703] opacity-70"
-			)}
+			className="h-full min-h-0 w-full rounded-t"
 		/>
 	);
 };
