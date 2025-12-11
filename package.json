@@ -1,40 +1,29 @@
 {
-  "scripts": {
-    "build": "dotenv -- turbo build",
-    "build-cloudflare": "dotenv -- turbo build-cloudflare",
-    "type-check": "tsc",
-    "dev": "dotenv -- turbo dev",
-    "studio": "dotenv -- turbo studio",
-    "clean": "rm -rf node_modules && turbo clean && rm -rf bun.lock",
-    "ngrok": "ngrok http --url=humane-cockatoo-instantly.ngrok-free.app 3000"
-  },
-  "dependencies": {
-    "@react-navigation/elements": "^2.9.1",
-    "@tanstack/react-form": "^1.27.1",
-    "@types/uuid": "^11.0.0",
-    "dotenv": "^17.2.3",
-    "hono": "^4.10.7",
-    "ngrok": "^5.0.0-beta.2",
-    "turbo": "^2.6.3",
-    "typescript": "~5.9.3"
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "name": "root",
-  "devDependencies": {
-    "dotenv-cli": "^11.0.0"
-  },
-  "trustedDependencies": [
-    "@parcel/watcher",
-    "@sentry/cli",
-    "core-js",
-    "es5-ext",
-    "esbuild",
-    "ngrok",
-    "protobufjs",
-    "workerd"
-  ],
-  "packageManager": "^bun@1.3.3"
+	"scripts": {
+		"build": "turbo build",
+		"typecheck": "tsc --noEmit",
+		"dev": "turbo dev",
+		"studio": "turbo studio",
+		"clean": "rm -rf node_modules && turbo clean && rm -rf bun.lock"
+	},
+	"dependencies": {
+		"turbo": "^2.6.3",
+		"typescript": "~5.9.3"
+	},
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
+	"name": "root",
+	"trustedDependencies": [
+		"@parcel/watcher",
+		"@sentry/cli",
+		"core-js",
+		"es5-ext",
+		"esbuild",
+		"ngrok",
+		"protobufjs",
+		"workerd"
+	],
+	"packageManager": "^bun@1.3.4"
 }

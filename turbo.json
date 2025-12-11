@@ -4,19 +4,12 @@
 		"build": {
 			"outputs": ["dist/**"]
 		},
-		"build-cloudflare": {
-			"outputs": ["dist/**"]
-		},
-		"type-check": {},
+		"typecheck": {},
 		"dev": {
 			"persistent": true,
 			"cache": false
 		},
-		"clean": {},
-		"studio": {
-			"persistent": true,
-			"cache": false
-		}
+		"clean": {}
 	},
 	"globalEnv": ["DATABASE_URL"]
 }
