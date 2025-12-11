@@ -5,26 +5,18 @@ import { View } from "react-native";
 import { Text } from "../ui/text";
 import { cn } from "@recordscratch/lib";
 
-const ListResources = ({
-	items,
-	category,
-}: {
-	items: ListItem[];
-	category: Category;
-}) => {
+const ListResources = ({ items, category }: { items: ListItem[]; category: Category }) => {
 	return (
 		<View className="flex h-full w-full flex-col">
 			{items.map((item, index) => (
 				<View
 					key={index}
 					className={cn(
-						"border-muted flex flex-row items-center gap-3 rounded-xl border-b",
-					)}
-				>
+						"flex flex-row items-center gap-3 rounded-xl border-b border-muted"
+					)}>
 					<Text
 						style={{ fontSize: 12, marginLeft: 15 }}
-						className="text-muted-foreground w-6 font-bold"
-					>
+						className="w-6 font-bold text-muted-foreground">
 						{index + 1}
 					</Text>
 					{category === "ARTIST" ? (

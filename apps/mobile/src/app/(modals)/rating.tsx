@@ -2,17 +2,19 @@ import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { Star } from "@/lib/icons/IconsLoader";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { RateForm, RateFormSchema, Resource } from "@recordscratch/types";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { Controller, useForm } from "react-hook-form";
-import { Alert, Platform, Pressable, TextInput, View } from "react-native";
+import { Alert, Pressable, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useForm } from "@tanstack/react-form";
+
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const RatingInput = ({
 	value: rating,
@@ -29,26 +31,16 @@ const RatingInput = ({
 					onPress={() => {
 						onChange(index);
 					}}
-					className="flex flex-row items-center justify-center pt-2"
-				>
+					className="flex flex-row items-center justify-center pt-2">
 					<View className="flex flex-col items-center">
 						{rating ? (
 							index <= rating ? (
-								<Star
-									size={28}
-									className="stroke-star fill-star"
-								/>
+								<Star size={28} className="fill-star stroke-star" />
 							) : (
-								<Star
-									size={28}
-									className="stroke-star fill-background"
-								/>
+								<Star size={28} className="fill-background stroke-star" />
 							)
 						) : (
-							<Star
-								size={28}
-								className="stroke-star fill-background"
-							/>
+							<Star size={28} className="fill-background stroke-star" />
 						)}
 						<Text className="text-muted-foreground">{index}</Text>
 					</View>
@@ -60,6 +52,7 @@ const RatingInput = ({
 
 const RatingModal = () => {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { imageUrl, name, ...resource } = useLocalSearchParams<{
 		parentId: Resource["parentId"];
 		resourceId: Resource["resourceId"];
@@ -67,46 +60,60 @@ const RatingModal = () => {
 		imageUrl?: string;
 		name?: string;
 	}>();
-	const utils = api.useUtils();
 	const userId = useAuth((s) => s.profile!.userId);
 
-	const { data: userRating } = api.ratings.user.get.useQuery(
-		{ resourceId: resource.resourceId, userId },
-		{
-			staleTime: Infinity,
-		},
+	const { data: userRating } = useQuery(
+		api.ratings.user.get.queryOptions(
+			{ resourceId: resource.resourceId, userId },
+			{
+				staleTime: Infinity,
+			}
+		)
 	);
 
-	const { control, handleSubmit, formState } = useForm<RateForm>({
-		resolver: zodResolver(RateFormSchema),
-		defaultValues: { ...resource, ...userRating },
-	});
+	const { mutate: rateMutation } = useMutation(
+		api.ratings.rate.mutationOptions({
+			onSuccess: async () => {
+				await Promise.all([
+					queryClient.invalidateQueries(
+						api.ratings.user.get.queryOptions({
+							resourceId: resource.resourceId,
+							userId,
+						})
+					),
+					queryClient.invalidateQueries(
+						api.ratings.get.queryOptions({
+							resourceId: resource.resourceId,
+							category: resource.category,
+						})
+					),
+					queryClient.invalidateQueries(
+						api.profiles.distribution.queryOptions({
+							userId,
+						})
+					),
+					queryClient.invalidateQueries(
+						api.ratings.feed.queryOptions({
+							filters: {
+								profileId: userId,
+							},
+						})
+					),
+				]);
+				router.back();
+			},
+		})
+	);
 
-	const { mutate: rateMutation } = api.ratings.rate.useMutation({
-		onSuccess: async () => {
-			await utils.ratings.user.get.invalidate({
-				resourceId: resource.resourceId,
-				userId,
-			});
-			await utils.ratings.get.invalidate({
-				resourceId: resource.resourceId,
-				category: resource.category,
-			});
-			await utils.profiles.distribution.invalidate({
-				userId,
-			});
-			await utils.ratings.feed.invalidate({
-				filters: {
-					profileId: userId,
-				},
-			});
-			router.back();
+	const form = useForm({
+		validators: {
+			onSubmit: RateFormSchema,
+		},
+		defaultValues: { ...resource, ...userRating } as RateForm,
+		onSubmit: async ({ value }) => {
+			rateMutation(value);
 		},
 	});
-
-	const onSubmit = async (rate: RateForm) => {
-		rateMutation(rate);
-	};
 
 	const clearRating = () => {
 		if (!userRating) return;
@@ -152,24 +159,22 @@ const RatingModal = () => {
 									? "How would you rate this album?"
 									: "How would you rate this song?"}
 							</Text>
-							<Controller
-								control={control}
+							<form.Field
 								name="rating"
-								render={({ field: { onChange, value } }) => (
+								children={(field) => (
 									<RatingInput
-										value={value ?? 0}
-										onChange={onChange}
+										value={field.state.value ?? 0}
+										onChange={field.handleChange}
 									/>
 								)}
 							/>
-							<Controller
-								control={control}
+							<form.Field
 								name="content"
-								render={({ field: { onChange, value } }) => (
+								children={(field) => (
 									<TextInput
-										onChangeText={onChange}
-										value={value ?? undefined}
-										className="text-foreground border-border min-h-32 rounded-xl border p-4 text-lg"
+										onChangeText={field.handleChange}
+										value={field.state.value ?? undefined}
+										className="min-h-32 rounded-xl border border-border p-4 text-lg text-foreground"
 										placeholder="Add review..."
 										multiline
 										scrollEnabled={false}
@@ -179,11 +184,10 @@ const RatingModal = () => {
 						</View>
 						<View className="mt-4">
 							<Button
-								onPress={handleSubmit(onSubmit)}
-								disabled={!formState.isValid}
+								onPress={form.handleSubmit}
+								disabled={!form.state.isValid}
 								className="mb-4"
-								variant="secondary"
-							>
+								variant="secondary">
 								<Text>Rate</Text>
 							</Button>
 							{userRating &&
@@ -201,20 +205,15 @@ const RatingModal = () => {
 													},
 													{
 														text: "Remove",
-														onPress: () =>
-															clearRating(),
+														onPress: () => clearRating(),
 													},
-												],
+												]
 											)
-										}
-									>
+										}>
 										<Text>Remove rating</Text>
 									</Pressable>
 								) : (
-									<Pressable
-										onPress={clearRating}
-										className="flex items-center"
-									>
+									<Pressable onPress={clearRating} className="flex items-center">
 										<Text>Remove rating</Text>
 									</Pressable>
 								))}

@@ -1,78 +1,78 @@
 import NotFoundScreen from "@/app/+not-found";
 import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
 import { Button } from "@/components/ui/button";
-import { api } from "@/components/Providers";
 import { UpdateList, updateFormSchema } from "@recordscratch/types";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Controller, useForm } from "react-hook-form";
 import { Switch, TextInput, View } from "react-native";
 import { Text } from "@/components/ui/text";
 import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/lib/auth";
+import { useForm } from "@tanstack/react-form";
+
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const SettingsPage = () => {
 	const router = useRouter();
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const listId = id!;
-	const [list] = api.lists.get.useSuspenseQuery({ id: listId });
-
+	const { data: list } = useSuspenseQuery(api.lists.get.queryOptions({ id: listId }));
+	const queryClient = useQueryClient();
 	const [loading, setLoading] = useState(false);
 	const profile = useAuth((s) => s.profile);
 
-	const utils = api.useUtils();
-
-	const form = useForm<UpdateList>({
-		resolver: zodResolver(updateFormSchema),
+	const form = useForm({
+		validators: {
+			onSubmit: updateFormSchema,
+		},
 		defaultValues: {
-			description: list!.description ?? "",
-			name: list!.name,
-			onProfile: list!.onProfile,
+			description: list?.description ?? "",
+			name: list?.name,
+			onProfile: list?.onProfile,
+		} as UpdateList,
+		onSubmit: async ({ value }) => {
+			setLoading(true);
+			updateList({
+				id,
+				...value,
+			});
+			setLoading(false);
+			router.back();
 		},
 	});
 
-	const name = form.watch("name");
+	const { mutate: updateList } = useMutation(
+		api.lists.update.mutationOptions({
+			onSuccess: () =>
+				Promise.all([
+					queryClient.invalidateQueries(api.lists.get.queryOptions({ id })),
+					queryClient.invalidateQueries(
+						api.lists.getUser.queryOptions({ userId: list!.userId })
+					),
+				]),
+		})
+	);
 
-	const { mutate: updateList } = api.lists.update.useMutation({
-		onSuccess: () => {
-			utils.lists.getUser.invalidate({ userId: list!.userId });
-			utils.lists.get.invalidate({ id });
-		},
-	});
-
-	const deleteResource = api.lists.delete.useMutation({
-		onSettled: () => {
-			utils.lists.getUser.invalidate({ userId: list!.userId });
-			utils.lists.get.invalidate({ id: listId });
-			if (list?.onProfile)
-				utils.lists.topLists.invalidate({ userId: list!.userId });
-		},
-	}).mutate;
+	const deleteResource = useMutation(
+		api.lists.delete.mutationOptions({
+			onSettled: () =>
+				Promise.all([
+					queryClient.invalidateQueries(api.lists.get.queryOptions({ id: listId })),
+					queryClient.invalidateQueries(
+						api.lists.getUser.queryOptions({ userId: list!.userId })
+					),
+					list?.onProfile &&
+						queryClient.invalidateQueries(
+							api.lists.topLists.queryOptions({ userId: list!.userId })
+						),
+				]),
+		})
+	).mutate;
 
 	if (!list || profile!.userId != list.userId) {
 		return <NotFoundScreen />;
 	}
-
-	const onSubmit = async ({ name, description, onProfile }: UpdateList) => {
-		setLoading(true);
-		updateList({
-			id,
-			name,
-			description,
-			onProfile,
-		});
-		setLoading(false);
-	};
-
-	const pageValid = () => {
-		return (
-			!form.getFieldState("name").invalid &&
-			name?.length > 0 &&
-			!form.getFieldState("description").invalid &&
-			!form.getFieldState("onProfile").invalid &&
-			!loading
-		);
-	};
 
 	const handleDelete = () => {
 		if (!loading) {
@@ -92,79 +92,63 @@ const SettingsPage = () => {
 					title: `Edit List`,
 				}}
 			/>
-			<Controller
-				control={form.control}
+			<form.Field
 				name="onProfile"
-				render={({ field }) => (
+				children={(field) => (
 					<View className="flex flex-row items-center gap-3">
-						<Text className="mt-2">Show as Top 6?</Text>
-						<Switch {...field} onValueChange={field.onChange} />
-						{form.formState.errors.onProfile && (
-							<Text className="text-destructive mt-2">
-								{form.formState.errors.onProfile.message}
+						<Switch onValueChange={field.handleChange} value={field.state.value} />
+						<Text>Show as Top 6</Text>
+						{field.state.meta.errors.map((error) => (
+							<Text className="mt-2 text-destructive" key={error?.message}>
+								{error?.message}
 							</Text>
-						)}
+						))}
 					</View>
 				)}
 			/>
-
-			<Controller
-				control={form.control}
+			<form.Field
 				name="name"
-				render={({ field }) => (
+				children={(field) => (
 					<View className="gap-2">
 						<Text>Name</Text>
 						<TextInput
-							{...field}
-							placeholder="Name"
-							className="text-foreground border-border self-stretch rounded-md border px-4 py-3"
+							className="self-stretch rounded-md border border-border px-4 py-3 text-foreground"
 							autoComplete="off"
-							onChangeText={field.onChange}
+							onChangeText={field.handleChange}
+							value={field.state.value}
 						/>
-						{form.formState.errors.name && (
-							<Text className="text-destructive mt-2">
-								{form.formState.errors.name.message}
+						{field.state.meta.errors.map((error) => (
+							<Text className="mt-2 text-destructive" key={error?.message}>
+								{error?.message}
 							</Text>
-						)}
+						))}
 					</View>
 				)}
 			/>
-			<Controller
-				control={form.control}
+			<form.Field
 				name="description"
-				render={({ field }) => (
+				children={(field) => (
 					<View className="gap-2">
 						<Text>Description</Text>
 						<TextInput
-							{...field}
-							placeholder="description"
-							className="text-foreground border-border h-40 self-stretch rounded-md border p-4"
+							className="h-40 self-stretch rounded-md border border-border p-4 text-foreground"
 							multiline
 							autoComplete="off"
-							onChangeText={field.onChange}
-							value={field.value ?? ""}
+							onChangeText={field.handleChange}
+							value={field.state.value ?? ""}
 						/>
-						{form.formState.errors.description && (
-							<Text className="text-destructive mt-2">
-								{form.formState.errors.description.message}
+						{field.state.meta.errors.map((error) => (
+							<Text className="mt-2 text-destructive" key={error?.message}>
+								{error?.message}
 							</Text>
-						)}
+						))}
 					</View>
 				)}
 			/>
-			<Button
-				onPress={form.handleSubmit(onSubmit)}
-				disabled={!pageValid()}
-				className="self-stretch"
-				variant="secondary"
-			>
+			<Button onPress={form.handleSubmit} className="self-stretch" variant="secondary">
 				<Text>{loading ? "Loading..." : "Save"}</Text>
 			</Button>
-			<Button
-				disabled={loading}
-				variant="destructive"
-				onPress={handleDelete}
-			>
+			<Button disabled={loading} variant="destructive" onPress={handleDelete}>
 				<Text>Delete List</Text>
 			</Button>
 		</KeyboardAvoidingScrollView>

@@ -9,12 +9,7 @@ import { createStore, useStore } from "zustand";
 import { registerForPushNotificationsAsync } from "./notifications";
 import { Platform } from "react-native";
 
-type Status =
-	| "loading"
-	| "authenticated"
-	| "unauthenticated"
-	| "needsonboarding"
-	| "deactivated";
+type Status = "loading" | "authenticated" | "unauthenticated" | "needsonboarding" | "deactivated";
 
 // Define the context type
 type Auth = {
@@ -66,8 +61,7 @@ export const createAuthStore = () =>
 			let expoPushToken: string | undefined;
 
 			if (Platform.OS !== "web" && !sessionId) {
-				sessionId =
-					(await SecureStore.getItemAsync("sessionId")) ?? undefined;
+				sessionId = (await SecureStore.getItemAsync("sessionId")) ?? undefined;
 				expoPushToken = await registerForPushNotificationsAsync();
 				set({ pushToken: expoPushToken });
 			}
@@ -96,7 +90,7 @@ export const createAuthStore = () =>
 								"user.profile.updatedAt": ["Date"],
 							},
 						},
-					}),
+					})
 				);
 
 			if (parsedData.error || !parsedData.data.user) {

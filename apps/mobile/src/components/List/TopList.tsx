@@ -1,18 +1,18 @@
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@recordscratch/lib";
-import {
-	Category,
-	ListWithResources,
-	UserListItem,
-} from "@recordscratch/types";
-import { Link, Stack, useRouter } from "expo-router";
-import { Dimensions, View, useWindowDimensions } from "react-native";
+import { Category, ListWithResources, UserListItem } from "@recordscratch/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useRouter } from "expo-router";
+import { View, useWindowDimensions } from "react-native";
 import { ArtistItem } from "../Item/ArtistItem";
 import { ResourceItem } from "../Item/ResourceItem";
 import { Button } from "../ui/button";
-import { Trash2 } from "@/lib/icons/IconsLoader";
+import { Eraser, Trash2 } from "@/lib/icons/IconsLoader";
+import { useState } from "react";
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 export const DeleteButton = ({
 	isVisible = false,
@@ -31,8 +31,7 @@ export const DeleteButton = ({
 				className={cn("size-9", className)}
 				onPress={() => onPress(position)}
 				variant="destructive"
-				size="icon"
-			>
+				size="icon">
 				<Trash2 size={18} />
 			</Button>
 		)
@@ -50,8 +49,7 @@ const Resource = ({
 }) => {
 	const props = {
 		direction: "vertical" as any,
-		textClassName:
-			"line-clamp-2 truncate w-38 text-wrap text-center sm:line-clamp-3",
+		textClassName: "line-clamp-2 truncate w-38 text-wrap text-center sm:line-clamp-3",
 		imageWidthAndHeight: top6Width,
 		style: { width: top6Width },
 	};
@@ -84,45 +82,48 @@ export const TopList = ({
 	setEditMode: (edit: boolean) => void;
 }) => {
 	const { id: listId, resources = [] } = list || {};
-	const utils = api.useUtils();
 	const userId = useAuth((s) => s.profile!.userId);
+	const router = useRouter();
+	const queryClient = useQueryClient();
+
 	const screenSize = Math.min(useWindowDimensions().width, 1024);
 	const numColumns = screenSize === 1024 ? 6 : 3;
-	const top6Width =
-		(Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns;
-	const router = useRouter();
+	const top6Width = (Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns;
 
-	const { mutate: deleteResource } = api.lists.resources.delete.useMutation({
-		onSuccess: () => {
-			utils.lists.topLists.invalidate({ userId });
-			utils.lists.getUser.invalidate({ userId });
-		},
-	});
-	const { mutate: createList } = api.lists.create.useMutation({
-		onSuccess: (id) => {
-			utils.lists.topLists.invalidate({ userId });
-			utils.lists.getUser.invalidate({ userId });
+	const { mutate: deleteResource } = useMutation(
+		api.lists.resources.delete.mutationOptions({
+			onSuccess: () =>
+				Promise.all([
+					queryClient.invalidateQueries(api.lists.topLists.queryOptions({ userId })),
+					queryClient.invalidateQueries(api.lists.getUser.queryOptions({ userId })),
+				]),
+		})
+	);
+	const { mutate: createList } = useMutation(
+		api.lists.create.mutationOptions({
+			onSuccess: async (id) => {
+				await Promise.all([
+					queryClient.invalidateQueries(api.lists.topLists.queryOptions({ userId })),
+					queryClient.invalidateQueries(api.lists.getUser.queryOptions({ userId })),
+				]);
 
-			router.push({
-				pathname: "/(modals)/list/searchResource",
-				params: {
-					category: category,
-					listId: id,
-					isTopList: "true",
-				},
-			});
-		},
-	});
+				router.push({
+					pathname: "/(modals)/list/searchResource",
+					params: {
+						category: category,
+						listId: id,
+						isTopList: "true",
+					},
+				});
+			},
+		})
+	);
 	const className = "relative mb-1 h-auto overflow-hidden mt-2";
 	return (
 		<View className="flex flex-row flex-wrap gap-3 px-2">
 			{resources.map((resource) => (
 				<View className={className} key={resource.resourceId}>
-					<Resource
-						resource={resource}
-						category={category}
-						top6Width={top6Width}
-					/>
+					<Resource resource={resource} category={category} top6Width={top6Width} />
 					<DeleteButton
 						isVisible={editMode}
 						position={resource.position}
@@ -140,10 +141,7 @@ export const TopList = ({
 			{resources.length < 6 && isUser && (
 				<Button
 					variant={"outline"}
-					className={cn(
-						className,
-						category === "ARTIST" ? "rounded-full" : "rounded-lg",
-					)}
+					className={cn(className, category === "ARTIST" ? "rounded-full" : "rounded-lg")}
 					style={{
 						width: top6Width,
 						height: top6Width,
@@ -166,13 +164,86 @@ export const TopList = ({
 							});
 
 						setEditMode(false);
-					}}
-				>
+					}}>
 					<Text className="w-20 text-center capitalize">
 						Add {category.toLowerCase()}
 					</Text>
 				</Button>
 			)}
+		</View>
+	);
+};
+
+export const TopListTab = ({
+	tab = "ALBUM",
+	album,
+	song,
+	artist,
+	isUser,
+}: {
+	tab: string;
+	album: ListWithResources | undefined;
+	song: ListWithResources | undefined;
+	artist: ListWithResources | undefined;
+	isUser: boolean;
+}) => {
+	const [value, setValue] = useState(tab);
+	const [editMode, setEditMode] = useState(false);
+
+	return (
+		<View>
+			<Tabs value={value} onValueChange={setValue}>
+				<View className="mt-2">
+					<TabsList className="w-full flex-row">
+						<TabsTrigger value="ALBUM" className="flex-1">
+							<Text>Albums</Text>
+						</TabsTrigger>
+						<TabsTrigger value="SONG" className="flex-1">
+							<Text>Songs</Text>
+						</TabsTrigger>
+						<TabsTrigger value="ARTIST" className="flex-1">
+							<Text>Artists</Text>
+						</TabsTrigger>
+					</TabsList>
+				</View>
+				<TabsContent value="ALBUM">
+					<TopList
+						category="ALBUM"
+						setEditMode={setEditMode}
+						editMode={editMode}
+						list={album}
+						isUser={isUser}
+					/>
+				</TabsContent>
+				<TabsContent value="SONG">
+					<TopList
+						category="SONG"
+						setEditMode={setEditMode}
+						editMode={editMode}
+						list={song}
+						isUser={isUser}
+					/>
+				</TabsContent>
+				<TabsContent value="ARTIST">
+					<TopList
+						category="ARTIST"
+						setEditMode={setEditMode}
+						editMode={editMode}
+						list={artist}
+						isUser={isUser}
+					/>
+				</TabsContent>
+			</Tabs>
+			{isUser ? (
+				<Button
+					className="flex w-full items-center"
+					variant={editMode ? "destructive" : "outline"}
+					onPress={() => {
+						setEditMode(!editMode);
+					}}>
+					<Eraser size={20} className="text-foreground" />
+				</Button>
+			) : null}
 		</View>
 	);
 };

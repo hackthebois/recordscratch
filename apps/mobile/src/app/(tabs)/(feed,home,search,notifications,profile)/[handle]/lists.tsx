@@ -1,24 +1,22 @@
 import NotFoundScreen from "@/app/+not-found";
 import ListOfLists from "@/components/List/ListOfLists";
 import { Button } from "@/components/ui/button";
-import { api } from "@/components/Providers";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { Platform, View, useWindowDimensions } from "react-native";
 import { Text } from "@/components/ui/text";
-import { SquarePlus } from "@/lib/icons/IconsLoader";
+import { Plus } from "@/lib/icons/IconsLoader";
 import { useAuth } from "@/lib/auth";
-import { WebWrapper } from "@/components/WebWrapper";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ListsType } from "@recordscratch/types";
+
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const CreateListButton = ({ isProfile }: { isProfile: boolean }) => {
 	return (
 		isProfile && (
-			<Link asChild href="/(modals)/list/createList">
-				<Button
-					variant="outline"
-					className="my-2 flex flex-row items-center gap-3"
-				>
-					<SquarePlus className="text-foreground" />
+			<Link asChild href="/(modals)/list/create">
+				<Button variant="outline" className="flex-row items-center gap-2">
+					<Plus className="text-foreground" size={18} />
 					<Text>Create A List</Text>
 				</Button>
 			</Link>
@@ -29,21 +27,21 @@ const CreateListButton = ({ isProfile }: { isProfile: boolean }) => {
 const AllListsPage = () => {
 	const { handle } = useLocalSearchParams<{ handle: string }>();
 
-	const [profile] = api.profiles.get.useSuspenseQuery(handle);
+	const { data: profile } = useSuspenseQuery(api.profiles.get.queryOptions(handle));
 	const userProfile = useAuth((s) => s.profile);
 	const isProfile = profile?.userId == userProfile?.userId;
 	const dimensions = useWindowDimensions();
 	const screenSize = Math.min(dimensions.width, 1024);
 	const numColumns = screenSize === 1024 ? 6 : 3;
-	const top6Width =
-		(Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns -
-		1;
+	const top6Width = (Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns - 1;
 
 	if (!profile) return <NotFoundScreen />;
 
-	const [lists] = api.lists.getUser.useSuspenseQuery({
-		userId: profile.userId,
-	});
+	const { data: lists } = useSuspenseQuery(
+		api.lists.getUser.queryOptions({
+			userId: profile.userId,
+		})
+	);
 
 	return (
 		<>
@@ -61,12 +59,11 @@ const AllListsPage = () => {
 					) : (
 						<Text
 							variant="h2"
-							className="pb-4"
-						>{`${isProfile ? "My" : `${profile.handle}'s`} Lists`}</Text>
+							className="pb-4">{`${isProfile ? "My" : `${profile.handle}'s`} Lists`}</Text>
 					)
 				}
 				numColumns={numColumns}
-				lists={lists}
+				lists={lists as ListsType[]}
 				orientation="vertical"
 				size={top6Width}
 			/>

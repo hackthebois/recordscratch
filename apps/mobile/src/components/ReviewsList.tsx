@@ -1,4 +1,3 @@
-import { api } from "@/components/Providers";
 import { useRefreshByUser } from "@/lib/refresh";
 import { RouterInputs } from "@recordscratch/api";
 import { ReviewType } from "@recordscratch/types";
@@ -9,23 +8,21 @@ import { Review } from "./Review";
 import { Text } from "./ui/text";
 import { WebWrapper } from "./WebWrapper";
 
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+
 export const ReviewsList = (
 	input: RouterInputs["ratings"]["feed"] & {
 		ListHeaderComponent?: FlashListProps<ReviewType>["ListHeaderComponent"];
 		emptyText?: string;
-	},
+	}
 ) => {
 	const { ListHeaderComponent, emptyText, ...queryInput } = input;
-	const { data, fetchNextPage, hasNextPage, refetch, isLoading } =
-		api.ratings.feed.useInfiniteQuery(
-			{
-				...queryInput,
-			},
-			{
-				getNextPageParam: (lastPage: { nextCursor: any }) =>
-					lastPage.nextCursor,
-			},
-		);
+	const { data, fetchNextPage, hasNextPage, refetch, isLoading } = useInfiniteQuery(
+		api.ratings.feed.infiniteQueryOptions(queryInput, {
+			getNextPageParam: (lastPage: { nextCursor: any }) => lastPage.nextCursor,
+		})
+	);
 
 	const { refetchByUser, isRefetchingByUser } = useRefreshByUser(refetch);
 
@@ -40,26 +37,21 @@ export const ReviewsList = (
 			keyExtractor={(item, index) => `review-${item.userId}-${index}`}
 			ItemSeparatorComponent={() => (
 				<WebWrapper>
-					<View className="bg-muted h-[1px]" />
+					<View className="h-[1px] bg-muted" />
 				</WebWrapper>
 			)}
 			renderItem={({ item }) => (
-				<Review {...item} feedInput={{ ...queryInput }} />
+				<Review {...item} content={item.content ?? ""} feedInput={queryInput} />
 			)}
 			ListFooterComponent={() =>
-				hasNextPage ? (
-					<ActivityIndicator size="large" color="#ff8500" />
-				) : null
+				hasNextPage ? <ActivityIndicator size="large" color="#ff8500" /> : null
 			}
 			ListEmptyComponent={
 				<View className="px-4 pt-40">
 					{isLoading ? (
 						<ActivityIndicator size="large" color="#ff8500" />
 					) : (
-						<Text
-							variant="h3"
-							className="text-muted-foreground text-center"
-						>
+						<Text variant="h3" className="text-center text-muted-foreground">
 							{emptyText ? emptyText : "No reviews found"}
 						</Text>
 					)}
@@ -74,7 +66,6 @@ export const ReviewsList = (
 			}}
 			refreshing={isRefetchingByUser}
 			onRefresh={refetchByUser}
-			estimatedItemSize={380}
 		/>
 	);
 };

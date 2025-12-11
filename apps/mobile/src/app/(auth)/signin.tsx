@@ -33,18 +33,15 @@ const SignInPage = () => {
 				Browser.dismissAuthSession();
 				const result = await Browser.openAuthSessionAsync(
 					`${env.SITE_URL}/api/auth/${adapter}?expoAddress=${env.SCHEME}`,
-					`${env.SCHEME}`,
+					`${env.SCHEME}`
 				);
 				if (result.type !== "success") return;
 				const url = Linking.parse(result.url);
-				const sessionId =
-					url.queryParams?.session_id?.toString() ?? null;
+				const sessionId = url.queryParams?.session_id?.toString() ?? null;
 				if (!sessionId) return;
 
 				await login(sessionId)
-					.then(({ status }) =>
-						handleLoginRedirect({ status, router }),
-					)
+					.then(({ status }) => handleLoginRedirect({ status, router }))
 					.catch((e) => {
 						catchError(e);
 						reloadAppAsync();
@@ -79,8 +76,7 @@ const SignInPage = () => {
 			<Pressable
 				disabled={isAuthoring}
 				onPress={async () => await handlePressButtonAsync("google")}
-				className="border-border flex-row items-center gap-4 rounded-full border px-8 py-4"
-			>
+				className="flex-row items-center gap-4 rounded-full border border-border px-8 py-4">
 				<Image
 					source={require("../../../assets/google-logo.svg")}
 					style={{
@@ -88,7 +84,7 @@ const SignInPage = () => {
 						height: 30,
 					}}
 				/>
-				<Text className="text-lg font-medium">Sign in with Google</Text>
+				<Text className="font-medium text-lg">Sign in with Google</Text>
 			</Pressable>
 			{Platform.OS === "ios" || Platform.OS === "macos" ? (
 				<Pressable
@@ -97,13 +93,11 @@ const SignInPage = () => {
 						if (isAuthoring) return;
 						try {
 							setIsAuthoring(true);
-							const credential =
-								await AppleAuthentication.signInAsync({
-									requestedScopes: [
-										AppleAuthentication
-											.AppleAuthenticationScope.EMAIL,
-									],
-								});
+							const credential = await AppleAuthentication.signInAsync({
+								requestedScopes: [
+									AppleAuthentication.AppleAuthenticationScope.EMAIL,
+								],
+							});
 							const { identityToken, email } = credential;
 
 							const res = await fetch(
@@ -117,7 +111,7 @@ const SignInPage = () => {
 										idToken: identityToken,
 										email: email ?? undefined,
 									}),
-								},
+								}
 							);
 							const { sessionId } = z
 								.object({
@@ -126,9 +120,7 @@ const SignInPage = () => {
 								.parse(await res.json());
 
 							await login(sessionId)
-								.then(({ status }) =>
-									handleLoginRedirect({ status, router }),
-								)
+								.then(({ status }) => handleLoginRedirect({ status, router }))
 								.catch((e) => {
 									catchError(e);
 									reloadAppAsync();
@@ -136,8 +128,7 @@ const SignInPage = () => {
 						} catch (e) {
 							if (
 								e instanceof Error &&
-								e.message ===
-									"The user canceled the authorization attempt"
+								e.message === "The user canceled the authorization attempt"
 							) {
 								return;
 							}
@@ -146,23 +137,16 @@ const SignInPage = () => {
 							setIsAuthoring(false);
 						}
 					}}
-					className="border-border flex-row items-center gap-4 rounded-full border px-8 py-4"
-				>
+					className="flex-row items-center gap-4 rounded-full border border-border px-8 py-4">
 					<Image
 						key={colorScheme}
-						source={
-							colorScheme === "dark"
-								? appleLogo.dark
-								: appleLogo.light
-						}
+						source={colorScheme === "dark" ? appleLogo.dark : appleLogo.light}
 						style={{
 							width: 26,
 							height: 30,
 						}}
 					/>
-					<Text className="text-lg font-medium">
-						Sign in with Apple
-					</Text>
+					<Text className="font-medium text-lg">Sign in with Apple</Text>
 				</Pressable>
 			) : null}
 		</View>

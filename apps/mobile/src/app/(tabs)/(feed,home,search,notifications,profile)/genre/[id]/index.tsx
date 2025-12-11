@@ -19,7 +19,7 @@ const GenrePage = () => {
 		getQueryOptions({
 			route: "/editorial/{id}",
 			input: { id: genreId },
-		}),
+		})
 	);
 
 	if (!genre) return <NotFoundScreen />;
@@ -30,7 +30,7 @@ const GenrePage = () => {
 			input: {
 				id: genreId,
 			},
-		}),
+		})
 	);
 
 	const { data: releases } = useSuspenseQuery(
@@ -40,7 +40,7 @@ const GenrePage = () => {
 				id: genreId,
 				limit: 20,
 			},
-		}),
+		})
 	);
 
 	return (
@@ -57,18 +57,11 @@ const GenrePage = () => {
 						</Text>
 						<FlashList
 							data={releases.data}
-							renderItem={({ item }) => (
-								<AlbumItem resourceId={String(item.id)} />
-							)}
+							renderItem={({ item }) => <AlbumItem resourceId={String(item.id)} />}
 							horizontal
-							showsHorizontalScrollIndicator={
-								Platform.OS === "web"
-							}
-							estimatedItemSize={160}
+							showsHorizontalScrollIndicator={Platform.OS === "web"}
 							contentContainerClassName="h-64"
-							ItemSeparatorComponent={() => (
-								<View className="w-4" />
-							)}
+							ItemSeparatorComponent={() => <View className="w-4" />}
 						/>
 						<Text variant="h2" className="pb-4 pt-6">
 							Top {genre.name} Artists
@@ -85,14 +78,9 @@ const GenrePage = () => {
 								/>
 							)}
 							horizontal
-							showsHorizontalScrollIndicator={
-								Platform.OS === "web"
-							}
-							estimatedItemSize={115}
+							showsHorizontalScrollIndicator={Platform.OS === "web"}
 							contentContainerClassName="h-48"
-							ItemSeparatorComponent={() => (
-								<View className="w-4" />
-							)}
+							ItemSeparatorComponent={() => <View className="w-4" />}
 						/>
 					</View>
 				</WebWrapper>

@@ -49,15 +49,13 @@ export const ArtistItem = ({
 				className={cn(
 					"flex items-center gap-4",
 					className,
-					direction === "vertical" ? "flex-col" : "flex-row",
-				)}
-			>
+					direction === "vertical" ? "flex-col" : "flex-row"
+				)}>
 				<View
 					style={{
 						width: imageWidthAndHeight,
 						height: imageWidthAndHeight,
-					}}
-				>
+					}}>
 					<Skeleton className="relative h-full w-full rounded-full" />
 				</View>
 				<View className="justify-center gap-1">
@@ -75,24 +73,19 @@ export const ArtistItem = ({
 			onPress={() => {
 				if (onPress) onPress();
 				if (showLink) router.push(`/artists/${String(artist.id)}`);
-			}}
-		>
+			}}>
 			<View
 				className={cn(
 					"flex items-center gap-4",
 					className,
-					direction === "vertical" ? "flex-col" : "flex-row",
+					direction === "vertical" ? "flex-col" : "flex-row"
 				)}
-				style={style}
-			>
+				style={style}>
 				<View className="items-center justify-center overflow-hidden rounded-full">
 					{artistImage ? (
 						<Image
 							source={artistImage}
-							className={cn(
-								"border-2 sm:border-0",
-								imageClassName,
-							)}
+							className={cn("border-2 sm:border-0", imageClassName)}
 							contentFit="cover"
 							style={{
 								width: imageWidthAndHeight,
@@ -100,7 +93,7 @@ export const ArtistItem = ({
 							}}
 						/>
 					) : (
-						<View className="bg-muted h-full"></View>
+						<View className="h-full bg-muted"></View>
 					)}
 				</View>
 				<View className="justify-center gap-1">
@@ -108,17 +101,12 @@ export const ArtistItem = ({
 						className={cn(
 							"flex font-semibold",
 							direction === "vertical" ? "text-center" : "",
-							textClassName,
+							textClassName
 						)}
-						numberOfLines={2}
-					>
+						numberOfLines={2}>
 						{artist.name}
 					</Text>
-					{showType && (
-						<Text className="text-muted-foreground">
-							{"Artist"}
-						</Text>
-					)}
+					{showType && <Text className="text-muted-foreground">{"Artist"}</Text>}
 				</View>
 			</View>
 		</Pressable>

@@ -33,13 +33,13 @@ export default function DeleteAccount() {
 	return (
 		<ScrollView>
 			<WebWrapper>
-				<View className="p-4 gap-6">
+				<View className="gap-6 p-4">
 					<Stack.Screen
 						options={{
 							title: "Delete Account",
 						}}
 					/>
-					<Text className="text-lg font-bold mb-3">
+					<Text className="mb-3 font-bold text-lg">
 						Warning: This action cannot be undone
 					</Text>
 					<View>
@@ -71,8 +71,7 @@ export default function DeleteAccount() {
 						onPress={() => handleDeleteAccount()}
 						disabled={!confirmDelete}
 						variant="destructive"
-						className="w-full"
-					>
+						className="w-full">
 						<Text>Delete Account</Text>
 					</Button>
 				</View>

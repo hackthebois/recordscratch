@@ -2,19 +2,20 @@ import { ArtistItem } from "@/components/Item/ArtistItem";
 import { ResourceItem } from "@/components/Item/ResourceItem";
 import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
 import { WebWrapper } from "@/components/WebWrapper";
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { deezerHelpers } from "@/lib/deezer";
 import { Search } from "@/lib/icons/IconsLoader";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Album, Artist, Track, useDebounce } from "@recordscratch/lib";
 import { FlashList } from "@shopify/flash-list";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, Platform, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
+import { useForm, useStore } from "@tanstack/react-form";
+
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const MusicSearch = ({
 	query,
@@ -118,7 +119,6 @@ const MusicSearch = ({
 			ItemSeparatorComponent={() => <View className="h-3" />}
 			contentContainerClassName="py-4"
 			keyboardShouldPersistTaps="handled"
-			estimatedItemSize={125}
 		/>
 	);
 };
@@ -130,34 +130,47 @@ const RatingModal = () => {
 		listId: string;
 		isTopList: "true" | "false";
 	}>();
-	const utils = api.useUtils();
 	const myProfile = useAuth((s) => s.profile);
+	const queryClient = useQueryClient();
 
-	const { control, watch } = useForm<{ query: string }>({
-		resolver: zodResolver(z.object({ query: z.string().min(1) })),
+	const form = useForm({
+		validators: {
+			onSubmit: z.object({ query: z.string().min(1) }),
+		},
 		defaultValues: { query: "" },
 	});
 
-	const query = watch("query");
+	const query = useStore(form.store, (state) => state.values.query);
 	const debouncedQuery = useDebounce(query, 500);
 
-	const list = api.useUtils().lists.resources.get;
-	const { mutate } = api.lists.resources.create.useMutation({
-		onSettled: async (_data, _error, variables) => {
-			if (variables) {
-				await list.invalidate({
-					listId: variables.listId,
-				});
-				if (isTopList === "true") {
-					utils.lists.topLists.invalidate({
-						userId: myProfile!.userId,
-					});
+	const { mutate } = useMutation(
+		api.lists.resources.create.mutationOptions({
+			onSettled: async (_data, _error, variables) => {
+				if (variables) {
+					await Promise.all([
+						queryClient.invalidateQueries(
+							api.lists.resources.get.queryOptions({
+								userId: myProfile!.userId,
+								listId: variables.listId,
+							})
+						),
+						isTopList === "true" &&
+							queryClient.invalidateQueries(
+								api.lists.topLists.queryOptions({
+									userId: myProfile!.userId,
+								})
+							),
+						queryClient.invalidateQueries(
+							api.lists.getUser.queryOptions({
+								userId: myProfile!.userId,
+							})
+						),
+					]);
+					router.back();
 				}
-				utils.lists.getUser.invalidate({ userId: myProfile!.userId });
-				router.back();
-			}
-		},
-	});
+			},
+		})
+	);
 
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={["left", "right", "top"]}>
@@ -170,36 +183,25 @@ const RatingModal = () => {
 				<WebWrapper>
 					<View className="p-4">
 						<View className="flex-row items-center">
-							<View className="border-border h-14 flex-1 flex-row items-center rounded-xl border pr-4">
-								<Search
-									size={20}
-									className="text-foreground mx-4"
-								/>
-								<Controller
-									control={control}
+							<View className="h-14 flex-1 flex-row items-center rounded-xl border border-border pr-4">
+								<Search size={20} className="mx-4 text-foreground" />
+								<form.Field
 									name="query"
-									render={({
-										field: { onChange, value },
-									}) => (
+									children={(field) => (
 										<TextInput
 											autoComplete="off"
 											placeholder={`Search for a ${category.toLowerCase()}`}
-											value={value}
+											value={field.state.value}
 											cursorColor={"#ffb703"}
 											style={{
 												paddingTop: 0,
-												paddingBottom:
-													Platform.OS === "ios"
-														? 4
-														: 0,
+												paddingBottom: Platform.OS === "ios" ? 4 : 0,
 												textAlignVertical: "center",
 											}}
 											autoCorrect={false}
 											autoFocus
-											className="text-foreground h-full w-full flex-1 p-0 text-xl outline-none"
-											onChangeText={(text) =>
-												onChange(text)
-											}
+											className="h-full w-full flex-1 p-0 text-xl text-foreground outline-none"
+											onChangeText={field.handleChange}
 											keyboardType="default"
 										/>
 									)}
@@ -217,7 +219,7 @@ const RatingModal = () => {
 											? String(resource.album?.id)
 											: "artist" in resource
 												? String(resource.artist?.id)
-												: null,
+												: undefined,
 									listId,
 								});
 							}}

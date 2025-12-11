@@ -53,6 +53,7 @@ import {
 	ReceiptText as LucideReceiptText,
 	ShieldCheck as LucideShieldCheck,
 	Hand as LucideHand,
+	Plus as LucidePlus,
 } from "lucide-react-native";
 import { cssInterop } from "nativewind";
 
@@ -106,7 +107,7 @@ export const Save = iconWithClassName(LucideSave);
 export const Search = iconWithClassName(LucideSearch);
 export const Send = iconWithClassName(LucideSend);
 export const Settings = iconWithClassName(LucideSettings);
-export const Sheild = iconWithClassName(LucideShield);
+export const Shield = iconWithClassName(LucideShield);
 export const Square = iconWithClassName(LucideSquare);
 export const SquareCheck = iconWithClassName(LucideSquareCheck);
 export const SquarePlus = iconWithClassName(LucideSquarePlus);
@@ -124,3 +125,4 @@ export const Frown = iconWithClassName(LuicideFrown);
 export const ReceiptText = iconWithClassName(LucideReceiptText);
 export const ShieldCheck = iconWithClassName(LucideShieldCheck);
 export const Hand = iconWithClassName(LucideHand);
+export const Plus = iconWithClassName(LucidePlus);

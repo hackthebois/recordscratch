@@ -8,7 +8,7 @@ import { RatingInfo } from "@/components/Rating/RatingInfo";
 import SongTable from "@/components/SongTable";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
+import { api } from "@/lib/api";
 import { getQueryOptions } from "@/lib/deezer";
 import { ChevronRight } from "@/lib/icons/IconsLoader";
 import { formatDuration } from "@recordscratch/lib";
@@ -24,16 +24,18 @@ export default function AlbumLayout() {
 	const { albumId } = useLocalSearchParams<{ albumId: string }>();
 	const id = albumId!;
 
-	const [total] = api.ratings.count.useSuspenseQuery({
-		resourceId: id,
-		category: "ALBUM",
-	});
+	const { data: rating } = useSuspenseQuery(
+		api.ratings.get.queryOptions({
+			resourceId: id,
+			category: "ALBUM",
+		})
+	);
 
 	const { data: album } = useSuspenseQuery(
 		getQueryOptions({
 			route: "/album/{id}",
 			input: { id },
-		}),
+		})
 	);
 
 	if (!album) return <NotFoundScreen />;
@@ -55,7 +57,7 @@ export default function AlbumLayout() {
 				id: String(album.artist!.id),
 				limit: 20,
 			},
-		}),
+		})
 	);
 
 	const resource: Resource = {
@@ -76,23 +78,18 @@ export default function AlbumLayout() {
 							cover={album.cover_big}
 							tags={[
 								album.release_date,
-								album.duration
-									? `${formatDuration(album.duration)}`
-									: undefined,
+								album.duration ? `${formatDuration(album.duration)}` : undefined,
 							]}
-							genres={album.genres?.data ?? []}
-						>
+							genres={album.genres?.data ?? []}>
 							<View className="flex flex-row items-center justify-center sm:justify-start">
 								{album.contributors?.map((artist, index) => (
 									<Pressable
+										key={artist?.id}
 										onPress={() => {
-											router.navigate(
-												`/artists/${artist?.id}`,
-											);
+											router.navigate(`/artists/${artist?.id}`);
 										}}
-										style={{ maxWidth: "100%" }}
-									>
-										<Text className="text-muted-foreground text-center sm:text-left">
+										style={{ maxWidth: "100%" }}>
+										<Text className="text-center text-muted-foreground sm:text-left">
 											{`${artist?.name + (album.contributors?.length === index + 1 ? "" : ",  ")}`}
 										</Text>
 									</Pressable>
@@ -116,7 +113,7 @@ export default function AlbumLayout() {
 								<Pressable>
 									<StatBlock
 										title="Ratings"
-										description={String(total)}
+										description={String(rating?.total)}
 									/>
 								</Pressable>
 							</Link>
@@ -132,36 +129,23 @@ export default function AlbumLayout() {
 								href={{
 									pathname: "/artists/[id]/discography",
 									params: { id: String(album.artist?.id) },
-								}}
-							>
+								}}>
 								<View className="flex w-full flex-row items-center pb-4 pt-6">
-									<Text variant="h4">
-										More From {album.artist?.name}
-									</Text>
-									<ChevronRight
-										size={30}
-										className="color-muted-foreground"
-									/>
+									<Text variant="h4">More From {album.artist?.name}</Text>
+									<ChevronRight size={30} className="color-muted-foreground" />
 								</View>
 							</Link>
 							<FlashList
 								data={albums.data}
 								renderItem={({ item }) =>
 									item.id != album.id ? (
-										<AlbumItem
-											resourceId={String(item.id)}
-										/>
+										<AlbumItem resourceId={String(item.id)} />
 									) : null
 								}
 								contentContainerClassName="h-64"
 								horizontal
-								showsHorizontalScrollIndicator={
-									Platform.OS === "web"
-								}
-								estimatedItemSize={160}
-								ItemSeparatorComponent={() => (
-									<View className="w-4" />
-								)}
+								showsHorizontalScrollIndicator={Platform.OS === "web"}
+								ItemSeparatorComponent={() => <View className="w-4" />}
 							/>
 						</View>
 					</WebWrapper>

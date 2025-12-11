@@ -46,4 +46,12 @@
 		--input: 240 3.7% 15.9%;
 		--ring: 240 4.9% 83.9%;
 	}
+
+	::-webkit-scrollbar {
+		@apply bg-background w-2.5 h-2.5;
+	}
+
+	::-webkit-scrollbar-thumb {
+		@apply bg-border rounded-full;
+	}
 }

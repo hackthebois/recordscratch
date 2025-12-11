@@ -24,7 +24,7 @@ const ArtistPage = () => {
 			input: {
 				id: artistId,
 			},
-		}),
+		})
 	);
 	const { data: top } = useSuspenseQuery(
 		getQueryOptions({
@@ -33,7 +33,7 @@ const ArtistPage = () => {
 				id: artistId,
 				limit: 5,
 			},
-		}),
+		})
 	);
 	const { data: albums } = useSuspenseQuery(
 		getQueryOptions({
@@ -42,7 +42,7 @@ const ArtistPage = () => {
 				id: artistId,
 				limit: 20,
 			},
-		}),
+		})
 	);
 	const { data: artists } = useSuspenseQuery(
 		getQueryOptions({
@@ -51,7 +51,7 @@ const ArtistPage = () => {
 				id: artistId,
 				limit: 20,
 			},
-		}),
+		})
 	);
 
 	return (
@@ -64,8 +64,7 @@ const ArtistPage = () => {
 							<Metadata
 								title={artist.name}
 								cover={artist.picture_big ?? ""}
-								type="ARTIST"
-							>
+								type="ARTIST">
 								<View className="flex flex-row items-center justify-center gap-3 sm:justify-start">
 									<RatingInfo
 										resource={{
@@ -87,8 +86,7 @@ const ArtistPage = () => {
 									href={{
 										pathname: "/artists/[id]/top",
 										params: { id: artistId },
-									}}
-								>
+									}}>
 									<View className="flex w-full flex-row items-center pb-4 pt-6">
 										<Text variant="h2">Top Songs</Text>
 										<ChevronRight
@@ -104,8 +102,7 @@ const ArtistPage = () => {
 									href={{
 										pathname: "/artists/[id]/discography",
 										params: { id: artistId },
-									}}
-								>
+									}}>
 									<View className="flex w-full flex-row items-center pb-4 pt-6">
 										<Text variant="h2">Discography</Text>
 										<ChevronRight
@@ -117,30 +114,20 @@ const ArtistPage = () => {
 								<FlashList
 									data={albums.data}
 									renderItem={({ item }) => (
-										<AlbumItem
-											resourceId={String(item.id)}
-										/>
+										<AlbumItem resourceId={String(item.id)} />
 									)}
 									horizontal
-									showsHorizontalScrollIndicator={
-										Platform.OS === "web"
-									}
-									estimatedItemSize={160}
+									showsHorizontalScrollIndicator={Platform.OS === "web"}
 									contentContainerClassName="h-64"
-									ItemSeparatorComponent={() => (
-										<View className="w-4" />
-									)}
+									ItemSeparatorComponent={() => <View className="w-4" />}
 								/>
 								<Link
 									href={{
 										pathname: "/artists/[id]/related",
 										params: { id: artistId },
-									}}
-								>
+									}}>
 									<View className="flex w-full flex-row items-center pb-4 pt-6">
-										<Text variant="h2">
-											Related Artists
-										</Text>
+										<Text variant="h2">Related Artists</Text>
 										<ChevronRight
 											size={30}
 											className="color-muted-foreground"
@@ -160,14 +147,9 @@ const ArtistPage = () => {
 										/>
 									)}
 									horizontal
-									showsHorizontalScrollIndicator={
-										Platform.OS === "web"
-									}
+									showsHorizontalScrollIndicator={Platform.OS === "web"}
 									contentContainerClassName="h-48"
-									ItemSeparatorComponent={() => (
-										<View className="w-4" />
-									)}
-									estimatedItemSize={105}
+									ItemSeparatorComponent={() => <View className="w-4" />}
 								/>
 							</View>
 						</View>

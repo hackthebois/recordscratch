@@ -1,16 +1,11 @@
 import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
-import { TopList } from "@/components/List/TopList";
 import { UserAvatar } from "@/components/UserAvatar";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
-import { AtSign, Eraser } from "@/lib/icons/IconsLoader";
+import { AtSign } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useDebounce } from "@recordscratch/lib";
 import {
 	ListWithResources,
 	UpdateProfileForm,
@@ -18,100 +13,32 @@ import {
 } from "@recordscratch/types";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useState } from "react";
 import { TextInput, View } from "react-native";
+import { useForm, useStore } from "@tanstack/react-form";
+import { TopListTab } from "@/components/List/TopList";
 
-const TopListTab = ({
-	tab = "ALBUM",
-	album,
-	song,
-	artist,
-}: {
-	tab: string;
-	album: ListWithResources | undefined;
-	song: ListWithResources | undefined;
-	artist: ListWithResources | undefined;
-}) => {
-	const [value, setValue] = useState(tab);
-	const [editMode, setEditMode] = useState(false);
-
-	return (
-		<View>
-			<Text variant="h4" className="text-center">
-				My Top 6
-			</Text>
-
-			<Tabs value={value} onValueChange={setValue}>
-				<View className="mt-2">
-					<TabsList className="w-full flex-row">
-						<TabsTrigger value="ALBUM" className="flex-1">
-							<Text>Albums</Text>
-						</TabsTrigger>
-						<TabsTrigger value="SONG" className="flex-1">
-							<Text>Songs</Text>
-						</TabsTrigger>
-						<TabsTrigger value="ARTIST" className="flex-1">
-							<Text>Artists</Text>
-						</TabsTrigger>
-					</TabsList>
-				</View>
-				<TabsContent value="ALBUM">
-					<TopList
-						category="ALBUM"
-						setEditMode={setEditMode}
-						editMode={editMode}
-						list={album}
-						isUser={true}
-					/>
-				</TabsContent>
-				<TabsContent value="SONG">
-					<TopList
-						category="SONG"
-						setEditMode={setEditMode}
-						editMode={editMode}
-						list={song}
-						isUser={true}
-					/>
-				</TabsContent>
-				<TabsContent value="ARTIST">
-					<TopList
-						category="ARTIST"
-						setEditMode={setEditMode}
-						editMode={editMode}
-						list={artist}
-						isUser={true}
-					/>
-				</TabsContent>
-			</Tabs>
-
-			<Button
-				className="flex w-full items-center"
-				variant={editMode ? "destructive" : "outline"}
-				onPress={() => {
-					setEditMode(!editMode);
-				}}
-			>
-				<Eraser size={20} className="text-foreground" />
-			</Button>
-			<View className="h-28"></View>
-		</View>
-	);
-};
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const EditProfile = () => {
 	const { tab } = useLocalSearchParams<{ tab: string }>();
+	const queryClient = useQueryClient();
 	const profile = useAuth((s) => s.profile!);
-	const [topLists] = api.lists.topLists.useSuspenseQuery({
-		userId: profile!.userId,
-	});
+	const { data: topLists } = useSuspenseQuery(
+		api.lists.topLists.queryOptions({
+			userId: profile!.userId,
+		})
+	);
 
 	const setProfile = useAuth((s) => s.setProfile);
-	const utils = api.useUtils();
 	const [loading, setLoading] = useState(false);
 
-	const form = useForm<UpdateProfileForm>({
-		resolver: zodResolver(UpdateProfileFormSchema),
+	const form = useForm({
+		validators: {
+			onSubmit: UpdateProfileFormSchema,
+		},
 		defaultValues: {
 			bio: profile.bio ?? undefined,
 			image: {
@@ -121,104 +48,67 @@ const EditProfile = () => {
 			},
 			name: profile.name,
 			handle: profile.handle,
-		},
-	});
+		} as UpdateProfileForm,
+		onSubmit: async ({ value }) => {
+			setLoading(true);
+			if (value.image) {
+				const url = await getSignedURL({
+					type: value.image.type,
+					size: value.image.size,
+				});
 
-	const { mutate: updateProfile } = api.profiles.update.useMutation({
-		onSuccess: async (profile, { handle }) => {
-			await utils.profiles.me.invalidate();
-			await utils.profiles.get.invalidate(handle);
-			await setProfile(profile);
-			await form.reset({
-				bio: profile.bio ?? undefined,
-				image: {
-					uri: getImageUrl(profile),
-					type: "image/jpeg",
-					size: 0,
-				},
-				name: profile.name,
-				handle: handle,
-			});
-		},
-	});
-	const { mutateAsync: getSignedURL } =
-		api.profiles.getSignedURL.useMutation();
+				const response = await fetch(value.image.uri);
+				const blob = await response.blob();
 
-	const image = form.watch("image");
-	const handle = form.watch("handle");
-	const name = form.watch("name");
-
-	const debouncedHandle = useDebounce(handle, 500);
-	const { data: handleExists } = api.profiles.handleExists.useQuery(
-		debouncedHandle,
-		{
-			enabled:
-				debouncedHandle.length > 0 &&
-				debouncedHandle !== profile.handle,
-		},
-	);
-
-	useEffect(() => {
-		if (handleExists) {
-			form.setError("handle", {
-				type: "validate",
-				message: "Handle already exists",
-			});
-		} else {
-			if (
-				form.formState.errors.handle?.message ===
-				"Handle already exists"
-			) {
-				form.clearErrors("handle");
+				await fetch(url, {
+					method: "PUT",
+					body: blob,
+					headers: {
+						"Content-Type": value.image.type,
+					},
+				});
 			}
-		}
-	}, [form, handleExists]);
 
-	const onSubmit = async (data: UpdateProfileForm) => {
-		await setLoading(true);
-		if (data.image) {
-			const url = await getSignedURL({
-				type: data.image.type,
-				size: data.image.size,
+			updateProfile({
+				bio: value.bio ?? null,
+				name: value.name,
+				handle: value.handle,
 			});
+			setLoading(false);
+		},
+	});
 
-			const response = await fetch(data.image.uri);
-			const blob = await response.blob();
+	const { mutate: updateProfile } = useMutation(
+		api.profiles.update.mutationOptions({
+			onSuccess: async (profile, { handle }) => {
+				await Promise.all([
+					queryClient.invalidateQueries(api.profiles.me.queryOptions()),
+					queryClient.invalidateQueries(api.profiles.get.queryOptions(handle)),
+				]);
+				setProfile(profile);
+				form.reset({
+					bio: profile.bio ?? undefined,
+					image: {
+						uri: getImageUrl(profile),
+						type: "image/jpeg",
+						size: 0,
+					},
+					name: profile.name,
+					handle: handle,
+				});
+			},
+		})
+	);
+	const { mutateAsync: getSignedURL } = useMutation(api.profiles.getSignedURL.mutationOptions());
 
-			await fetch(url, {
-				method: "PUT",
-				body: blob,
-				headers: {
-					"Content-Type": data.image.type,
-				},
-			});
-		}
+	const image = useStore(form.store, (state) => state.values.image);
 
-		await updateProfile({
-			bio: data.bio ?? null,
-			name: data.name,
-			handle: data.handle,
-			imageUrl: null,
-		});
-		await setLoading(false);
-	};
-
-	const pageValid = () => {
-		return (
-			!form.getFieldState("name").invalid &&
-			name?.length > 0 &&
-			!form.getFieldState("handle").invalid &&
-			handle?.length > 0 &&
-			!form.getFieldState("bio").invalid &&
-			!form.getFieldState("image").invalid &&
-			!loading
-		);
-	};
+	const handleExists = useMutation(api.profiles.handleExists.mutationOptions());
 
 	return (
 		<KeyboardAvoidingScrollView>
 			<WebWrapper>
-				<View className="gap-3 p-4">
+				<View className="gap-4 p-4">
 					<Stack.Screen
 						options={{
 							title: "Edit Profile",
@@ -226,23 +116,19 @@ const EditProfile = () => {
 					/>
 					<View className="flex flex-row items-center gap-4">
 						<UserAvatar imageUrl={image?.uri} size={100} />
-						<Controller
-							control={form.control}
+						<form.Field
 							name="image"
-							render={({ field: { onChange } }) => (
+							children={(field) => (
 								<View>
 									<Button
 										variant="secondary"
 										onPress={async () => {
-											let result =
-												await ImagePicker.launchImageLibraryAsync(
-													{
-														mediaTypes: ["images"],
-														allowsEditing: true,
-														aspect: [1, 1],
-														quality: 1,
-													},
-												);
+											let result = await ImagePicker.launchImageLibraryAsync({
+												mediaTypes: ["images"],
+												allowsEditing: true,
+												aspect: [1, 1],
+												quality: 1,
+											});
 
 											if (
 												!result.canceled &&
@@ -250,116 +136,120 @@ const EditProfile = () => {
 												result.assets.length > 0
 											) {
 												const asset = result.assets[0]!;
-												onChange({
+												field.handleChange({
 													uri: asset.uri,
-													type:
-														asset.type ??
-														"image/jpeg",
-													size: asset.fileSize,
+													type: asset.type ?? "image/jpeg",
+													size: asset.fileSize!,
 												});
 											}
-										}}
-									>
+										}}>
 										<Text>Pick an image</Text>
 									</Button>
-									{form.formState.errors.image && (
-										<Text className="text-destructive mt-2">
-											{
-												form.formState.errors.image
-													.message
-											}
+									{field.state.meta.errors.map((error) => (
+										<Text
+											className="mt-2 text-destructive"
+											key={error?.message}>
+											{error?.message}
 										</Text>
-									)}
+									))}
 								</View>
 							)}
 						/>
 					</View>
-					<Controller
-						control={form.control}
+					<form.Field
 						name="name"
-						render={({ field }) => (
+						children={(field) => (
 							<View className="gap-2">
 								<Text>Name</Text>
 								<TextInput
-									{...field}
 									placeholder="Name"
-									className="text-foreground border-border self-stretch rounded-md border px-4 py-3"
+									className="self-stretch rounded-md border border-border px-4 py-3 text-foreground"
 									autoComplete="off"
-									onChangeText={field.onChange}
+									onChangeText={field.handleChange}
+									value={field.state.value}
 								/>
-								{form.formState.errors.name && (
-									<Text className="text-destructive mt-2">
-										{form.formState.errors.name.message}
+								{field.state.meta.errors.map((error) => (
+									<Text className="mt-2 text-destructive" key={error?.message}>
+										{error?.message}
 									</Text>
-								)}
+								))}
 							</View>
 						)}
 					/>
-					<Controller
-						control={form.control}
+					<form.Field
 						name="handle"
-						render={({ field }) => (
+						validators={{
+							onChangeAsyncDebounceMs: 500,
+							onChangeAsync: async ({ value }) => {
+								if (value.length === 0) return;
+								const exists = await handleExists.mutateAsync(value);
+								if (exists) {
+									return { message: "Handle already exists" };
+								}
+							},
+						}}
+						children={(field) => (
 							<View className="gap-2">
 								<Text>Handle</Text>
 								<View>
 									<AtSign
-										className="text-muted-foreground absolute left-3 top-[11px] text-lg"
+										className="absolute left-3 top-[11px] text-lg text-muted-foreground"
 										size={16}
 									/>
 									<TextInput
-										{...field}
 										placeholder="Handle"
-										className="text-foreground border-border self-stretch rounded-md border py-3 pl-9 pr-4"
+										className="self-stretch rounded-md border border-border py-3 pl-9 pr-4 text-foreground"
 										autoComplete="off"
-										onChangeText={field.onChange}
+										onChangeText={field.handleChange}
+										value={field.state.value}
 									/>
-									{form.formState.errors.handle && (
-										<Text className="text-destructive mt-2">
-											{
-												form.formState.errors.handle
-													.message
-											}
+									{field.state.meta.errors.map((error) => (
+										<Text
+											className="mt-2 text-destructive"
+											key={error?.message}>
+											{error?.message}
 										</Text>
-									)}
+									))}
 								</View>
 							</View>
 						)}
 					/>
-					<Controller
-						control={form.control}
+					<form.Field
 						name="bio"
-						render={({ field }) => (
+						children={(field) => (
 							<View className="gap-2">
 								<Text>Bio</Text>
 								<TextInput
-									{...field}
 									placeholder="Bio"
-									className="text-foreground border-border h-40 self-stretch rounded-md border p-4"
+									className="h-40 self-stretch rounded-md border border-border p-4 text-foreground"
 									multiline
 									autoComplete="off"
-									onChangeText={field.onChange}
+									onChangeText={field.handleChange}
+									value={field.state.value}
 								/>
-								{form.formState.errors.bio && (
-									<Text className="text-destructive mt-2">
-										{form.formState.errors.bio.message}
+								{field.state.meta.errors.map((error) => (
+									<Text className="mt-2 text-destructive" key={error?.message}>
+										{error?.message}
 									</Text>
-								)}
+								))}
 							</View>
 						)}
 					/>
 					<Button
-						onPress={form.handleSubmit(onSubmit)}
-						disabled={!pageValid()}
+						onPress={form.handleSubmit}
 						className="self-stretch"
-						variant="secondary"
-					>
+						variant="secondary">
 						{loading ? <Text>Loading...</Text> : <Text>Save</Text>}
 					</Button>
+					<Text variant="h4" className="text-center">
+						My Top 6
+					</Text>
 					<TopListTab
+						isUser
 						tab={tab}
-						album={topLists.album}
-						song={topLists.song}
-						artist={topLists.artist}
+						album={topLists.album as ListWithResources | undefined}
+						song={topLists.song as ListWithResources | undefined}
+						artist={topLists.artist as ListWithResources | undefined}
 					/>
 				</View>
 			</WebWrapper>

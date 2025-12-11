@@ -1,12 +1,15 @@
-import { api } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { View, useWindowDimensions } from "react-native";
 import ListOfList from "@/components/List/ListOfLists";
 import { Link, useLocalSearchParams } from "expo-router";
-import { Category } from "@recordscratch/types";
+import { Category, ListsType } from "@recordscratch/types";
 import { Button } from "@/components/ui/button";
 import { SquarePlus } from "@/lib/icons/IconsLoader";
 import { Text } from "@/components/ui/text";
+
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const AddToListModal = () => {
 	const { resourceId, parentId, category } = useLocalSearchParams<{
@@ -15,33 +18,39 @@ const AddToListModal = () => {
 		category: string;
 	}>();
 	if (!resourceId || !(category as Category)) return null;
+	const queryClient = useQueryClient();
 	const profile = useAuth((s) => s.profile);
-	const [lists] = api.lists.getUser.useSuspenseQuery({
-		userId: profile!.userId,
-		category: category as Category,
-	});
+	const { data: lists } = useSuspenseQuery(
+		api.lists.getUser.queryOptions({
+			userId: profile!.userId,
+			category: category as Category,
+		})
+	);
 
-	const utils = api.useUtils();
-	const { mutate } = api.lists.resources.create.useMutation({
-		onSettled: (_data, _error, variables) => {
-			if (variables) {
-				utils.lists.resources.get.invalidate({
-					listId: variables.listId,
-				});
-			}
-			utils.lists.getUser.invalidate({
-				userId: profile!.userId,
-				category: category as Category,
-			});
-		},
-	});
+	const { mutate } = useMutation(
+		api.lists.resources.create.mutationOptions({
+			onSettled: (_data, _error, variables) =>
+				Promise.all([
+					variables &&
+						queryClient.invalidateQueries(
+							api.lists.resources.get.queryOptions({
+								userId: profile!.userId,
+								listId: variables.listId,
+							})
+						),
+					queryClient.invalidateQueries(
+						api.lists.getUser.queryOptions({ userId: profile!.userId })
+					),
+				]),
+		})
+	);
 
 	const dimensions = useWindowDimensions();
 
 	return (
 		<View className="flex flex-1 pb-20">
 			<ListOfList
-				lists={lists}
+				lists={lists as ListsType[]}
 				orientation="vertical"
 				onPress={(listId: string) => {
 					mutate({
@@ -57,10 +66,9 @@ const AddToListModal = () => {
 						<Link
 							asChild
 							href={{
-								pathname: "/(modals)/list/createList",
+								pathname: "/(modals)/list/create",
 								params: { categoryProp: category },
-							}}
-						>
+							}}>
 							<Button
 								variant="outline"
 								className="flex flex-col items-center justify-center gap-1 rounded-2xl"
@@ -69,20 +77,14 @@ const AddToListModal = () => {
 									height: dimensions.width / 3.25,
 									maxHeight: dimensions.width / 3.25,
 									maxWidth: dimensions.width / 3.25,
-								}}
-							>
+								}}>
 								<SquarePlus className="mt-6" />
-								<Text className="text-center">
-									Create a List
-								</Text>
+								<Text className="text-center">Create a List</Text>
 							</Button>
 						</Link>
 						{!lists?.length && (
 							<View className="mt-40 w-full items-center justify-center">
-								<Text
-									variant="h3"
-									className="text-muted-foreground capitalize"
-								>
+								<Text variant="h3" className="capitalize text-muted-foreground">
 									Make sure to create a list first
 								</Text>
 							</View>

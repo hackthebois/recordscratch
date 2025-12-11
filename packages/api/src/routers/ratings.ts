@@ -1,19 +1,17 @@
 import {
 	comments,
 	followers,
-	getDB,
 	likes,
 	profile,
 	ratings,
+	type DB,
 } from "@recordscratch/db";
 import {
 	DeactivateRatingSchema,
 	FeedFiltersSchema,
 	RateFormSchema,
 	ResourceSchema,
-	ReviewFormSchema,
 } from "@recordscratch/types";
-import dayjs from "dayjs";
 import {
 	and,
 	avg,
@@ -40,10 +38,7 @@ const RatingAlgorithm = (countWeight: number) => {
 	return sql`ROUND(AVG(${ratings.rating}), 1) + ${countWeight} * LN(COUNT(${ratings.rating}))`;
 };
 
-const getFollowingWhere = async (
-	db: ReturnType<typeof getDB>,
-	userId: string,
-) => {
+const getFollowingWhere = async (db: DB, userId: string) => {
 	const following = await db.query.followers.findMany({
 		where: eq(followers.userId, userId),
 	});
@@ -106,45 +101,8 @@ export const ratingsRouter = router({
 				)
 				.groupBy(ratings.resourceId);
 		}),
-	count: publicProcedure
-		.input(
-			ResourceSchema.pick({ resourceId: true, category: true }).extend({
-				onlyReviews: z.boolean().optional(),
-			}),
-		)
-		.query(
-			async ({
-				ctx: { db },
-				input: { resourceId, category, onlyReviews },
-			}) => {
-				const total = await db
-					.select({ total: count(ratings.rating) })
-					.from(ratings)
-					.where(
-						and(
-							eq(ratings.resourceId, resourceId),
-							eq(ratings.category, category),
-							eq(ratings.deactivated, false),
-							onlyReviews
-								? isNotNull(ratings.content)
-								: undefined,
-						),
-					)
-					.then(([result]) => result.total);
-				return total;
-				// const total = await db.query.ratings.findMany({
-				// 	where: and(
-				// 		eq(ratings.resourceId, resourceId),
-				// 		eq(ratings.category, category),
-				// 		eq(ratings.deactivated, false),
-				// 		onlyReviews ? isNotNull(ratings.content) : undefined,
-				// 	),
-				// });
-				// return total.length;
-			},
-		),
-	trending: publicProcedure.query(async ({ ctx: { db } }) => {
-		return await db
+	charts: publicProcedure.query(async ({ ctx: { db } }) => {
+		const trendingAlbums = await db
 			.select({
 				total: count(ratings.rating),
 				resourceId: ratings.resourceId,
@@ -160,19 +118,14 @@ export const ratingsRouter = router({
 			.where(
 				and(
 					eq(ratings.category, "ALBUM"),
-					// gt(
-					// 	ratings.createdAt,
-					// 	new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
-					// ),
 					eq(ratings.deactivated, false),
 				),
 			)
 			.groupBy(ratings.resourceId)
 			.orderBy(({ total }) => desc(total))
 			.limit(20);
-	}),
-	top: publicProcedure.query(async ({ ctx: { db } }) => {
-		const data = await db
+
+		const topAlbums = await db
 			.select({
 				total: count(ratings.rating),
 				average: avg(ratings.rating),
@@ -197,10 +150,8 @@ export const ratingsRouter = router({
 			.orderBy(({ sortValue }) => desc(sortValue))
 			.having(({ total }) => gt(total, 5))
 			.limit(20);
-		return data;
-	}),
-	popular: publicProcedure.query(async ({ ctx: { db } }) => {
-		return await db
+
+		const popularAlbums = await db
 			.select({
 				total: count(ratings.rating),
 				resourceId: ratings.resourceId,
@@ -222,9 +173,8 @@ export const ratingsRouter = router({
 			.groupBy(ratings.resourceId)
 			.orderBy(({ total }) => desc(total))
 			.limit(20);
-	}),
-	topArtists: publicProcedure.query(async ({ ctx: { db } }) => {
-		const rating = await db
+
+		const topArtists = await db
 			.select({
 				total: count(ratings.rating),
 				average: avg(ratings.rating),
@@ -249,7 +199,30 @@ export const ratingsRouter = router({
 			.orderBy(({ sortValue }) => desc(sortValue))
 			.having(({ total }) => gt(total, 5))
 			.limit(20);
-		return rating;
+
+		const leaderboard = await db
+			.select({
+				total: count(ratings.rating),
+				profile,
+			})
+			.from(ratings)
+			.leftJoin(profile, eq(ratings.userId, profile.userId))
+			.where(eq(ratings.deactivated, false))
+			.groupBy(profile.userId)
+			.orderBy(({ total }) => desc(total))
+			.limit(20);
+
+		return {
+			albums: {
+				trending: trendingAlbums.map(({ resourceId }) => resourceId),
+				top: topAlbums.map(({ resourceId }) => resourceId),
+				popular: popularAlbums.map(({ resourceId }) => resourceId),
+			},
+			artists: {
+				top: topArtists.map(({ artistId }) => artistId),
+			},
+			leaderboard,
+		};
 	}),
 	feed: publicProcedure
 		.input(
@@ -431,84 +404,6 @@ export const ratingsRouter = router({
 				});
 				return userRating ? userRating : null;
 			}),
-		streak: publicProcedure
-			.input(z.object({ userId: z.string() }))
-			.query(async ({ input: { userId }, ctx: { db } }) => {
-				const ratingsList = await db.query.ratings.findMany({
-					where: and(
-						eq(ratings.userId, userId),
-						isNotNull(ratings.createdAt),
-					),
-					orderBy: desc(ratings.createdAt),
-				});
-
-				if (ratingsList.length === 0) {
-					return 0;
-				}
-
-				if (
-					dayjs(dayjs().format("YYYY-MM-DD")).diff(
-						dayjs(ratingsList[0].createdAt).format("YYYY-MM-DD"),
-						"day",
-					) > 1
-				) {
-					return 0;
-				}
-
-				// USE FOR RATING LOG
-				const groupedDays = new Map<string, number>();
-
-				ratingsList.forEach((rating) => {
-					const date = dayjs(rating.createdAt).format("YYYY-MM-DD");
-					if (groupedDays.has(date)) {
-						const current = groupedDays.get(date);
-						groupedDays.set(date, current ? current + 1 : 1);
-					} else {
-						groupedDays.set(date, 1);
-					}
-				});
-
-				const days = Array.from(groupedDays.keys());
-
-				let streak = 1;
-
-				for (let i = 0; i < days.length; i++) {
-					if (i === days.length - 1) {
-						streak++;
-						break;
-					}
-
-					const current = dayjs(days[i]);
-					const next = dayjs(days[i + 1]);
-
-					if (current.diff(next, "day") <= 2) {
-						streak++;
-					} else {
-						break;
-					}
-				}
-
-				return streak;
-			}),
-		total: publicProcedure
-			.input(z.object({ userId: z.string() }))
-			.query(async ({ input: { userId }, ctx: { db } }) => {
-				const total = await db.query.ratings.findMany({
-					where: and(
-						eq(ratings.userId, userId),
-						eq(ratings.deactivated, false),
-					),
-				});
-				return total.length;
-			}),
-		totalLikes: publicProcedure
-			.input(z.object({ userId: z.string() }))
-			.query(async ({ input: { userId }, ctx: { db } }) => {
-				const total = await db.query.likes.findMany({
-					where: and(eq(likes.authorId, userId)),
-				});
-				return total.length;
-			}),
 		getList: protectedProcedure
 			.input(
 				z.object({
@@ -580,26 +475,6 @@ export const ratingsRouter = router({
 				],
 			]);
 		}),
-	review: protectedProcedure
-		.input(ReviewFormSchema)
-		.mutation(async ({ ctx: { db, userId, ph }, input }) => {
-			await db
-				.insert(ratings)
-				.values({ ...input, userId })
-				.onConflictDoUpdate({
-					target: [ratings.resourceId, ratings.userId],
-					set: { ...input, userId },
-				});
-			await posthog(ph, [
-				[
-					"review",
-					{
-						distinctId: userId,
-						properties: input,
-					},
-				],
-			]);
-		}),
 	deactivate: moderatorProcedure
 		.input(DeactivateRatingSchema)
 		.mutation(async ({ ctx: { db }, input: { resourceId, userId } }) => {
@@ -615,17 +490,4 @@ export const ratingsRouter = router({
 					),
 				);
 		}),
-	leaderboard: publicProcedure.query(async ({ ctx: { db } }) => {
-		return await db
-			.select({
-				total: count(ratings.rating),
-				profile,
-			})
-			.from(ratings)
-			.leftJoin(profile, eq(ratings.userId, profile.userId))
-			.where(eq(ratings.deactivated, false))
-			.groupBy(profile.userId)
-			.orderBy(({ total }) => desc(total))
-			.limit(20);
-	}),
 });

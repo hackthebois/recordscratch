@@ -3,21 +3,21 @@ import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
 import { Pill } from "@/components/ui/pill";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
+import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { AtSign } from "@/lib/icons/IconsLoader";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useDebounce } from "@recordscratch/lib";
 import type { Onboard } from "@recordscratch/types";
-import { OnboardSchema, handleRegex } from "@recordscratch/types";
+import { OnboardSchema, invalidHandleRegex } from "@recordscratch/types";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, TextInput, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useForm, useStore } from "@tanstack/react-form";
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const SlideWrapper = ({
 	page,
@@ -32,8 +32,7 @@ const SlideWrapper = ({
 		<Animated.View
 			className={"w-full flex-col items-center justify-center gap-4 p-4"}
 			entering={FadeIn}
-			exiting={FadeOut}
-		>
+			exiting={FadeOut}>
 			{page !== 0 ? <Pill>STEP {page}/3</Pill> : null}
 			{title ? (
 				<Text className="my-8 text-center" variant="h1">
@@ -45,26 +44,97 @@ const SlideWrapper = ({
 	);
 };
 
-const onInvalid = (errors: unknown) => console.error(errors);
+const pages = [
+	{
+		fields: [],
+	},
+	{
+		fields: ["name", "handle"],
+	},
+	{
+		fields: ["bio"],
+	},
+	{
+		fields: ["image"],
+	},
+] as const;
 
 const OnboardPage = () => {
-	const utils = api.useUtils();
 	const [page, setPage] = useState(0);
-	const [loading, setLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const status = useAuth((s) => s.status);
+	const queryClient = useQueryClient();
 	const setStatus = useAuth((s) => s.setStatus);
 	const setProfile = useAuth((s) => s.setProfile);
-	const form = useForm<Onboard>({
-		resolver: zodResolver(OnboardSchema),
-		mode: "onChange",
+
+	const { mutateAsync: createProfile } = useMutation(
+		api.profiles.create.mutationOptions({
+			onSuccess: (profile) => {
+				queryClient.invalidateQueries(api.profiles.me.queryOptions());
+				setProfile(profile);
+				router.navigate("/(tabs)");
+				setStatus("authenticated");
+			},
+		})
+	);
+	const { mutateAsync: getSignedURL } = useMutation(api.profiles.getSignedURL.mutationOptions());
+
+	const form = useForm({
+		validators: { onSubmit: OnboardSchema },
 		defaultValues: {
 			handle: "",
 			name: "",
 			bio: "",
 			image: undefined,
+		} as Onboard,
+		onSubmit: async ({ value }) => {
+			setIsLoading(true);
+			if (value.image) {
+				const url = await getSignedURL({
+					type: value.image.type,
+					size: value.image.size,
+				});
+
+				const response = await fetch(value.image.uri);
+				const blob = await response.blob();
+
+				await fetch(url, {
+					credentials: "include",
+					method: "PUT",
+					body: blob,
+					headers: {
+						"Content-Type": value.image.type,
+					},
+				});
+			}
+
+			await createProfile({
+				name: value.name,
+				handle: value.handle,
+				bio: value.bio ?? null,
+			});
 		},
 	});
-	const { name, image, handle, bio } = form.watch();
+	const { name, image, bio } = useStore(form.store, (state) => state.values);
+
+	const handlePristine = useStore(form.store, (state) => state.fieldMeta.handle?.isPristine);
+
+	const pageValid = useStore(form.store, (state) => {
+		return [
+			// Page 0
+			true,
+			// Page 1
+			!state.isValidating &&
+				!state.fieldMeta.name?.isPristine &&
+				!state.fieldMeta.handle?.isPristine &&
+				!!state.fieldMeta.name?.isValid &&
+				!!state.fieldMeta.handle?.isValid,
+			// Page 2
+			!state.isValidating && !!state.fieldMeta.bio?.isValid,
+			// Page 3
+			!state.isValidating && !!state.fieldMeta.image?.isValid,
+		];
+	});
 
 	useEffect(() => {
 		if (status !== "needsonboarding") {
@@ -72,117 +142,19 @@ const OnboardPage = () => {
 		}
 	}, [status, router]);
 
-	const { mutateAsync: createProfile } = api.profiles.create.useMutation({
-		onSuccess: (profile) => {
-			utils.profiles.me.invalidate();
-			setProfile(profile);
-			router.navigate("/(tabs)");
-			setStatus("authenticated");
-		},
-	});
-	const { mutateAsync: getSignedURL } =
-		api.profiles.getSignedURL.useMutation();
-
-	const debouncedHandle = useDebounce(handle, 500);
-	const { data: handleExists } = api.profiles.handleExists.useQuery(
-		debouncedHandle,
-		{
-			enabled: debouncedHandle?.length > 0,
-		},
-	);
-	const handleDoesNotExist = useMemo(
-		() => handleExists !== undefined && !handleExists,
-		[handleExists],
-	);
+	const handleExists = useMutation(api.profiles.handleExists.mutationOptions());
 
 	useEffect(() => {
-		if (handleExists) {
-			form.setError("handle", {
-				type: "validate",
-				message: "Handle already exists",
-			});
-		} else {
-			if (
-				form.formState.errors.handle?.message ===
-				"Handle already exists"
-			) {
-				form.clearErrors("handle");
-			}
+		if (!handlePristine) {
+			form.setFieldValue("handle", name.replace(invalidHandleRegex, ""));
 		}
-	}, [form, handleExists]);
+	}, [handlePristine, form, name]);
 
-	const onSubmit = async (data: Onboard) => {
-		setLoading(true);
-		if (data.image) {
-			const url = await getSignedURL({
-				type: data.image.type,
-				size: data.image.size,
-			});
-
-			const response = await fetch(data.image.uri);
-			const blob = await response.blob();
-
-			await fetch(url, {
-				credentials: "include",
-				method: "PUT",
-				body: blob,
-				headers: {
-					"Content-Type": data.image.type,
-				},
-			});
-		}
-
-		await createProfile({
-			name: data.name,
-			handle: data.handle,
-			bio: data.bio ?? null,
-		});
-	};
-
-	useEffect(() => {
-		if (!form.getFieldState("handle").isTouched) {
-			form.setValue(
-				"handle",
-				name
-					?.replace(new RegExp(`[^${handleRegex.source}]+`, "g"), "")
-					.replace(" ", ""),
-			);
-		}
-	}, [form, name]);
-
-	useEffect(() => {
-		if (page === 1) {
-			form.setFocus("name");
-		}
-	}, [form, page]);
-
-	const pageValid = useMemo(() => {
-		switch (page) {
-			case 0:
-				return true;
-			case 1:
-				return (
-					name?.length > 0 && handleDoesNotExist && handle?.length > 0
-				);
-			case 2:
-				return !form.getFieldState("bio").invalid;
-			case 3:
-				return !form.getFieldState("image").invalid;
-			default:
-				return true;
-		}
-	}, [form, handleDoesNotExist, debouncedHandle, name, page]);
-
-	if (loading) {
+	if (isLoading) {
 		return (
 			<View className="mx-auto flex min-h-[100svh] w-full max-w-screen-lg flex-1 flex-col items-center justify-center p-4 sm:p-6">
-				<ActivityIndicator
-					size="large"
-					className="text-muted-foreground"
-				/>
-				<Text className="text-muted-foreground mt-4">
-					Creating your account
-				</Text>
+				<ActivityIndicator size="large" className="text-muted-foreground" />
+				<Text className="mt-4 text-muted-foreground">Creating your account</Text>
 			</View>
 		);
 	}
@@ -191,7 +163,7 @@ const OnboardPage = () => {
 		switch (page) {
 			case 0:
 				return (
-					<SlideWrapper page={page} /*pageIndex={0}*/ key={0}>
+					<SlideWrapper page={page} key={0}>
 						<Image
 							source={require("../../../assets/icon.png")}
 							style={{
@@ -204,70 +176,72 @@ const OnboardPage = () => {
 							Welcome to RecordScratch
 						</Text>
 						<Text className="mt-4 text-center">
-							Before you get started we have to set up your
-							profile.
+							Before you get started we have to set up your profile.
 						</Text>
-						<Text className="mt-1 text-center">
-							Press next below to get started.
-						</Text>
+						<Text className="mt-1 text-center">Press next below to get started.</Text>
 					</SlideWrapper>
 				);
 			case 1:
 				return (
-					<SlideWrapper
-						page={page}
-						// pageIndex={1}
-						title="Pick a display name and handle"
-						key={1}
-					>
-						<Controller
-							control={form.control}
+					<SlideWrapper page={page} title="Pick a display name and handle" key={1}>
+						<form.Field
 							name="name"
-							render={({ field }) => (
+							children={(field) => (
 								<View className="relative self-stretch">
 									<TextInput
-										{...field}
+										autoFocus
 										placeholder="Display name"
-										className="text-foreground border-border self-stretch rounded-md border px-4 py-3"
+										className="self-stretch rounded-md border border-border px-4 py-3 text-foreground"
 										autoComplete="off"
-										onChangeText={field.onChange}
+										onChangeText={field.handleChange}
+										value={field.state.value}
 									/>
-									{form.formState.errors.name && (
-										<Text className="text-destructive mt-2">
-											{form.formState.errors.name.message}
+									{field.state.meta.errors.map((error) => (
+										<Text
+											className="mt-2 text-destructive"
+											key={error?.message}>
+											{error?.message}
 										</Text>
-									)}
+									))}
 								</View>
 							)}
 						/>
-						<Controller
-							control={form.control}
+						<form.Field
 							name="handle"
-							render={({ field }) => (
+							validators={{
+								onChangeAsync: async ({ value }) => {
+									if (value.length === 0) return;
+									const exists = await handleExists.mutateAsync(value);
+									if (exists) {
+										return { message: "Handle already exists" };
+									}
+								},
+								onChangeAsyncDebounceMs: 500,
+							}}
+							children={(field) => (
 								<View className="self-stretch">
-									<View className="border-border flex flex-row items-center rounded-md border">
+									<View className="flex flex-row items-center rounded-md border border-border">
 										<View className="pl-3 pr-1.5">
 											<AtSign
-												className="text-muted-foreground text-lg"
+												className="text-lg text-muted-foreground"
 												size={16}
 											/>
 										</View>
 										<TextInput
-											{...field}
 											placeholder="Handle"
-											className="text-foreground mb-[1px] flex-1 py-3 pr-4"
+											className="mb-[1px] flex-1 py-3 pr-4 text-foreground"
 											autoComplete="off"
-											onChangeText={field.onChange}
+											onChangeText={field.handleChange}
+											value={field.state.value}
 										/>
 									</View>
-									{form.formState.errors.handle && (
-										<Text className="text-destructive mt-2">
-											{
-												form.formState.errors.handle
-													.message
-											}
+									{field.state.meta.errors.map((error) => (
+										<Text
+											className="mt-2 text-destructive"
+											key={error?.message}>
+											{error?.message}
 										</Text>
-									)}
+									))}
 								</View>
 							)}
 						/>
@@ -275,30 +249,26 @@ const OnboardPage = () => {
 				);
 			case 2:
 				return (
-					<SlideWrapper
-						page={page}
-						// pageIndex={2}
-						title="Describe yourself"
-						key={2}
-					>
-						<Controller
-							control={form.control}
+					<SlideWrapper page={page} title="Describe yourself" key={2}>
+						<form.Field
 							name="bio"
-							render={({ field }) => (
+							children={(field) => (
 								<View className="self-stretch">
 									<TextInput
-										{...field}
 										placeholder="Bio"
-										className="text-foreground border-border h-40 self-stretch rounded-md border p-4"
+										className="h-40 self-stretch rounded-md border border-border p-4 text-foreground"
 										multiline
 										autoComplete="off"
-										onChangeText={field.onChange}
+										onChangeText={field.handleChange}
+										value={field.state.value}
 									/>
-									{form.formState.errors.bio && (
-										<Text className="text-destructive mt-2">
-											{form.formState.errors.bio.message}
+									{field.state.meta.errors.map((error) => (
+										<Text
+											className="mt-2 text-destructive"
+											key={error?.message}>
+											{error?.message}
 										</Text>
-									)}
+									))}
 								</View>
 							)}
 						/>
@@ -306,29 +276,21 @@ const OnboardPage = () => {
 				);
 			case 3:
 				return (
-					<SlideWrapper
-						page={page}
-						/*pageIndex={3} */ title="Image"
-						key={3}
-					>
+					<SlideWrapper page={page} title="Image" key={3}>
 						<UserAvatar imageUrl={image?.uri} size={200} />
-						<Controller
-							control={form.control}
+						<form.Field
 							name="image"
-							render={({ field: { onChange } }) => (
+							children={(field) => (
 								<View>
 									<Button
 										variant="secondary"
 										onPress={async () => {
-											let result =
-												await ImagePicker.launchImageLibraryAsync(
-													{
-														mediaTypes: ["images"],
-														allowsEditing: true,
-														aspect: [1, 1],
-														quality: 1,
-													},
-												);
+											let result = await ImagePicker.launchImageLibraryAsync({
+												mediaTypes: ["images"],
+												allowsEditing: true,
+												aspect: [1, 1],
+												quality: 1,
+											});
 
 											if (
 												!result.canceled &&
@@ -336,27 +298,23 @@ const OnboardPage = () => {
 												result.assets.length > 0
 											) {
 												const asset = result.assets[0]!;
-												onChange({
+												field.handleChange({
 													uri: asset.uri,
-													type:
-														asset.type ??
-														"image/jpeg",
-													size: asset.fileSize,
+													type: asset.type ?? "image/jpeg",
+													size: asset.fileSize ?? 0,
 												});
 											}
 										}}
-										className="mt-8"
-									>
+										className="mt-8">
 										<Text>Pick an image</Text>
 									</Button>
-									{form.formState.errors.image && (
-										<Text className="text-destructive mt-2">
-											{
-												form.formState.errors.image
-													.message
-											}
+									{field.state.meta.errors.map((error) => (
+										<Text
+											className="mt-2 text-destructive"
+											key={error?.message}>
+											{error?.message}
 										</Text>
-									)}
+									))}
 								</View>
 							)}
 						/>
@@ -371,24 +329,26 @@ const OnboardPage = () => {
 				{renderPage(page)}
 				<View className="mt-8 flex flex-row gap-4">
 					{page !== 0 && (
-						<Button
-							variant="secondary"
-							onPress={() => setPage((page) => page - 1)}
-						>
+						<Button variant="secondary" onPress={() => setPage((page) => page - 1)}>
 							<Text>Back</Text>
 						</Button>
 					)}
 					<Button
 						variant="secondary"
-						onPress={() => {
+						onPress={async () => {
 							if (page === 3) {
-								form.handleSubmit(onSubmit, onInvalid)();
+								form.handleSubmit();
 							} else {
-								setPage((page) => page + 1);
+								await Promise.all([
+									pages[page].fields.map((field) =>
+										form.validateField(field, "submit")
+									),
+								]);
+								if (pageValid[page]) {
+									setPage((page) => page + 1);
+								}
 							}
-						}}
-						disabled={!pageValid}
-					>
+						}}>
 						<Text>
 							{page === 2 && !bio
 								? "Skip"

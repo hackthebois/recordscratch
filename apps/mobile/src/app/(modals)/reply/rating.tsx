@@ -4,14 +4,16 @@ import { Review } from "@/components/Review";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Controller, useForm } from "react-hook-form";
 import { Platform, TextInput, View } from "react-native";
 import { z } from "zod";
 import { useWindowDimensions } from "react-native";
 import { Send } from "@/lib/icons/IconsLoader";
+import { useForm } from "@tanstack/react-form";
+
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const Reply = () => {
 	const { width } = useWindowDimensions();
@@ -20,52 +22,62 @@ const Reply = () => {
 		resourceId: string;
 		handle: string;
 	}>();
-	const [profile] = api.profiles.get.useSuspenseQuery(handle);
-	const [rating] = api.ratings.user.get.useSuspenseQuery({
-		userId: profile!.userId,
-		resourceId,
-	});
+	const queryClient = useQueryClient();
+	const { data: profile } = useSuspenseQuery(api.profiles.get.queryOptions(handle));
+	const { data: rating } = useSuspenseQuery(
+		api.ratings.user.get.queryOptions({
+			userId: profile!.userId,
+			resourceId,
+		})
+	);
 
 	if (!profile || !rating) return <NotFoundScreen />;
 
-	const utils = api.useUtils();
-	const form = useForm<{ content: string }>({
-		resolver: zodResolver(z.object({ content: z.string() })),
+	const form = useForm({
+		validators: {
+			onSubmit: z.object({ content: z.string() }),
+		},
 		defaultValues: {
 			content: "",
 		},
-	});
-
-	const { mutate, isPending } = api.comments.create.useMutation({
-		onSuccess: async () => {
-			await form.reset();
-			await router.back();
-			await router.navigate({
-				pathname: "/[handle]/ratings/[id]",
-				params: { handle, id: resourceId },
-			});
-		},
-		onSettled: () => {
-			utils.comments.list.invalidate({
-				authorId: profile.userId,
+		onSubmit: async ({ value, formApi }) => {
+			mutate({
+				content: value.content,
 				resourceId,
-			});
-			utils.comments.count.rating.invalidate({
 				authorId: profile.userId,
-				resourceId,
+				parentId: null,
+				rootId: null,
 			});
+			formApi.reset();
 		},
 	});
 
-	const onSubmit = async ({ content }: { content: string }) => {
-		mutate({
-			content,
-			resourceId,
-			authorId: profile.userId,
-			parentId: null,
-			rootId: null,
-		});
-	};
+	const { mutate, isPending } = useMutation(
+		api.comments.create.mutationOptions({
+			onSuccess: async () => {
+				router.back();
+				router.navigate({
+					pathname: "/[handle]/ratings/[id]",
+					params: { handle, id: resourceId },
+				});
+			},
+			onSettled: () =>
+				Promise.all([
+					queryClient.invalidateQueries(
+						api.comments.list.queryOptions({
+							authorId: profile.userId,
+							resourceId,
+						})
+					),
+					queryClient.invalidateQueries(
+						api.comments.count.rating.queryOptions({
+							authorId: profile.userId,
+							resourceId,
+						})
+					),
+				]),
+		})
+	);
 
 	return (
 		<KeyboardAvoidingScrollView modal>
@@ -76,7 +88,7 @@ const Reply = () => {
 							title: `Reply`,
 							headerRight: () => (
 								<Button
-									onPress={form.handleSubmit(onSubmit)}
+									onPress={form.handleSubmit}
 									disabled={isPending}
 									variant="secondary"
 									style={{
@@ -87,32 +99,27 @@ const Reply = () => {
 													? 16
 													: 0,
 									}}
-									className="flex-row items-center gap-2"
-								>
-									<Send
-										size={16}
-										className="text-foreground"
-									/>
+									className="flex-row items-center gap-2">
+									<Send size={16} className="text-foreground" />
 									<Text>Post</Text>
 								</Button>
 							),
 						}}
 					/>
 					<Review {...rating} profile={profile} hideActions />
-					<View className="bg-muted h-[1px]" />
-					<Controller
-						control={form.control}
+					<View className="h-[1px] bg-muted" />
+					<form.Field
 						name="content"
-						render={({ field }) => (
+						children={(field) => (
 							<View className="flex-1 p-4">
 								<TextInput
 									placeholder="Create a new comment..."
 									autoFocus
 									multiline
-									className="text-foreground text-lg outline-none"
+									className="text-lg text-foreground outline-none"
 									scrollEnabled={false}
-									onChangeText={field.onChange}
-									{...field}
+									onChangeText={field.handleChange}
+									value={field.state.value}
 								/>
 							</View>
 						)}

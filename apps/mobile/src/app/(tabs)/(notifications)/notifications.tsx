@@ -1,7 +1,6 @@
 import { Text } from "@/components/ui/text";
 import { UserAvatar } from "@/components/UserAvatar";
 import { WebWrapper } from "@/components/WebWrapper";
-import { api, RouterOutputs } from "@/components/Providers";
 import { useAuth } from "@/lib/auth";
 import { BellOff } from "@/lib/icons/IconsLoader";
 import { Heart } from "@/lib/icons/IconsLoader";
@@ -19,7 +18,11 @@ import {
 import { FlashList } from "@shopify/flash-list";
 import { Link, LinkProps, Stack, usePathname } from "expo-router";
 import React, { useEffect } from "react";
-import { Platform, Pressable, View } from "react-native";
+import { Pressable, View } from "react-native";
+
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api, RouterOutputs } from "@/lib/api";
 
 const NotificationBlock = ({
 	icon,
@@ -28,13 +31,14 @@ const NotificationBlock = ({
 	content,
 	profile,
 }: Notification & { icon: React.ReactNode }) => {
-	const utils = api.useUtils();
 	const pathname = usePathname();
-	const { mutate } = api.notifications.markSeen.useMutation({
-		onSettled: () => {
-			utils.notifications.getUnseen.invalidate();
-		},
-	});
+	const queryClient = useQueryClient();
+	const { mutate } = useMutation(
+		api.notifications.markSeen.mutationOptions({
+			onSettled: () =>
+				queryClient.invalidateQueries(api.notifications.getUnseen.queryOptions()),
+		})
+	);
 
 	useEffect(() => {
 		if (pathname === "/" && !data.notification.data.seen) {
@@ -48,29 +52,21 @@ const NotificationBlock = ({
 				className={cn("flex flex-1 flex-row items-center gap-3 px-4")}
 				style={{
 					height: 75,
-				}}
-			>
+				}}>
 				<View>{icon}</View>
 				<View className="flex flex-1 flex-col gap-2">
 					<View className="flex flex-1 flex-row items-center gap-3">
 						<Link href={`/${profile.handle}`}>
-							<UserAvatar
-								imageUrl={getImageUrl(profile)}
-								size={50}
-							/>
+							<UserAvatar imageUrl={getImageUrl(profile)} size={50} />
 						</Link>
 						<View className="flex flex-1 flex-row flex-wrap items-center">
 							<Text numberOfLines={2}>
-								<Text className="text-lg font-bold">
-									{profile.name}
-								</Text>
+								<Text className="font-bold text-lg">{profile.name}</Text>
 								<Text className="text-left text-lg">
 									{" " + action + (content ? ": " : "")}
 								</Text>
 								{content ? (
-									<Text className="text-muted-foreground text-lg">
-										{content}
-									</Text>
+									<Text className="text-lg text-muted-foreground">{content}</Text>
 								) : null}
 							</Text>
 						</View>
@@ -113,9 +109,7 @@ const NotificationItem = ({
 		case "comment":
 			return (
 				<NotificationBlock
-					icon={
-						<MessageCircle size={26} className="text-emerald-500" />
-					}
+					icon={<MessageCircle size={26} className="text-emerald-500" />}
 					{...parseCommentNotification({
 						profile: notification.profile,
 						comment: notification.comment,
@@ -128,8 +122,7 @@ const NotificationItem = ({
 };
 
 export default function Notifications() {
-	const { data: allNotifications, refetch } =
-		api.notifications.get.useQuery();
+	const { data: allNotifications, refetch } = useQuery(api.notifications.get.queryOptions());
 
 	const { refetchByUser, isRefetchingByUser } = useRefreshByUser(refetch);
 
@@ -141,19 +134,15 @@ export default function Notifications() {
 			{emptyNotifications ? (
 				<View className="my-[20vh] flex w-full flex-col items-center justify-center gap-6">
 					<BellOff size={64} className="text-muted-foreground" />
-					<Text className="text-muted-foreground">
-						No notifications yet
-					</Text>
+					<Text className="text-muted-foreground">No notifications yet</Text>
 				</View>
 			) : (
 				<FlashList
 					data={allNotifications}
-					keyExtractor={(item, index) =>
-						`notification-${item.userId}-${index}`
-					}
+					keyExtractor={(item, index) => `notification-${item.userId}-${index}`}
 					ItemSeparatorComponent={() => (
 						<WebWrapper>
-							<View className="bg-muted h-[2px] sm:my-2" />
+							<View className="h-[2px] bg-muted sm:my-2" />
 						</WebWrapper>
 					)}
 					renderItem={({ item }) => (
@@ -161,7 +150,6 @@ export default function Notifications() {
 							<NotificationItem notification={item} />
 						</WebWrapper>
 					)}
-					estimatedItemSize={75}
 					scrollEnabled={true}
 					refreshing={isRefetchingByUser}
 					onRefresh={refetchByUser}

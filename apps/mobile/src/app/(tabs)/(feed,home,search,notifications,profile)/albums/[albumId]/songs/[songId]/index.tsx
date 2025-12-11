@@ -7,7 +7,7 @@ import { RatingInfo } from "@/components/Rating/RatingInfo";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
+import { api } from "@/lib/api";
 import { getQueryOptions } from "@/lib/deezer";
 import { formatDuration } from "@recordscratch/lib";
 import { Resource } from "@recordscratch/types";
@@ -22,23 +22,25 @@ const SongPage = () => {
 		songId: string;
 	}>();
 
-	const [total] = api.ratings.count.useSuspenseQuery({
-		resourceId: songId,
-		category: "SONG",
-	});
+	const { data: rating } = useSuspenseQuery(
+		api.ratings.get.queryOptions({
+			resourceId: songId,
+			category: "SONG",
+		})
+	);
 
 	const { data: album } = useSuspenseQuery(
 		getQueryOptions({
 			route: "/album/{id}",
 			input: { id: albumId! },
-		}),
+		})
 	);
 
 	const { data: song } = useSuspenseQuery(
 		getQueryOptions({
 			route: "/track/{id}",
 			input: { id: songId! },
-		}),
+		})
 	);
 
 	if (!album || !song) return <NotFoundScreen />;
@@ -76,8 +78,7 @@ const SongPage = () => {
 								album.release_date,
 								song.explicit_lyrics ? "Explicit" : undefined,
 								formatDuration(song.duration),
-							]}
-						>
+							]}>
 							<View className="flex w-auto flex-col sm:max-w-72">
 								<View className="my-4 flex-row items-center justify-center gap-4 sm:justify-start">
 									<RatingInfo resource={resource} />
@@ -95,8 +96,7 @@ const SongPage = () => {
 										<Button
 											variant="secondary"
 											size={"sm"}
-											className="hidden sm:flex"
-										>
+											className="hidden sm:flex">
 											<Text>Go to album</Text>
 										</Button>
 									</Link>
@@ -104,12 +104,11 @@ const SongPage = () => {
 								<Link
 									href={`/albums/${album.id}/songs/${song.id}/reviews`}
 									asChild
-									style={{ width: "100%" }}
-								>
+									style={{ width: "100%" }}>
 									<Pressable>
 										<StatBlock
 											title="Ratings"
-											description={String(total)}
+											description={String(rating?.total)}
 										/>
 									</Pressable>
 								</Link>

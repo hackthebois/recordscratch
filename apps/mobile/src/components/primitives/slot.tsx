@@ -19,6 +19,7 @@ const Pressable = React.forwardRef<React.ElementRef<typeof RNPressable>, RNPress
 		const { children, ...pressableSlotProps } = props;
 
 		if (!React.isValidElement(children)) {
+			console.log("Slot.Pressable - Invalid asChild element", children);
 			return null;
 		}
 
@@ -26,7 +27,7 @@ const Pressable = React.forwardRef<React.ElementRef<typeof RNPressable>, RNPress
 			React.ComponentPropsWithoutRef<typeof RNPressable>,
 			React.ElementRef<typeof RNPressable>
 		>(isTextChildren(children) ? <></> : children, {
-			...mergeProps(pressableSlotProps, children.props),
+			...mergeProps(pressableSlotProps, children.props as AnyProps),
 			ref: forwardedRef
 				? composeRefs(forwardedRef, (children as any).ref)
 				: (children as any).ref,
@@ -41,6 +42,7 @@ const View = React.forwardRef<React.ElementRef<typeof RNView>, RNViewProps>(
 		const { children, ...viewSlotProps } = props;
 
 		if (!React.isValidElement(children)) {
+			console.log("Slot.View - Invalid asChild element", children);
 			return null;
 		}
 
@@ -48,7 +50,7 @@ const View = React.forwardRef<React.ElementRef<typeof RNView>, RNViewProps>(
 			React.ComponentPropsWithoutRef<typeof RNView>,
 			React.ElementRef<typeof RNView>
 		>(isTextChildren(children) ? <></> : children, {
-			...mergeProps(viewSlotProps, children.props),
+			...mergeProps(viewSlotProps, children.props as AnyProps),
 			ref: forwardedRef
 				? composeRefs(forwardedRef, (children as any).ref)
 				: (children as any).ref,
@@ -63,6 +65,7 @@ const Text = React.forwardRef<React.ElementRef<typeof RNText>, RNTextProps>(
 		const { children, ...textSlotProps } = props;
 
 		if (!React.isValidElement(children)) {
+			console.log("Slot.Text - Invalid asChild element", children);
 			return null;
 		}
 
@@ -70,7 +73,7 @@ const Text = React.forwardRef<React.ElementRef<typeof RNText>, RNTextProps>(
 			React.ComponentPropsWithoutRef<typeof RNText>,
 			React.ElementRef<typeof RNText>
 		>(isTextChildren(children) ? <></> : children, {
-			...mergeProps(textSlotProps, children.props),
+			...mergeProps(textSlotProps, children.props as AnyProps),
 			ref: forwardedRef
 				? composeRefs(forwardedRef, (children as any).ref)
 				: (children as any).ref,
@@ -89,6 +92,7 @@ const Image = React.forwardRef<React.ElementRef<typeof RNImage>, ImageSlotProps>
 		const { children, ...imageSlotProps } = props;
 
 		if (!React.isValidElement(children)) {
+			console.log("Slot.Image - Invalid asChild element", children);
 			return null;
 		}
 
@@ -96,7 +100,7 @@ const Image = React.forwardRef<React.ElementRef<typeof RNImage>, ImageSlotProps>
 			React.ComponentPropsWithoutRef<typeof RNImage>,
 			React.ElementRef<typeof RNImage>
 		>(isTextChildren(children) ? <></> : children, {
-			...mergeProps(imageSlotProps, children.props),
+			...mergeProps(imageSlotProps, children.props as AnyProps),
 			ref: forwardedRef
 				? composeRefs(forwardedRef, (children as any).ref)
 				: (children as any).ref,

@@ -1,6 +1,6 @@
 import type { ConfigContext, ExpoConfig } from "@expo/config";
 
-const version = "0.0.8";
+const version = "0.1.0";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
 	...config,
@@ -19,6 +19,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		entitlements: {
 			"com.apple.developer.applesignin": ["Default"],
 		},
+		infoPlist: {
+			ITSAppUsesNonExemptEncryption: false,
+		},
 	},
 	newArchEnabled: true,
 	android: {
@@ -28,8 +31,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		},
 		package: "app.recordscratch.android",
 		versionCode: 1,
-		googleServicesFile:
-			process.env.GOOGLE_SERVICES_JSON || "./google-services.json",
+		googleServicesFile: process.env.GOOGLE_SERVICES_JSON || "./google-services.json",
 	},
 	web: {
 		favicon: "./assets/icon.png",
@@ -40,8 +42,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		[
 			"@sentry/react-native/expo",
 			{
-				organization: "recordscratch",
+				url: "https://sentry.io/",
 				project: "recordscratch",
+				organization: "recordscratch",
 			},
 		],
 		[
@@ -53,6 +56,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 				backgroundColor: "#ffffff",
 			},
 		],
+		"expo-web-browser",
 		"expo-apple-authentication",
 		"expo-font",
 		"expo-secure-store",

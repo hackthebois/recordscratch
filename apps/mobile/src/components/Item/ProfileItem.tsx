@@ -24,9 +24,8 @@ export const ProfileItem = ({
 				pathname: "/[handle]",
 				params: { handle: String(profile.handle) },
 			}}
-			onPress={onPress}
-		>
-			<View className="flex flex-row justify-between items-center gap-4 rounded w-full">
+			onPress={onPress}>
+			<View className="flex w-full flex-row items-center justify-between gap-4 rounded">
 				<View className="flex flex-row items-center gap-4">
 					<UserAvatar imageUrl={getImageUrl(profile)} size={size} />
 					<View className="justify-center gap-1">

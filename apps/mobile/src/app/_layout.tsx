@@ -1,5 +1,5 @@
 import env from "@/env";
-import { AuthProvider, TRPCProvider } from "@/components/Providers";
+import { AuthProvider, QueryProvider } from "@/components/Providers";
 import { PrefetchProfile } from "@/components/Prefetch";
 import { NAV_THEME } from "@/lib/constants";
 import { catchError } from "@/lib/errors";
@@ -24,11 +24,8 @@ import { SplashScreen, Stack, useNavigationContainerRef } from "expo-router";
 import * as Updates from "expo-updates";
 import React, { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import "../styles.css";
-import {
-	configureReanimatedLogger,
-	ReanimatedLogLevel,
-} from "react-native-reanimated";
+import "../global.css";
+import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { defaultScreenOptions } from "@/lib/navigation";
 
@@ -66,10 +63,8 @@ const navigationIntegration = Sentry.reactNavigationIntegration({
 
 Sentry.init({
 	dsn: "https://2648bda3885c4f3b7ab58671e8a9d44f@o4508287201312768.ingest.us.sentry.io/4508287205441536",
-	debug: false,
-	tracesSampleRate: 1.0,
-	integrations: [navigationIntegration],
-	enableNativeFramesTracking: !isRunningInExpoGo(),
+	sendDefaultPii: true,
+	enableLogs: true,
 });
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -151,11 +146,9 @@ const RootLayout = () => {
 
 	return (
 		<AuthProvider>
-			<TRPCProvider>
+			<QueryProvider>
 				<SafeAreaProvider>
-					<ThemeProvider
-						value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
-					>
+					<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
 						<PrefetchProfile />
 						<Stack screenOptions={defaultScreenOptions}>
 							<Stack.Screen
@@ -188,14 +181,6 @@ const RootLayout = () => {
 									headerShown: false,
 								}}
 							/>
-							{/* <Stack.Screen
-								name="(modals)"
-								options={{
-									title: "",
-									presentation: "modal",
-									animation: "slide_from_bottom",
-								}}
-							/> */}
 							<Stack.Screen
 								name="(modals)/rating"
 								options={{
@@ -221,7 +206,7 @@ const RootLayout = () => {
 								}}
 							/>
 							<Stack.Screen
-								name="(modals)/list/createList"
+								name="(modals)/list/create"
 								options={{
 									title: "Create List",
 									presentation: "modal",
@@ -256,7 +241,7 @@ const RootLayout = () => {
 						<PortalHost />
 					</ThemeProvider>
 				</SafeAreaProvider>
-			</TRPCProvider>
+			</QueryProvider>
 		</AuthProvider>
 	);
 };

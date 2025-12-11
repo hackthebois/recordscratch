@@ -1,11 +1,5 @@
 import { ListsType } from "@recordscratch/types";
-import {
-	FlatList,
-	Platform,
-	Pressable,
-	View,
-	useWindowDimensions,
-} from "react-native";
+import { FlatList, Platform, Pressable, View, useWindowDimensions } from "react-native";
 import ListImage from "./ListImage";
 import React from "react";
 import { Text } from "../ui/text";
@@ -37,19 +31,13 @@ const ListsItem = ({
 					maxWidth: size,
 					maxHeight: size,
 				}}
-				className="flex items-center justify-center"
-			>
-				<ListImage
-					listItems={listResources}
-					category={listsItem.category}
-					size={size}
-				/>
+				className="flex items-center justify-center">
+				<ListImage listItems={listResources} category={listsItem.category} size={size} />
 			</View>
 			<Text
 				className={"w-full text-ellipsis font-semibold"}
 				numberOfLines={1}
-				style={{ flexWrap: "wrap" }}
-			>
+				style={{ flexWrap: "wrap" }}>
 				{listsItem.name}
 			</Text>
 		</View>
@@ -59,8 +47,7 @@ const ListsItem = ({
 		<View
 			style={{
 				width: size,
-			}}
-		>
+			}}>
 			{
 				<Pressable
 					onPress={() => {
@@ -69,8 +56,7 @@ const ListsItem = ({
 						}
 						if (showLink) router.push(`/lists/${listsItem.id}`);
 					}}
-					className="flex w-full flex-col"
-				>
+					className="flex w-full flex-col">
 					{ListItemContent}
 				</Pressable>
 			}
@@ -158,12 +144,7 @@ const ListOfLists = ({
 			data={lists}
 			keyExtractor={(index) => index.id}
 			renderItem={({ item }) => (
-				<ListsItem
-					listsItem={item}
-					size={size}
-					onPress={onPress}
-					showLink={showLink}
-				/>
+				<ListsItem listsItem={item} size={size} onPress={onPress} showLink={showLink} />
 			)}
 			contentContainerStyle={{
 				flexDirection: "row",

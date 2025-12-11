@@ -3,7 +3,7 @@ import { WebWrapper } from "@/components/WebWrapper";
 import { getQueryOptions } from "@/lib/deezer";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { Platform, ScrollView, View } from "react-native";
+import { Platform, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/text";
 
@@ -17,7 +17,7 @@ const TopPage = () => {
 			input: {
 				id: artistId,
 			},
-		}),
+		})
 	);
 	const { data: top } = useSuspenseQuery(
 		getQueryOptions({
@@ -26,7 +26,7 @@ const TopPage = () => {
 				id: artistId,
 				limit: 50,
 			},
-		}),
+		})
 	);
 
 	return (

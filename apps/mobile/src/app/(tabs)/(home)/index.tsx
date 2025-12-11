@@ -4,7 +4,6 @@ import { ResourceItemSkeleton } from "@/components/Item/ResourceItem";
 import Metadata from "@/components/Metadata";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { getQueryOptions } from "@/lib/deezer";
 import { formatDuration } from "@recordscratch/lib";
 import { FlashList } from "@shopify/flash-list";
@@ -16,17 +15,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import NotFound from "../../+not-found";
 import { WebHeaderRight } from "@/components/WebHeaderRight";
 
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+
 const AlbumOfTheDay = () => {
-	const [albumOfTheDay] = api.misc.albumOfTheDay.useSuspenseQuery();
+	const router = useRouter();
+	const { data: albumOfTheDay } = useSuspenseQuery(api.misc.albumOfTheDay.queryOptions());
 	const { data: album } = useSuspenseQuery(
 		getQueryOptions({
 			route: "/album/{id}",
 			input: { id: albumOfTheDay.albumId },
-		}),
+		})
 	);
 
 	if (!album) return <NotFound />;
-	const router = useRouter();
 
 	return (
 		<Metadata
@@ -35,19 +37,15 @@ const AlbumOfTheDay = () => {
 			type="ALBUM OF THE DAY"
 			tags={[
 				album.release_date,
-				album.duration
-					? `${formatDuration(album.duration)}`
-					: undefined,
+				album.duration ? `${formatDuration(album.duration)}` : undefined,
 			]}
-			genres={album.genres?.data ?? []}
-		>
+			genres={album.genres?.data ?? []}>
 			<Button
 				variant="secondary"
 				onPress={() => {
 					router.navigate(`/albums/${albumOfTheDay.albumId}`);
 				}}
-				className="self-center sm:self-start"
-			>
+				className="self-center sm:self-start">
 				<Text>Go to Album</Text>
 			</Button>
 		</Metadata>
@@ -55,10 +53,7 @@ const AlbumOfTheDay = () => {
 };
 
 const HomePage = () => {
-	const { data: trending } = api.ratings.trending.useQuery();
-	const { data: top } = api.ratings.top.useQuery();
-	const { data: popular } = api.ratings.popular.useQuery();
-	const { data: topArtists } = api.ratings.topArtists.useQuery();
+	const { data: charts } = useQuery(api.ratings.charts.queryOptions());
 
 	useEffect(() => {
 		SplashScreen.hide();
@@ -74,8 +69,7 @@ const HomePage = () => {
 			/>
 			<ScrollView
 				contentContainerClassName="flex flex-col pb-4 items-center"
-				nestedScrollEnabled
-			>
+				nestedScrollEnabled>
 				<View className="w-full max-w-screen-lg">
 					<AlbumOfTheDay />
 					<View className="px-4">
@@ -83,19 +77,13 @@ const HomePage = () => {
 							Trending Albums
 						</Text>
 						<FlashList
-							data={trending}
-							renderItem={({ item }) => <AlbumItem {...item} />}
+							data={charts?.albums.trending}
+							renderItem={({ item }) => <AlbumItem resourceId={item} />}
 							horizontal
 							contentContainerClassName="h-64"
-							ItemSeparatorComponent={() => (
-								<View className="w-4" />
-							)}
-							estimatedItemSize={150}
+							ItemSeparatorComponent={() => <View className="w-4" />}
 							ListEmptyComponent={
-								<ScrollView
-									horizontal
-									contentContainerClassName="gap-4"
-								>
+								<ScrollView horizontal contentContainerClassName="gap-4">
 									<ResourceItemSkeleton direction="vertical" />
 									<ResourceItemSkeleton direction="vertical" />
 									<ResourceItemSkeleton direction="vertical" />
@@ -104,27 +92,19 @@ const HomePage = () => {
 									<ResourceItemSkeleton direction="vertical" />
 								</ScrollView>
 							}
-							showsHorizontalScrollIndicator={
-								Platform.OS === "web"
-							}
+							showsHorizontalScrollIndicator={Platform.OS === "web"}
 						/>
 						<Text variant="h2" className="pb-4 pt-6">
 							Top Albums
 						</Text>
 						<FlashList
-							data={top}
-							renderItem={({ item }) => <AlbumItem {...item} />}
+							data={charts?.albums.top}
+							renderItem={({ item }) => <AlbumItem resourceId={item} />}
 							horizontal
 							contentContainerClassName="h-64"
-							ItemSeparatorComponent={() => (
-								<View className="w-4" />
-							)}
-							estimatedItemSize={150}
+							ItemSeparatorComponent={() => <View className="w-4" />}
 							ListEmptyComponent={
-								<ScrollView
-									horizontal
-									contentContainerClassName="gap-4"
-								>
+								<ScrollView horizontal contentContainerClassName="gap-4">
 									<ResourceItemSkeleton direction="vertical" />
 									<ResourceItemSkeleton direction="vertical" />
 									<ResourceItemSkeleton direction="vertical" />
@@ -133,27 +113,19 @@ const HomePage = () => {
 									<ResourceItemSkeleton direction="vertical" />
 								</ScrollView>
 							}
-							showsHorizontalScrollIndicator={
-								Platform.OS === "web"
-							}
+							showsHorizontalScrollIndicator={Platform.OS === "web"}
 						/>
 						<Text variant="h2" className="pb-4 pt-6">
 							Most Popular Albums
 						</Text>
 						<FlashList
-							data={popular}
-							renderItem={({ item }) => <AlbumItem {...item} />}
+							data={charts?.albums.popular}
+							renderItem={({ item }) => <AlbumItem resourceId={item} />}
 							horizontal
 							contentContainerClassName="h-64"
-							ItemSeparatorComponent={() => (
-								<View className="w-4" />
-							)}
-							estimatedItemSize={150}
+							ItemSeparatorComponent={() => <View className="w-4" />}
 							ListEmptyComponent={
-								<ScrollView
-									horizontal
-									contentContainerClassName="gap-4"
-								>
+								<ScrollView horizontal contentContainerClassName="gap-4">
 									<ResourceItemSkeleton direction="vertical" />
 									<ResourceItemSkeleton direction="vertical" />
 									<ResourceItemSkeleton direction="vertical" />
@@ -162,31 +134,24 @@ const HomePage = () => {
 									<ResourceItemSkeleton direction="vertical" />
 								</ScrollView>
 							}
-							showsHorizontalScrollIndicator={
-								Platform.OS === "web"
-							}
+							showsHorizontalScrollIndicator={Platform.OS === "web"}
 						/>
 						<Text variant="h2" className="pb-4 pt-6">
 							Top Artists
 						</Text>
 						<FlashList
-							data={topArtists}
-							renderItem={({ item: { artistId } }) => (
+							data={charts?.artists.top}
+							renderItem={({ item }) => (
 								<ArtistItem
-									artistId={artistId}
+									artistId={item}
 									direction="vertical"
 									imageWidthAndHeight={105}
 								/>
 							)}
 							horizontal
-							showsHorizontalScrollIndicator={
-								Platform.OS === "web"
-							}
+							showsHorizontalScrollIndicator={Platform.OS === "web"}
 							contentContainerClassName="h-40"
-							ItemSeparatorComponent={() => (
-								<View className="w-4" />
-							)}
-							estimatedItemSize={105}
+							ItemSeparatorComponent={() => <View className="w-4" />}
 						/>
 					</View>
 				</View>

@@ -17,52 +17,26 @@ export const WebHeaderRight = () => {
 			className="h-full flex-row items-center"
 			style={{
 				marginRight: width > 1024 ? (width - 1024) / 2 : 0,
-			}}
-		>
-			<Link
-				href="/"
-				className="flex h-full items-center justify-center gap-2 px-2"
-			>
-				<Home
-					className="text-foreground"
-					size={width > 768 ? 22 : 26}
-				/>
+			}}>
+			<Link href="/" className="flex h-full items-center justify-center gap-2 px-2">
+				<Home className="text-foreground" size={width > 768 ? 22 : 26} />
 				<Text className="hidden sm:block">Home</Text>
 			</Link>
-			<Link
-				href="/search"
-				className="flex h-full items-center justify-center gap-2 px-2"
-			>
-				<Search
-					className="text-foreground"
-					size={width > 768 ? 22 : 26}
-				/>
+			<Link href="/search" className="flex h-full items-center justify-center gap-2 px-2">
+				<Search className="text-foreground" size={width > 768 ? 22 : 26} />
 				<Text className="hidden sm:block">Search</Text>
 			</Link>
-			<Link
-				href="/feed"
-				className="flex h-full items-center justify-center gap-2 px-2"
-			>
-				<Rows3
-					className="text-foreground"
-					size={width > 768 ? 22 : 26}
-				/>
+			<Link href="/feed" className="flex h-full items-center justify-center gap-2 px-2">
+				<Rows3 className="text-foreground" size={width > 768 ? 22 : 26} />
 				<Text className="hidden sm:block">Feed</Text>
 			</Link>
 			<Link
 				href="/notifications"
-				className="flex h-full items-center justify-center gap-2 px-2"
-			>
-				<Bell
-					className="text-foreground"
-					size={width > 768 ? 22 : 26}
-				/>
+				className="flex h-full items-center justify-center gap-2 px-2">
+				<Bell className="text-foreground" size={width > 768 ? 22 : 26} />
 				<Text className="hidden sm:block">Notifications</Text>
 			</Link>
-			<Link
-				href="/profile"
-				className="flex h-full items-center justify-center gap-2 px-4"
-			>
+			<Link href="/profile" className="flex h-full items-center justify-center gap-2 px-4">
 				<UserAvatar imageUrl={getImageUrl(profile)} size={40} />
 			</Link>
 		</View>

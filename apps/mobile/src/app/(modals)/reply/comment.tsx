@@ -3,75 +3,84 @@ import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { api } from "@/components/Providers";
 import { Send } from "@/lib/icons/IconsLoader";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { Controller, useForm } from "react-hook-form";
 import { TextInput, View, Platform, useWindowDimensions } from "react-native";
 import { z } from "zod";
+import { useForm } from "@tanstack/react-form";
+
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const CommentModal = () => {
 	const { width } = useWindowDimensions();
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { id } = useLocalSearchParams<{
 		id: string;
 	}>();
 
-	const [comment] = api.comments.get.useSuspenseQuery({
-		id,
-	});
+	const { data: comment } = useSuspenseQuery(
+		api.comments.get.queryOptions({
+			id,
+		})
+	);
 
 	if (!comment) return null;
 
-	const utils = api.useUtils();
-	const form = useForm<{ content: string }>({
-		resolver: zodResolver(z.object({ content: z.string() })),
+	const { mutate, isPending } = useMutation(
+		api.comments.create.mutationOptions({
+			onSuccess: async () => {
+				router.back();
+			},
+			onSettled: () =>
+				Promise.all([
+					queryClient.invalidateQueries(
+						api.comments.get.queryOptions({
+							id,
+						})
+					),
+					queryClient.invalidateQueries(
+						api.comments.list.queryOptions({
+							resourceId: comment.resourceId,
+							authorId: comment.authorId,
+						})
+					),
+					queryClient.invalidateQueries(
+						api.comments.count.rating.queryOptions({
+							resourceId: comment.resourceId,
+							authorId: comment.authorId,
+						})
+					),
+					queryClient.invalidateQueries(
+						api.comments.count.reply.queryOptions({
+							id: comment.rootId ?? comment.id,
+						})
+					),
+				]),
+		})
+	);
+
+	const form = useForm({
+		validators: {
+			onSubmit: z.object({ content: z.string() }),
+		},
 		defaultValues: {
 			content: "",
 		},
-	});
-
-	const { mutate, isPending } = api.comments.create.useMutation({
-		onSuccess: async () => {
-			await form.reset();
-			await router.back();
-			// await router.navigate({
-			// 	pathname: "/comments/[id]",
-			// 	params: { id },
-			// });
-		},
-		onSettled: async () => {
-			await utils.comments.get.invalidate({
-				id,
-			});
-			await utils.comments.list.invalidate({
+		onSubmit: async ({ value, formApi }) => {
+			mutate({
+				content: value.content,
 				resourceId: comment.resourceId,
 				authorId: comment.authorId,
+				rootId: comment.rootId ?? comment.id,
+				parentId: comment.id,
 			});
-			await utils.comments.count.rating.invalidate({
-				resourceId: comment.resourceId,
-				authorId: comment.authorId,
-			});
-
-			await utils.comments.count.reply.invalidate({
-				id: comment.rootId ?? comment.id,
-			});
+			formApi.reset();
 		},
 	});
-
-	const markSeen = api.notifications.markSeen.useMutation();
-
-	const onSubmit = async ({ content }: { content: string }) => {
-		mutate({
-			content,
-			resourceId: comment.resourceId,
-			authorId: comment.authorId,
-			rootId: comment.rootId ?? comment.id,
-			parentId: comment.id,
-		});
-	};
 
 	return (
 		<KeyboardAvoidingScrollView modal>
@@ -82,7 +91,7 @@ const CommentModal = () => {
 							title: `Reply`,
 							headerRight: () => (
 								<Button
-									onPress={form.handleSubmit(onSubmit)}
+									onPress={form.handleSubmit}
 									disabled={isPending}
 									variant="secondary"
 									style={{
@@ -93,8 +102,7 @@ const CommentModal = () => {
 													? 16
 													: 0,
 									}}
-									className="flex-row items-center gap-2"
-								>
+									className="flex-row items-center gap-2">
 									<Send size={16} />
 									<Text>Post</Text>
 								</Button>
@@ -102,20 +110,19 @@ const CommentModal = () => {
 						}}
 					/>
 					<Comment comment={comment} hideActions />
-					<View className="bg-muted h-[1px]" />
-					<Controller
-						control={form.control}
+					<View className="h-[1px] bg-muted" />
+					<form.Field
 						name="content"
-						render={({ field }) => (
+						children={(field) => (
 							<View className="flex-1 p-4">
 								<TextInput
 									placeholder="Create a new comment..."
 									autoFocus
 									multiline
-									className="text-foreground text-lg outline-none"
+									className="text-lg text-foreground outline-none"
 									scrollEnabled={false}
-									onChangeText={field.onChange}
-									{...field}
+									onChangeText={field.handleChange}
+									value={field.state.value}
 								/>
 							</View>
 						)}
@@ -123,11 +130,10 @@ const CommentModal = () => {
 
 					{Platform.OS === "web" ? (
 						<Button
-							onPress={form.handleSubmit(onSubmit)}
+							onPress={form.handleSubmit}
 							disabled={isPending}
 							variant="secondary"
-							size="sm"
-						>
+							size="sm">
 							<Text>Post</Text>
 						</Button>
 					) : null}
