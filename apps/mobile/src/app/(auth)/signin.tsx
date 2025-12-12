@@ -14,6 +14,7 @@ import { Platform, Pressable, View } from "react-native";
 import { z } from "zod";
 
 Browser.maybeCompleteAuthSession();
+
 const SignInPage = () => {
 	const login = useAuth((s) => s.login);
 	const router = useRouter();
@@ -30,7 +31,10 @@ const SignInPage = () => {
 				await Linking.openURL(url);
 				return;
 			} else {
-				Browser.dismissAuthSession();
+				if (Platform.OS === "ios") {
+					// Doesn't exist on Android
+					Browser.dismissAuthSession();
+				}
 				const result = await Browser.openAuthSessionAsync(
 					`${env.SITE_URL}/api/auth/${adapter}?expoAddress=${env.SCHEME}`,
 					`${env.SCHEME}`

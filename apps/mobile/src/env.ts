@@ -9,6 +9,10 @@ let env = {
 	DEBUG: true,
 };
 
+if (Platform.OS === "android") {
+	env.SITE_URL = "https://api.recordscratch.app";
+}
+
 if (Platform.OS === "web" && process.env.NODE_ENV !== "development") {
 	env.ENV = "production";
 	env.SCHEME = "https://recordscratch.app";
