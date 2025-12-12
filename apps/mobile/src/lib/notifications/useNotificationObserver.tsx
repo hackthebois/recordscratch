@@ -42,7 +42,6 @@ export function useNotificationObserver() {
 				}
 			}
 
-			router.navigate("/(tabs)/(notifications)");
 			if (url) {
 				router.navigate(`/(tabs)/(notifications)${url}`);
 			}
