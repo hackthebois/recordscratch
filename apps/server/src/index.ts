@@ -38,10 +38,24 @@ const app = new Hono()
 		}),
 	)
 	.get("/music/**", async (c) => {
-		return proxy("https://api.deezer.com" + c.req.url.split("/music")[1]);
+		return proxy("https://api.deezer.com" + c.req.url.split("/music")[1], {
+			headers: {
+				"User-Agent":
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36",
+				"Accept-Language": "en-US,en;q=0.9",
+			},
+		});
 	})
-	.get("/ingest/**", async (c) => {
-		return proxy("https://app.posthog.com" + c.req.url.split("/ingest")[1]);
+	.get("/ingest/**", (c) => {
+		const headers = c.req.header();
+		delete headers["host"];
+
+		return proxy(
+			"https://app.posthog.com" + c.req.url.split("/ingest")[1],
+			{
+				headers,
+			},
+		);
 	})
 	.route("/api/auth/google", googleHandler)
 	.route("/api/auth/apple", appleHandler)
