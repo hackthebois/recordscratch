@@ -38,12 +38,11 @@ const app = new Hono()
 		}),
 	)
 	.get("/music/**", async (c) => {
+		const headers = c.req.header();
+		delete headers["host"];
+
 		return proxy("https://api.deezer.com" + c.req.url.split("/music")[1], {
-			headers: {
-				"User-Agent":
-					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36",
-				"Accept-Language": "en-US,en;q=0.9",
-			},
+			headers,
 		});
 	})
 	.get("/ingest/**", (c) => {
