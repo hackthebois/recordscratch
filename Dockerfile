@@ -7,7 +7,7 @@ COPY . .
 
 RUN bun install
 
-WORKDIR /app/apps/server
+# RUN bun run build
 
 EXPOSE 3000
 
