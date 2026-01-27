@@ -5,17 +5,13 @@
 	"scripts": {
 		"dev": "expo start --clear --port=3000",
 		"android": "expo run:android",
+		"build": "bun expo export -p web",
 		"start": "bun run server.ts",
 		"ios": "expo run:ios",
 		"web": "expo start --web",
-		"test": "jest --watchAll",
 		"clean": "rm -rf node_modules && rm -rf .expo",
 		"format": "prettier --write .",
-		"build": "expo export -p web",
 		"typecheck": "tsc"
-	},
-	"jest": {
-		"preset": "jest-expo"
 	},
 	"dependencies": {
 		"@expo-google-fonts/montserrat": "^0.4.2",
@@ -102,8 +98,6 @@
 		"@types/react": "~19.1.10",
 		"ajv": "^8.17.1",
 		"babel-preset-expo": "~54.0.10",
-		"jest": "~29.7.0",
-		"jest-expo": "~54.0.16",
 		"prettier": "^3.8.1",
 		"prettier-plugin-tailwindcss": "^0.7.2",
 		"react-test-renderer": "19.2.4",
