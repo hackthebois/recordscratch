@@ -1,11 +1,11 @@
 import { ArtistItem } from "@/components/Item/ArtistItem";
 import { getQueryOptions } from "@/lib/deezer";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { FlatList, Platform, View, useWindowDimensions } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams } from "expo-router";
+import { FlatList, Platform, useWindowDimensions } from "react-native";
 import { Text } from "@/components/ui/text";
 import { WebWrapper } from "@/components/WebWrapper";
+import { Page } from "@/components/Page";
 
 const RelatedPage = () => {
 	const { id } = useLocalSearchParams<{ id: string }>();
@@ -13,7 +13,9 @@ const RelatedPage = () => {
 	const dimensions = useWindowDimensions();
 	const screenSize = Math.min(dimensions.width, 1024);
 	const numColumns = screenSize === 1024 ? 6 : 3;
-	const top6Width = (Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns - 1;
+	const top6Width =
+		(Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns -
+		1;
 
 	const { data: artist } = useSuspenseQuery(
 		getQueryOptions({
@@ -21,7 +23,7 @@ const RelatedPage = () => {
 			input: {
 				id: artistId,
 			},
-		})
+		}),
 	);
 	const { data: artists } = useSuspenseQuery(
 		getQueryOptions({
@@ -29,16 +31,11 @@ const RelatedPage = () => {
 			input: {
 				id: artistId,
 			},
-		})
+		}),
 	);
 
 	return (
-		<>
-			<Stack.Screen
-				options={{
-					title: `Related Artists to ${artist.name}`,
-				}}
-			/>
+		<Page title={`Related Artists to ${artist.name}`}>
 			<FlatList
 				ListHeaderComponent={
 					Platform.OS === "web" ? (
@@ -79,7 +76,7 @@ const RelatedPage = () => {
 				keyboardDismissMode="interactive"
 				numColumns={numColumns}
 			/>
-		</>
+		</Page>
 	);
 };
 

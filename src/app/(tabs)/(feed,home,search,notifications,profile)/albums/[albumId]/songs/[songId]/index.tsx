@@ -12,9 +12,9 @@ import { getQueryOptions } from "@/lib/deezer";
 import { formatDuration } from "@/lib";
 import { Resource } from "@/types";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link, Stack, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import { Platform, Pressable, ScrollView, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Page } from "@/components/Page";
 
 const SongPage = () => {
 	const { albumId, songId } = useLocalSearchParams<{
@@ -65,9 +65,8 @@ const SongPage = () => {
 			: {};
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={["left", "right", "bottom"]}>
+		<Page options={options}>
 			<View className="flex flex-1">
-				<Stack.Screen options={options} />
 				<ScrollView>
 					<WebWrapper>
 						<Metadata
@@ -120,7 +119,7 @@ const SongPage = () => {
 					</WebWrapper>
 				</ScrollView>
 			</View>
-		</SafeAreaView>
+		</Page>
 	);
 };
 

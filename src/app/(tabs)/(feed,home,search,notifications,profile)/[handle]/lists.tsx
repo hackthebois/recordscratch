@@ -1,7 +1,7 @@
 import NotFoundScreen from "@/app/+not-found";
 import ListOfLists from "@/components/List/ListOfLists";
 import { Button } from "@/components/ui/button";
-import { Link, Stack, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import { Platform, View, useWindowDimensions } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Plus } from "@/lib/icons/IconsLoader";
@@ -10,6 +10,7 @@ import { ListsType } from "@/types";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 const CreateListButton = ({ isProfile }: { isProfile: boolean }) => {
 	return (
@@ -51,12 +52,7 @@ const AllListsPage = () => {
 	);
 
 	return (
-		<>
-			<Stack.Screen
-				options={{
-					title: `${isProfile ? "My" : `${profile.handle}'s`} Lists`,
-				}}
-			/>
+		<Page title={`${isProfile ? "My" : `${profile.handle}'s`} Lists`}>
 			<ListOfLists
 				HeaderComponent={
 					Platform.OS != "web" ? (
@@ -75,7 +71,7 @@ const AllListsPage = () => {
 				orientation="vertical"
 				size={top6Width}
 			/>
-		</>
+		</Page>
 	);
 };
 

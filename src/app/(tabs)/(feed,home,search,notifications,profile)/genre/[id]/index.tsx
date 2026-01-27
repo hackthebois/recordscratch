@@ -10,6 +10,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/text";
 import { WebWrapper } from "@/components/WebWrapper";
 import { ArtistItem } from "@/components/Item/ArtistItem";
+import { Page } from "@/components/Page";
 
 const GenrePage = () => {
 	const { id } = useLocalSearchParams<{ id: string }>();
@@ -19,7 +20,7 @@ const GenrePage = () => {
 		getQueryOptions({
 			route: "/editorial/{id}",
 			input: { id: genreId },
-		})
+		}),
 	);
 
 	if (!genre) return <NotFoundScreen />;
@@ -30,7 +31,7 @@ const GenrePage = () => {
 			input: {
 				id: genreId,
 			},
-		})
+		}),
 	);
 
 	const { data: releases } = useSuspenseQuery(
@@ -40,30 +41,35 @@ const GenrePage = () => {
 				id: genreId,
 				limit: 20,
 			},
-		})
+		}),
 	);
 
 	return (
-		<SafeAreaProvider>
-			<Stack.Screen />
+		<Page>
 			<ScrollView>
 				<WebWrapper>
 					<Metadata title={genre.name} cover={genre.picture_big}>
 						<></>
 					</Metadata>
 					<View className="px-4">
-						<Text variant="h2" className="pb-4 pt-6">
+						<Text variant="h2" className="pt-6 pb-4">
 							Recent {genre.name} Releases
 						</Text>
 						<FlashList
 							data={releases.data}
-							renderItem={({ item }) => <AlbumItem resourceId={String(item.id)} />}
+							renderItem={({ item }) => (
+								<AlbumItem resourceId={String(item.id)} />
+							)}
 							horizontal
-							showsHorizontalScrollIndicator={Platform.OS === "web"}
+							showsHorizontalScrollIndicator={
+								Platform.OS === "web"
+							}
 							contentContainerClassName="h-64"
-							ItemSeparatorComponent={() => <View className="w-4" />}
+							ItemSeparatorComponent={() => (
+								<View className="w-4" />
+							)}
 						/>
-						<Text variant="h2" className="pb-4 pt-6">
+						<Text variant="h2" className="pt-6 pb-4">
 							Top {genre.name} Artists
 						</Text>
 						<FlashList
@@ -78,14 +84,18 @@ const GenrePage = () => {
 								/>
 							)}
 							horizontal
-							showsHorizontalScrollIndicator={Platform.OS === "web"}
+							showsHorizontalScrollIndicator={
+								Platform.OS === "web"
+							}
 							contentContainerClassName="h-48"
-							ItemSeparatorComponent={() => <View className="w-4" />}
+							ItemSeparatorComponent={() => (
+								<View className="w-4" />
+							)}
 						/>
 					</View>
 				</WebWrapper>
 			</ScrollView>
-		</SafeAreaProvider>
+		</Page>
 	);
 };
 export default GenrePage;

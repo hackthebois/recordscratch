@@ -1,7 +1,7 @@
 import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
 import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
-import { Pill } from "@/components/ui/pill";
+import { Badge } from "@/components/ui/badge";
 import { Text } from "@/components/ui/text";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
@@ -14,10 +14,10 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, TextInput, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, useStore } from "@tanstack/react-form";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Page } from "@/components/Page";
 
 const SlideWrapper = ({
 	page,
@@ -34,7 +34,11 @@ const SlideWrapper = ({
 			entering={FadeIn}
 			exiting={FadeOut}
 		>
-			{page !== 0 ? <Pill>STEP {page}/3</Pill> : null}
+			{page !== 0 ? (
+				<Badge>
+					<Text>STEP {page}/3</Text>
+				</Badge>
+			) : null}
 			{title ? (
 				<Text className="my-8 text-center" variant="h1">
 					{title}
@@ -165,7 +169,7 @@ const OnboardPage = () => {
 					size="large"
 					className="text-muted-foreground"
 				/>
-				<Text className="mt-4 text-muted-foreground">
+				<Text className="text-muted-foreground mt-4">
 					Creating your account
 				</Text>
 			</View>
@@ -211,14 +215,14 @@ const OnboardPage = () => {
 									<TextInput
 										autoFocus
 										placeholder="Display name"
-										className="self-stretch rounded-md border border-border px-4 py-3 text-foreground"
+										className="border-border text-foreground self-stretch rounded-md border px-4 py-3"
 										autoComplete="off"
 										onChangeText={field.handleChange}
 										value={field.state.value}
 									/>
 									{field.state.meta.errors.map((error) => (
 										<Text
-											className="mt-2 text-destructive"
+											className="text-destructive mt-2"
 											key={error?.message}
 										>
 											{error?.message}
@@ -244,16 +248,16 @@ const OnboardPage = () => {
 							}}
 							children={(field) => (
 								<View className="self-stretch">
-									<View className="flex flex-row items-center rounded-md border border-border">
-										<View className="pl-3 pr-1.5">
+									<View className="border-border flex flex-row items-center rounded-md border">
+										<View className="pr-1.5 pl-3">
 											<AtSign
-												className="text-lg text-muted-foreground"
+												className="text-muted-foreground text-lg"
 												size={16}
 											/>
 										</View>
 										<TextInput
 											placeholder="Handle"
-											className="mb-[1px] flex-1 py-3 pr-4 text-foreground"
+											className="text-foreground mb-[1px] flex-1 py-3 pr-4"
 											autoComplete="off"
 											onChangeText={field.handleChange}
 											value={field.state.value}
@@ -261,7 +265,7 @@ const OnboardPage = () => {
 									</View>
 									{field.state.meta.errors.map((error) => (
 										<Text
-											className="mt-2 text-destructive"
+											className="text-destructive mt-2"
 											key={error?.message}
 										>
 											{error?.message}
@@ -281,7 +285,7 @@ const OnboardPage = () => {
 								<View className="self-stretch">
 									<TextInput
 										placeholder="Bio"
-										className="h-40 self-stretch rounded-md border border-border p-4 text-foreground"
+										className="border-border text-foreground h-40 self-stretch rounded-md border p-4"
 										multiline
 										autoComplete="off"
 										onChangeText={field.handleChange}
@@ -289,7 +293,7 @@ const OnboardPage = () => {
 									/>
 									{field.state.meta.errors.map((error) => (
 										<Text
-											className="mt-2 text-destructive"
+											className="text-destructive mt-2"
 											key={error?.message}
 										>
 											{error?.message}
@@ -342,7 +346,7 @@ const OnboardPage = () => {
 									</Button>
 									{field.state.meta.errors.map((error) => (
 										<Text
-											className="mt-2 text-destructive"
+											className="text-destructive mt-2"
 											key={error?.message}
 										>
 											{error?.message}
@@ -357,7 +361,7 @@ const OnboardPage = () => {
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1 }}>
+		<Page>
 			<KeyboardAvoidingScrollView contentContainerClassName="items-center justify-center h-full">
 				{renderPage(page)}
 				<View className="mt-8 flex flex-row gap-4">
@@ -398,7 +402,7 @@ const OnboardPage = () => {
 					</Button>
 				</View>
 			</KeyboardAvoidingScrollView>
-		</SafeAreaView>
+		</Page>
 	);
 };
 

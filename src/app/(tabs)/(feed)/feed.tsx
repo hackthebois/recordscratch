@@ -1,8 +1,9 @@
+import { Page } from "@/components/Page";
 import { ReviewsList } from "@/components/ReviewsList";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Text } from "@/components/ui/text";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 
@@ -14,12 +15,7 @@ const FeedPage = () => {
 	const tab = params.tab && tabs.includes(params.tab) ? params.tab : "recent";
 
 	return (
-		<>
-			<Stack.Screen
-				options={{
-					title: "Feed",
-				}}
-			/>
+		<Page title="Feed">
 			<WebWrapper>
 				<Tabs
 					value={tab}
@@ -28,7 +24,8 @@ const FeedPage = () => {
 							tab: value === "recent" ? undefined : value,
 						});
 					}}
-					className="sm:mt-4">
+					className="sm:mt-4"
+				>
 					<View className="px-4">
 						<TabsList className="w-full flex-row">
 							<TabsTrigger value="recent" className="flex-1">
@@ -57,7 +54,7 @@ const FeedPage = () => {
 						: "No for you reviews found. Check back later."
 				}
 			/>
-		</>
+		</Page>
 	);
 };
 

@@ -140,11 +140,6 @@ export const ResourceItem = ({
 			}}
 		>
 			<View
-				className={cn(
-					"flex items-center gap-4",
-					className,
-					direction === "vertical" ? "flex-col" : "flex-row",
-				)}
 				style={[
 					{
 						width:
@@ -155,65 +150,72 @@ export const ResourceItem = ({
 					style,
 				]}
 			>
-				<View className="overflow-hidden rounded-xl">
-					{album!.cover_big ? (
-						<Image
-							source={album!.cover_big}
-							style={{
-								width: imageWidthAndHeight,
-								height: imageWidthAndHeight,
-								borderRadius: 12,
-							}}
-							className={cn(
-								"aspect-square overflow-hidden rounded-xl transition-all hover:scale-105",
-								imageClassName,
-							)}
-						/>
-					) : (
-						<View className="h-full w-full bg-muted" />
-					)}
-				</View>
 				<View
 					className={cn(
-						"flex flex-col gap-2",
-						direction === "horizontal" ? "w-full" : "",
+						"flex items-center gap-4",
+						className,
+						direction === "vertical" ? "flex-col" : "flex-row",
 					)}
-					style={{
-						width:
-							direction === "vertical"
-								? imageWidthAndHeight
-								: "auto",
-					}}
 				>
-					<Text
-						className={cn(
-							"w-full text-ellipsis font-semibold",
-							textClassName,
-						)}
-						numberOfLines={direction === "horizontal" ? 2 : 1}
-						style={{ flexWrap: "wrap" }}
-					>
-						{name}
-					</Text>
-					<View className="flex flex-row gap-1 self-baseline">
-						{showType && (
-							<Text className="text-muted-foreground">
-								{resource.category === "SONG"
-									? "Song"
-									: "Album"}
-							</Text>
-						)}
-						{showArtist && (
-							<Text
+					<View className="overflow-hidden rounded-xl">
+						{album!.cover_big ? (
+							<Image
+								source={album!.cover_big}
+								style={{
+									width: imageWidthAndHeight,
+									height: imageWidthAndHeight,
+								}}
 								className={cn(
-									"text-muted-foreground",
-									artistClassName,
+									"aspect-square overflow-hidden rounded-xl transition-all hover:scale-105",
+									imageClassName,
 								)}
-							>
-								{showType ? "• " : ""}
-								{album!.artist?.name}
-							</Text>
+							/>
+						) : (
+							<View className="bg-muted h-full w-full" />
 						)}
+					</View>
+					<View
+						style={{
+							width:
+								direction === "vertical"
+									? imageWidthAndHeight
+									: "auto",
+						}}
+						className={cn(
+							"flex flex-col gap-2",
+							direction === "horizontal" ? "w-full" : "",
+						)}
+					>
+						<Text
+							className={cn(
+								"w-full font-semibold text-ellipsis",
+								textClassName,
+							)}
+							numberOfLines={direction === "horizontal" ? 2 : 1}
+							style={{ flexWrap: "wrap" }}
+						>
+							{name}
+						</Text>
+						<View className="flex flex-row gap-1 self-baseline">
+							{showType && (
+								<Text className="text-muted-foreground">
+									{resource.category === "SONG"
+										? "Song"
+										: "Album"}
+								</Text>
+							)}
+							{showArtist && (
+								<Text
+									className={cn(
+										"text-muted-foreground",
+										artistClassName,
+									)}
+								>
+									{showType ? "• " : ""}
+									{album!.artist?.name}
+								</Text>
+							)}
+						</View>
 					</View>
 				</View>
 			</View>

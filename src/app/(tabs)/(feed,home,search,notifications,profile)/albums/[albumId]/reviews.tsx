@@ -12,6 +12,7 @@ import { Platform, View } from "react-native";
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 const tabs = ["everyone", "friends"];
 const ratingTabs = ["all", "REVIEW", "RATING"];
@@ -76,15 +77,12 @@ const Reviews = () => {
 	};
 
 	return (
-		<View className="flex-1">
-			<Stack.Screen
-				options={{
-					title:
-						album.title.substring(0, 20) +
-						(album.title.length > 20 ? "... Ratings" : " Ratings"),
-				}}
-			/>
-
+		<Page
+			title={
+				album.title.substring(0, 20) +
+				(album.title.length > 20 ? "... Ratings" : " Ratings")
+			}
+		>
 			<ReviewsList
 				filters={{
 					following: tab === "friends",
@@ -95,13 +93,13 @@ const Reviews = () => {
 				}}
 				ListHeaderComponent={
 					<WebWrapper>
-						<View className="max-w-[600px] gap-4 p-4">
+						<View className="max-w-150 gap-4 p-4">
 							{Platform.OS === "web" && (
 								<Text variant="h2" className="mb-4">
 									{album.title + " Ratings"}
 								</Text>
 							)}
-							<View className="rounded-xl border border-border px-2 pt-3">
+							<View className="border-border rounded-xl border px-2 pt-3">
 								<DistributionChart
 									distribution={values}
 									value={ratingFilter}
@@ -149,7 +147,9 @@ const Reviews = () => {
 											ratingTab: undefined,
 										});
 									} else {
-										router.setParams({ ratingTab: value });
+										router.setParams({
+											ratingTab: value,
+										});
 									}
 								}}
 							>
@@ -180,7 +180,7 @@ const Reviews = () => {
 					</WebWrapper>
 				}
 			/>
-		</View>
+		</Page>
 	);
 };
 

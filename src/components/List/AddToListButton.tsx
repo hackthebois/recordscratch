@@ -18,8 +18,9 @@ const AddToListButton = ({
 				pathname: "/(modals)/list/addToList",
 				params: { resourceId, parentId, category },
 			}}
-			asChild>
-			<Button className="items-center gap-1 rounded" variant="outline" size="icon">
+			asChild
+		>
+			<Button variant="outline" size="icon">
 				<MoreHorizontal className="text-foreground" />
 			</Button>
 		</Link>

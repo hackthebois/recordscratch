@@ -21,6 +21,7 @@ import { TopListTab } from "@/components/List/TopList";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 const EditProfile = () => {
 	const { tab } = useLocalSearchParams<{ tab: string }>();
@@ -114,54 +115,79 @@ const EditProfile = () => {
 	);
 
 	return (
-		<KeyboardAvoidingScrollView>
-			<WebWrapper>
-				<View className="gap-4 p-4">
-					<Stack.Screen
-						options={{
-							title: "Edit Profile",
-						}}
-					/>
-					<View className="flex flex-row items-center gap-4">
-						<UserAvatar imageUrl={image?.uri} size={100} />
-						<form.Field
-							name="image"
-							children={(field) => (
-								<View>
-									<Button
-										variant="secondary"
-										onPress={async () => {
-											let result =
-												await ImagePicker.launchImageLibraryAsync(
-													{
-														mediaTypes: ["images"],
-														allowsEditing: true,
-														aspect: [1, 1],
-														quality: 1,
-													},
-												);
+		<Page title="Edit Profile">
+			<KeyboardAvoidingScrollView>
+				<WebWrapper>
+					<View className="gap-4 p-4">
+						<View className="flex flex-row items-center gap-4">
+							<UserAvatar imageUrl={image?.uri} size={100} />
+							<form.Field
+								name="image"
+								children={(field) => (
+									<View>
+										<Button
+											variant="secondary"
+											onPress={async () => {
+												let result =
+													await ImagePicker.launchImageLibraryAsync(
+														{
+															mediaTypes: [
+																"images",
+															],
+															allowsEditing: true,
+															aspect: [1, 1],
+															quality: 1,
+														},
+													);
 
-											if (
-												!result.canceled &&
-												result.assets &&
-												result.assets.length > 0
-											) {
-												const asset = result.assets[0]!;
-												field.handleChange({
-													uri: asset.uri,
-													type:
-														asset.type ??
-														"image/jpeg",
-													size: asset.fileSize!,
-												});
-											}
-										}}
-									>
-										<Text>Pick an image</Text>
-									</Button>
+												if (
+													!result.canceled &&
+													result.assets &&
+													result.assets.length > 0
+												) {
+													const asset =
+														result.assets[0]!;
+													field.handleChange({
+														uri: asset.uri,
+														type:
+															asset.type ??
+															"image/jpeg",
+														size: asset.fileSize!,
+													});
+												}
+											}}
+										>
+											<Text>Pick an image</Text>
+										</Button>
+										{field.state.meta.errors.map(
+											(error) => (
+												<Text
+													className="text-destructive mt-2"
+													key={error?.message}
+												>
+													{error?.message}
+												</Text>
+											),
+										)}
+									</View>
+								)}
+							/>
+						</View>
+						<form.Field
+							name="name"
+							children={(field) => (
+								<View className="gap-2">
+									<Text>Name</Text>
+									<TextInput
+										placeholder="Name"
+										className="border-border text-foreground self-stretch rounded-md border px-4 py-3"
+										autoComplete="off"
+										onChangeText={field.handleChange}
+										value={field.state.value}
+									/>
 									{field.state.meta.errors.map((error) => (
 										<Text
-											className="mt-2 text-destructive"
+											className="text-destructive mt-2"
 											key={error?.message}
 										>
 											{error?.message}
@@ -170,116 +196,105 @@ const EditProfile = () => {
 								</View>
 							)}
 						/>
-					</View>
-					<form.Field
-						name="name"
-						children={(field) => (
-							<View className="gap-2">
-								<Text>Name</Text>
-								<TextInput
-									placeholder="Name"
-									className="self-stretch rounded-md border border-border px-4 py-3 text-foreground"
-									autoComplete="off"
-									onChangeText={field.handleChange}
-									value={field.state.value}
-								/>
-								{field.state.meta.errors.map((error) => (
-									<Text
-										className="mt-2 text-destructive"
-										key={error?.message}
-									>
-										{error?.message}
-									</Text>
-								))}
-							</View>
-						)}
-					/>
-					<form.Field
-						name="handle"
-						validators={{
-							onChangeAsyncDebounceMs: 500,
-							onChangeAsync: async ({ value }) => {
-								if (value.length === 0) return;
-								const exists =
-									await handleExists.mutateAsync(value);
-								if (exists) {
-									return { message: "Handle already exists" };
-								}
-							},
-						}}
-						children={(field) => (
-							<View className="gap-2">
-								<Text>Handle</Text>
-								<View>
-									<AtSign
-										className="absolute left-3 top-[11px] text-lg text-muted-foreground"
-										size={16}
-									/>
+						<form.Field
+							name="handle"
+							validators={{
+								onChangeAsyncDebounceMs: 500,
+								onChangeAsync: async ({ value }) => {
+									if (value.length === 0) return;
+									const exists =
+										await handleExists.mutateAsync(value);
+									if (exists) {
+										return {
+											message: "Handle already exists",
+										};
+									}
+								},
+							}}
+							children={(field) => (
+								<View className="gap-2">
+									<Text>Handle</Text>
+									<View>
+										<AtSign
+											className="text-muted-foreground absolute top-[11px] left-3 text-lg"
+											size={16}
+										/>
+										<TextInput
+											placeholder="Handle"
+											className="border-border text-foreground self-stretch rounded-md border py-3 pr-4 pl-9"
+											autoComplete="off"
+											onChangeText={field.handleChange}
+											value={field.state.value}
+										/>
+										{field.state.meta.errors.map(
+											(error) => (
+												<Text
+													className="text-destructive mt-2"
+													key={error?.message}
+												>
+													{error?.message}
+												</Text>
+											),
+										)}
+									</View>
+								</View>
+							)}
+						/>
+						<form.Field
+							name="bio"
+							children={(field) => (
+								<View className="gap-2">
+									<Text>Bio</Text>
 									<TextInput
-										placeholder="Handle"
-										className="self-stretch rounded-md border border-border py-3 pl-9 pr-4 text-foreground"
+										placeholder="Bio"
+										className="border-border text-foreground h-40 self-stretch rounded-md border p-4"
+										multiline
 										autoComplete="off"
 										onChangeText={field.handleChange}
 										value={field.state.value}
 									/>
 									{field.state.meta.errors.map((error) => (
 										<Text
-											className="mt-2 text-destructive"
+											className="text-destructive mt-2"
 											key={error?.message}
 										>
 											{error?.message}
 										</Text>
 									))}
 								</View>
-							</View>
-						)}
-					/>
-					<form.Field
-						name="bio"
-						children={(field) => (
-							<View className="gap-2">
-								<Text>Bio</Text>
-								<TextInput
-									placeholder="Bio"
-									className="h-40 self-stretch rounded-md border border-border p-4 text-foreground"
-									multiline
-									autoComplete="off"
-									onChangeText={field.handleChange}
-									value={field.state.value}
-								/>
-								{field.state.meta.errors.map((error) => (
-									<Text
-										className="mt-2 text-destructive"
-										key={error?.message}
-									>
-										{error?.message}
-									</Text>
-								))}
-							</View>
-						)}
-					/>
-					<Button
-						onPress={form.handleSubmit}
-						className="self-stretch"
-						variant="secondary"
-					>
-						{loading ? <Text>Loading...</Text> : <Text>Save</Text>}
-					</Button>
-					<Text variant="h4" className="text-center">
-						My Top 6
-					</Text>
-					<TopListTab
-						isUser
-						tab={tab}
-						album={topLists.album as ListWithResources | undefined}
-						song={topLists.song as ListWithResources | undefined}
-						artist={
-							topLists.artist as ListWithResources | undefined
-						}
-					/>
-				</View>
-			</WebWrapper>
-		</KeyboardAvoidingScrollView>
+							)}
+						/>
+						<Button
+							onPress={form.handleSubmit}
+							className="self-stretch"
+							variant="secondary"
+						>
+							{loading ? (
+								<Text>Loading...</Text>
+							) : (
+								<Text>Save</Text>
+							)}
+						</Button>
+						<Text variant="h4" className="text-center">
+							My Top 6
+						</Text>
+						<TopListTab
+							isUser
+							tab={tab}
+							album={
+								topLists.album as ListWithResources | undefined
+							}
+							song={
+								topLists.song as ListWithResources | undefined
+							}
+							artist={
+								topLists.artist as ListWithResources | undefined
+							}
+						/>
+					</View>
+				</WebWrapper>
+			</KeyboardAvoidingScrollView>
+		</Page>
 	);
 };
 

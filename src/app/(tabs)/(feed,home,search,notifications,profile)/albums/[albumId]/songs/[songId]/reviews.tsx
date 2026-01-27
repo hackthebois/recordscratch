@@ -12,6 +12,7 @@ import { Platform, View } from "react-native";
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 const tabs = ["everyone", "friends"];
 const ratingTabs = ["REVIEW", "RATING", "all"];
@@ -75,14 +76,12 @@ const Reviews = () => {
 	};
 
 	return (
-		<>
-			<Stack.Screen
-				options={{
-					title:
-						song.title.substring(0, 20) +
-						(song.title.length > 20 ? "... Ratings" : " Ratings"),
-				}}
-			/>
+		<Page
+			title={
+				song.title.substring(0, 20) +
+				(song.title.length > 20 ? "... Ratings" : " Ratings")
+			}
+		>
 			<ReviewsList
 				filters={{
 					following: tab === "friends",
@@ -100,7 +99,7 @@ const Reviews = () => {
 									{song.title + " Ratings"}
 								</Text>
 							)}
-							<View className="rounded-xl border border-border px-2 pt-3">
+							<View className="border-border rounded-xl border px-2 pt-3">
 								<DistributionChart
 									distribution={values}
 									height={Platform.OS === "web" ? 100 : 80}
@@ -172,7 +171,7 @@ const Reviews = () => {
 					</WebWrapper>
 				}
 			/>
-		</>
+		</Page>
 	);
 };
 

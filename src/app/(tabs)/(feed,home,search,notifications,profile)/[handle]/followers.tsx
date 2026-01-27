@@ -14,6 +14,7 @@ import { Profile } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 const types = ["followers", "following"];
 
@@ -45,12 +46,7 @@ const Followers = () => {
 	const { refetchByUser, isRefetchingByUser } = useRefreshByUser(refetch);
 
 	return (
-		<>
-			<Stack.Screen
-				options={{
-					title: type === "followers" ? "Followers" : "Following",
-				}}
-			/>
+		<Page title={type === "followers" ? "Followers" : "Following"}>
 			<Tabs
 				value={type}
 				onValueChange={(value) =>
@@ -93,7 +89,7 @@ const Followers = () => {
 					onRefresh={refetchByUser}
 				/>
 			</Tabs>
-		</>
+		</Page>
 	);
 };
 

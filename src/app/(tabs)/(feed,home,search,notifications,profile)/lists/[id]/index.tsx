@@ -13,12 +13,12 @@ import { ListPlus, Pencil, Settings } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
 import { cn, timeAgo } from "@/lib";
 import { Category, ListItem } from "@/types";
-import { Link, Stack, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import { Platform, ScrollView, useWindowDimensions, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 const ListResources = ({
 	items,
@@ -34,7 +34,7 @@ const ListResources = ({
 				<View
 					key={item.resourceId}
 					className={cn(
-						"w-full border-muted",
+						"border-muted w-full",
 						index !== items.length - 1 && "border-b",
 					)}
 				>
@@ -44,7 +44,7 @@ const ListResources = ({
 						)}
 					>
 						<View className="flex flex-row items-center px-4">
-							<Text className="w-6 font-bold text-base text-muted-foreground">
+							<Text className="text-muted-foreground w-6 text-base font-bold">
 								{index + 1}
 							</Text>
 							{category === "ARTIST" ? (
@@ -140,10 +140,9 @@ const ListPage = () => {
 			: {};
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
+		<Page options={options}>
 			<ScrollView className="flex h-full flex-col gap-6">
 				<WebWrapper>
-					<Stack.Screen options={options} />
 					<Metadata
 						type={`${list.category} LIST`}
 						title={list.name}
@@ -258,7 +257,7 @@ const ListPage = () => {
 						)}
 				</WebWrapper>
 			</ScrollView>
-		</SafeAreaView>
+		</Page>
 	);
 };
 

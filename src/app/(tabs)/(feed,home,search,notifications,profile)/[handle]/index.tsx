@@ -6,7 +6,7 @@ import ListOfLists from "@/components/List/ListOfLists";
 import { UserAvatar } from "@/components/UserAvatar";
 import { WebWrapper } from "@/components/WebWrapper";
 import { Button } from "@/components/ui/button";
-import { Pill } from "@/components/ui/pill";
+import { Badge } from "@/components/ui/badge";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/lib/auth";
 import { ChevronRight, Hand, UserCheck } from "@/lib/icons/IconsLoader";
@@ -38,6 +38,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 const ToggleAccountStatus = ({
 	isActive,
@@ -230,8 +231,7 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 	}
 
 	return (
-		<View className="flex flex-1">
-			<Stack.Screen options={options} />
+		<Page options={options}>
 			<ScrollView>
 				<WebWrapper>
 					<View className="mt-4 gap-2 px-4">
@@ -273,11 +273,23 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 											{profile.name}
 										</Text>
 										<View className="flex flex-row flex-wrap items-center gap-3">
-											<Pill>{`@${profile.handle}`}</Pill>
-											<Pill>{`Streak: ${profile.meta.streak ?? ""}`}</Pill>
-											<Pill>{`Likes: ${profile.meta.totalLikes ?? ""}`}</Pill>
+											<Badge>
+												<Text>
+													{`@${profile.handle}`}
+												</Text>
+											</Badge>
+											<Badge>
+												<Text>
+													{`Streak: ${profile.meta.streak ?? ""}`}
+												</Text>
+											</Badge>
+											<Badge>
+												<Text>
+													{`Likes: ${profile.meta.totalLikes ?? ""}`}
+												</Text>
+											</Badge>
 											{profile.role === "MOD" && (
-												<Pill className="bg-red-300">
+												<Badge className="bg-red-300">
 													<View className="flex flex-row items-center">
 														<ShieldCheck
 															size={16}
@@ -285,7 +297,7 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 														/>
 														<Text>Moderator</Text>
 													</View>
-												</Pill>
+												</Badge>
 											)}
 										</View>
 										<Text className="truncate text-wrap">
@@ -304,7 +316,7 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 														>
 															<Settings
 																size={16}
-																className="mr-2 text-foreground"
+																className="text-foreground mr-2"
 															/>
 															<Text>
 																Settings
@@ -376,7 +388,7 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 								</View>
 							</View>
 						</View>
-						<View className="max-w-[450px] rounded-xl border border-border px-2 pt-3">
+						<View className="border-border max-w-112.5 rounded-xl border px-2 pt-3">
 							<DistributionChart
 								distribution={values}
 								height={Platform.OS === "web" ? 100 : 80}
@@ -394,7 +406,7 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 							/>
 						</View>
 					</View>
-					<View className="px-4">
+					{/*<View className="px-4">
 						<TopListTab
 							isUser={isProfile}
 							tab={tab}
@@ -413,10 +425,10 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 						handle={profile.handle}
 						lists={lists as ListsType[]}
 						isProfile={isProfile}
-					/>
+					/>*/}
 				</WebWrapper>
 			</ScrollView>
-		</View>
+		</Page>
 	);
 };
 

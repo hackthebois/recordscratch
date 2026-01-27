@@ -12,6 +12,7 @@ import { useForm } from "@tanstack/react-form";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 const SettingsPage = () => {
 	const router = useRouter();
@@ -98,92 +99,89 @@ const SettingsPage = () => {
 	};
 
 	return (
-		<KeyboardAvoidingScrollView contentContainerClassName="h-full p-4 gap-8">
-			<Stack.Screen
-				options={{
-					title: `Edit List`,
-				}}
-			/>
-			<form.Field
-				name="onProfile"
-				children={(field) => (
-					<View className="flex flex-row items-center gap-3">
-						<Switch
-							onValueChange={field.handleChange}
-							value={field.state.value}
-						/>
-						<Text>Show as Top 6</Text>
-						{field.state.meta.errors.map((error) => (
-							<Text
-								className="mt-2 text-destructive"
-								key={error?.message}
-							>
-								{error?.message}
-							</Text>
-						))}
-					</View>
-				)}
-			/>
-			<form.Field
-				name="name"
-				children={(field) => (
-					<View className="gap-2">
-						<Text>Name</Text>
-						<TextInput
-							className="self-stretch rounded-md border border-border px-4 py-3 text-foreground"
-							autoComplete="off"
-							onChangeText={field.handleChange}
-							value={field.state.value}
-						/>
-						{field.state.meta.errors.map((error) => (
-							<Text
-								className="mt-2 text-destructive"
-								key={error?.message}
-							>
-								{error?.message}
-							</Text>
-						))}
-					</View>
-				)}
-			/>
-			<form.Field
-				name="description"
-				children={(field) => (
-					<View className="gap-2">
-						<Text>Description</Text>
-						<TextInput
-							className="h-40 self-stretch rounded-md border border-border p-4 text-foreground"
-							multiline
-							autoComplete="off"
-							onChangeText={field.handleChange}
-							value={field.state.value ?? ""}
-						/>
-						{field.state.meta.errors.map((error) => (
-							<Text
-								className="mt-2 text-destructive"
-								key={error?.message}
-							>
-								{error?.message}
-							</Text>
-						))}
-					</View>
-				)}
-			/>
-			<Button
-				onPress={form.handleSubmit}
-				className="self-stretch"
-				variant="secondary"
-			>
-				<Text>{loading ? "Loading..." : "Save"}</Text>
-			</Button>
-			<Button
-				disabled={loading}
-				variant="destructive"
-				onPress={handleDelete}
-			>
-				<Text>Delete List</Text>
-			</Button>
-		</KeyboardAvoidingScrollView>
+		<Page title="Edit List">
+			<KeyboardAvoidingScrollView contentContainerClassName="h-full p-4 gap-8">
+				<form.Field
+					name="onProfile"
+					children={(field) => (
+						<View className="flex flex-row items-center gap-3">
+							<Switch
+								onValueChange={field.handleChange}
+								value={field.state.value}
+							/>
+							<Text>Show as Top 6</Text>
+							{field.state.meta.errors.map((error) => (
+								<Text
+									className="text-destructive mt-2"
+									key={error?.message}
+								>
+									{error?.message}
+								</Text>
+							))}
+						</View>
+					)}
+				/>
+				<form.Field
+					name="name"
+					children={(field) => (
+						<View className="gap-2">
+							<Text>Name</Text>
+							<TextInput
+								className="border-border text-foreground self-stretch rounded-md border px-4 py-3"
+								autoComplete="off"
+								onChangeText={field.handleChange}
+								value={field.state.value}
+							/>
+							{field.state.meta.errors.map((error) => (
+								<Text
+									className="text-destructive mt-2"
+									key={error?.message}
+								>
+									{error?.message}
+								</Text>
+							))}
+						</View>
+					)}
+				/>
+				<form.Field
+					name="description"
+					children={(field) => (
+						<View className="gap-2">
+							<Text>Description</Text>
+							<TextInput
+								className="border-border text-foreground h-40 self-stretch rounded-md border p-4"
+								multiline
+								autoComplete="off"
+								onChangeText={field.handleChange}
+								value={field.state.value ?? ""}
+							/>
+							{field.state.meta.errors.map((error) => (
+								<Text
+									className="text-destructive mt-2"
+									key={error?.message}
+								>
+									{error?.message}
+								</Text>
+							))}
+						</View>
+					)}
+				/>
+				<Button
+					onPress={form.handleSubmit}
+					className="self-stretch"
+					variant="secondary"
+				>
+					<Text>{loading ? "Loading..." : "Save"}</Text>
+				</Button>
+				<Button
+					disabled={loading}
+					variant="destructive"
+					onPress={handleDelete}
+				>
+					<Text>Delete List</Text>
+				</Button>
+			</KeyboardAvoidingScrollView>
+		</Page>
 	);
 };
 

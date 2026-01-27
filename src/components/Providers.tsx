@@ -10,7 +10,6 @@ import { useStore } from "zustand";
 import { Platform, useColorScheme } from "react-native";
 import { queryClient } from "@/lib/api";
 import { THEME } from "@/lib/constants";
-import { VariableContextProvider } from "nativewind";
 
 export const QueryProvider = (props: { children: React.ReactNode }) => {
 	return (
@@ -64,16 +63,5 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 	return (
 		<AuthContext.Provider value={store}>{children}</AuthContext.Provider>
-	);
-};
-
-export const ThemeProvider = (props: { children: React.ReactNode }) => {
-	const colorScheme = useColorScheme();
-	const theme = colorScheme === "dark" ? THEME.dark : THEME.light;
-
-	return (
-		<VariableContextProvider value={theme}>
-			{props.children}
-		</VariableContextProvider>
 	);
 };

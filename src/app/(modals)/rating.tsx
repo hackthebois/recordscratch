@@ -6,15 +6,15 @@ import { useAuth } from "@/lib/auth";
 import { Star } from "@/lib/icons/IconsLoader";
 import { RateForm, RateFormSchema, Resource } from "@/types";
 import { Image } from "expo-image";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { Alert, Pressable, TextInput, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm } from "@tanstack/react-form";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 const RatingInput = ({
 	value: rating,
@@ -135,12 +135,9 @@ const RatingModal = () => {
 	};
 
 	return (
-		<SafeAreaView edges={["bottom"]} className="h-full">
-			<Stack.Screen
-				options={{
-					title: `Rate ${resource.category === "ALBUM" ? "Album" : "Song"}`,
-				}}
-			/>
+		<Page
+			title={`Rate ${resource.category === "ALBUM" ? "Album" : "Song"}`}
+		>
 			<KeyboardAvoidingScrollView modal>
 				<WebWrapper>
 					<View className="gap-4 px-4 sm:mt-4 sm:px-0">
@@ -184,7 +181,7 @@ const RatingModal = () => {
 									<TextInput
 										onChangeText={field.handleChange}
 										value={field.state.value ?? undefined}
-										className="min-h-32 rounded-xl border border-border p-4 text-lg text-foreground"
+										className="border-border text-foreground min-h-32 rounded-xl border p-4 text-lg"
 										placeholder="Add review..."
 										multiline
 										scrollEnabled={false}
@@ -237,7 +234,7 @@ const RatingModal = () => {
 					</View>
 				</WebWrapper>
 			</KeyboardAvoidingScrollView>
-		</SafeAreaView>
+		</Page>
 	);
 };
 

@@ -1,4 +1,4 @@
-import { Pill } from "@/components/ui/pill";
+import { Badge } from "@/components/ui/badge";
 import { Text } from "@/components/ui/text";
 import { Genre } from "@/lib";
 import { Image } from "expo-image";
@@ -60,7 +60,9 @@ const Metadata = ({
 							{tags
 								.filter((tag) => Boolean(tag))
 								.map((tag, index) => (
-									<Pill key={index}>{tag}</Pill>
+									<Badge key={index}>
+										<Text>{tag}</Text>
+									</Badge>
 								))}
 
 							{genres &&
@@ -71,7 +73,9 @@ const Metadata = ({
 											href={`/genre/${genre.id}`}
 											key={genre.id}
 										>
-											<Pill>{genre.name}</Pill>
+											<Badge>
+												<Text>{genre.name}</Text>
+											</Badge>
 										</Link>
 									))}
 						</View>

@@ -3,10 +3,9 @@ import { ProfileItem } from "@/components/Item/ProfileItem";
 import { ResourceItem } from "@/components/Item/ResourceItem";
 import { SearchOptions, useDebounce } from "@/lib";
 import { useQuery } from "@tanstack/react-query";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useMemo } from "react";
 import { ActivityIndicator, Platform, TextInput, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Text } from "@/components/ui/text";
@@ -15,6 +14,7 @@ import { Search } from "@/lib/icons/IconsLoader";
 import { WebWrapper } from "@/components/WebWrapper";
 import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 type TabsType = Omit<SearchOptions, "query"> & {
 	label: string;
@@ -94,16 +94,11 @@ export default function SearchPage() {
 	const userProfile = useAuth((s) => s.profile);
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={["left", "right", "top"]}>
-			<Stack.Screen
-				options={{
-					headerShown: Platform.OS === "web",
-				}}
-			/>
+		<Page options={{ headerShown: Platform.OS === "web" }}>
 			<WebWrapper>
 				<View className="gap-2 px-4 sm:mt-4">
-					<View className="h-14 w-full flex-row items-center rounded-xl border border-border pr-4">
-						<Search size={20} className="mx-4 text-foreground" />
+					<View className="border-border h-14 w-full flex-row items-center rounded-xl border pr-4">
+						<Search size={20} className="text-foreground mx-4" />
 						<TextInput
 							id="name"
 							autoComplete="off"
@@ -117,7 +112,7 @@ export default function SearchPage() {
 							}}
 							autoCorrect={false}
 							autoFocus
-							className="h-full flex-1 p-0 text-xl text-foreground outline-none"
+							className="text-foreground h-full flex-1 p-0 text-xl outline-none"
 							onChangeText={(text) => {
 								router.setParams({ query: text });
 							}}
@@ -260,6 +255,6 @@ export default function SearchPage() {
 					</View>
 				</WebWrapper>
 			</KeyboardAvoidingScrollView>
-		</SafeAreaView>
+		</Page>
 	);
 }

@@ -8,14 +8,14 @@ import { Search } from "@/lib/icons/IconsLoader";
 import { Album, Artist, Track, useDebounce } from "@/lib";
 import { FlashList } from "@shopify/flash-list";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { ActivityIndicator, Platform, TextInput, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 import { useForm, useStore } from "@tanstack/react-form";
 
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 const MusicSearch = ({
 	query,
@@ -173,20 +173,15 @@ const RatingModal = () => {
 	);
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={["left", "right", "top"]}>
-			<Stack.Screen
-				options={{
-					title: `Search for an ${category.toLowerCase()}`,
-				}}
-			/>
+		<Page title={`Search for an ${category.toLowerCase()}`}>
 			<KeyboardAvoidingScrollView modal>
 				<WebWrapper>
 					<View className="p-4">
 						<View className="flex-row items-center">
-							<View className="h-14 flex-1 flex-row items-center rounded-xl border border-border pr-4">
+							<View className="border-border h-14 flex-1 flex-row items-center rounded-xl border pr-4">
 								<Search
 									size={20}
-									className="mx-4 text-foreground"
+									className="text-foreground mx-4"
 								/>
 								<form.Field
 									name="query"
@@ -206,7 +201,7 @@ const RatingModal = () => {
 											}}
 											autoCorrect={false}
 											autoFocus
-											className="h-full w-full flex-1 p-0 text-xl text-foreground outline-none"
+											className="text-foreground h-full w-full flex-1 p-0 text-xl outline-none"
 											onChangeText={field.handleChange}
 											keyboardType="default"
 										/>
@@ -233,7 +228,7 @@ const RatingModal = () => {
 					</View>
 				</WebWrapper>
 			</KeyboardAvoidingScrollView>
-		</SafeAreaView>
+		</Page>
 	);
 };
 

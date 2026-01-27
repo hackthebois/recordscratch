@@ -18,7 +18,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, Stack, router, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { Platform, Pressable, ScrollView, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Page } from "@/components/Page";
 
 export default function AlbumLayout() {
 	const { albumId } = useLocalSearchParams<{ albumId: string }>();
@@ -67,8 +67,7 @@ export default function AlbumLayout() {
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
-			<Stack.Screen />
+		<Page>
 			<View className="flex flex-1">
 				<ScrollView contentContainerClassName="pb-4">
 					<WebWrapper>
@@ -95,7 +94,7 @@ export default function AlbumLayout() {
 										}}
 										style={{ maxWidth: "100%" }}
 									>
-										<Text className="text-center text-muted-foreground sm:text-left">
+										<Text className="text-muted-foreground text-center sm:text-left">
 											{`${artist?.name + (album.contributors?.length === index + 1 ? "" : ",  ")}`}
 										</Text>
 									</Pressable>
@@ -137,7 +136,7 @@ export default function AlbumLayout() {
 									params: { id: String(album.artist?.id) },
 								}}
 							>
-								<View className="flex w-full flex-row items-center pb-4 pt-6">
+								<View className="flex w-full flex-row items-center pt-6 pb-4">
 									<Text variant="h4">
 										More From {album.artist?.name}
 									</Text>
@@ -169,6 +168,6 @@ export default function AlbumLayout() {
 					</WebWrapper>
 				</ScrollView>
 			</View>
-		</SafeAreaView>
+		</Page>
 	);
 }

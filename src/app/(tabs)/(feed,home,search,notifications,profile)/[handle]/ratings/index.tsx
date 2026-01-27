@@ -12,6 +12,7 @@ import { Platform, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 type RatingCategory = "all" | "ALBUM" | "SONG";
 
@@ -24,18 +25,27 @@ const Reviews = () => {
 	}>();
 	const handle = params.handle;
 	const rating =
-		params.rating && params.rating !== "undefined" ? parseInt(params.rating) : undefined;
-	const tab = (params.tab && params.tab !== "undefined" ? params.tab : "all") as RatingCategory;
-	const { data: profile } = useSuspenseQuery(api.profiles.get.queryOptions(handle));
+		params.rating && params.rating !== "undefined"
+			? parseInt(params.rating)
+			: undefined;
+	const tab = (
+		params.tab && params.tab !== "undefined" ? params.tab : "all"
+	) as RatingCategory;
+	const { data: profile } = useSuspenseQuery(
+		api.profiles.get.queryOptions(handle),
+	);
 
 	const { data: values } = useQuery(
 		api.profiles.distribution.queryOptions(
-			{ userId: profile!.userId, category: tab !== "all" ? tab : undefined },
+			{
+				userId: profile!.userId,
+				category: tab !== "all" ? tab : undefined,
+			},
 			{
 				enabled: !!profile,
 				placeholderData: keepPreviousData,
-			}
-		)
+			},
+		),
 	);
 
 	useEffect(() => {
@@ -49,12 +59,7 @@ const Reviews = () => {
 	if (!profile) return <NotFoundScreen />;
 
 	return (
-		<>
-			<Stack.Screen
-				options={{
-					title: handle + " Ratings",
-				}}
-			/>
+		<Page title={handle + " Ratings"}>
 			<ReviewsList
 				limit={20}
 				filters={{
@@ -64,13 +69,13 @@ const Reviews = () => {
 				}}
 				ListHeaderComponent={
 					<WebWrapper>
-						<View className="max-w-[600px] gap-4 p-4">
+						<View className="max-w-150 gap-4 p-4">
 							{Platform.OS === "web" && (
 								<Text variant="h2" className="mb-4">
 									{handle + " Ratings"}
 								</Text>
 							)}
-							<View className="rounded-xl border border-border px-2 pt-3">
+							<View className="border-border rounded-xl border px-2 pt-3">
 								<DistributionChart
 									distribution={values}
 									value={rating}
@@ -90,15 +95,22 @@ const Reviews = () => {
 									} else {
 										router.setParams({ tab: value });
 									}
-								}}>
+								}}
+							>
 								<TabsList className="w-full flex-row">
 									<TabsTrigger value="all" className="flex-1">
 										<Text>All</Text>
 									</TabsTrigger>
-									<TabsTrigger value="ALBUM" className="flex-1">
+									<TabsTrigger
+										value="ALBUM"
+										className="flex-1"
+									>
 										<Text>Albums</Text>
 									</TabsTrigger>
-									<TabsTrigger value="SONG" className="flex-1">
+									<TabsTrigger
+										value="SONG"
+										className="flex-1"
+									>
 										<Text>Songs</Text>
 									</TabsTrigger>
 								</TabsList>
@@ -107,7 +119,7 @@ const Reviews = () => {
 					</WebWrapper>
 				}
 			/>
-		</>
+		</Page>
 	);
 };
 

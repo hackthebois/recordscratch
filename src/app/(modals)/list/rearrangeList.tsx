@@ -19,7 +19,6 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { AlignJustify, Trash2 } from "@/lib/icons/IconsLoader";
 import ReText from "@/components/ui/retext";
 import { useState } from "react";
@@ -34,6 +33,7 @@ import { Text } from "@/components/ui/text";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 const SONG_HEIGHT = 70;
 const MARGIN_TOP_OFFSET = 20;
@@ -417,42 +417,39 @@ const RearrangeListModal = () => {
 
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
-			<SafeAreaProvider>
-				<SafeAreaView style={{ flex: 1 }}>
-					<Stack.Screen
-						options={{
-							title: `Edit ${list?.name}`,
-							headerRight: () => (
-								<Button
-									variant="secondary"
-									onPress={handleSave}
-									className="mt-1 flex"
-								>
-									<Text variant="h4">Save</Text>
-								</Button>
-							),
-						}}
+			<Page title={`Edit ${list?.name}`}>
+				<Stack.Screen
+					options={{
+						headerRight: () => (
+							<Button
+								variant="secondary"
+								onPress={handleSave}
+								className="mt-1 flex"
+							>
+								<Text variant="h4">Save</Text>
+							</Button>
+						),
+					}}
+				/>
+				{Platform.OS === "web" ? (
+					<WebWrapper>
+						<Text className="text-muted-foreground mt-40 text-center text-xl">
+							Editing lists is not supported on the web yet.
+							Please use the mobile app.
+						</Text>
+					</WebWrapper>
+				) : (
+					<SortableList
+						resourcesState={resourcesState}
+						setResourcesState={setResourcesState}
+						resourcesSharedMap={resourcesSharedMap}
+						category={list!.category}
+						hasListChanged={hasListChanged}
+						deletedResources={deletedResources}
+						setDeletedResources={setDeletedResources}
 					/>
-					{Platform.OS === "web" ? (
-						<WebWrapper>
-							<Text className="mt-40 text-center text-xl text-muted-foreground">
-								Editing lists is not supported on the web yet.
-								Please use the mobile app.
-							</Text>
-						</WebWrapper>
-					) : (
-						<SortableList
-							resourcesState={resourcesState}
-							setResourcesState={setResourcesState}
-							resourcesSharedMap={resourcesSharedMap}
-							category={list!.category}
-							hasListChanged={hasListChanged}
-							deletedResources={deletedResources}
-							setDeletedResources={setDeletedResources}
-						/>
-					)}
-				</SafeAreaView>
-			</SafeAreaProvider>
+				)}
+			</Page>
 		</GestureHandlerRootView>
 	);
 };

@@ -8,16 +8,14 @@ import { getQueryOptions } from "@/lib/deezer";
 import { formatDuration } from "@/lib";
 import { FlashList } from "@shopify/flash-list";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { SplashScreen, Stack, useRouter } from "expo-router";
+import { SplashScreen, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { Platform, ScrollView, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import NotFound from "../../+not-found";
-import { WebHeaderRight } from "@/components/WebHeaderRight";
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { defaultScreenOptions } from "@/lib/navigation";
+import { Page } from "@/components/Page";
 
 const AlbumOfTheDay = () => {
 	const router = useRouter();
@@ -67,12 +65,7 @@ const HomePage = () => {
 	}, []);
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
-			<Stack.Screen
-				options={{
-					title: "Home",
-				}}
-			/>
+		<Page title="Home">
 			<ScrollView
 				contentContainerClassName="flex flex-col pb-4 items-center"
 				nestedScrollEnabled
@@ -80,7 +73,7 @@ const HomePage = () => {
 				<View className="w-full max-w-5xl">
 					<AlbumOfTheDay />
 					<View className="px-4">
-						<Text variant="h2" className="pt-6 pb-4">
+						<Text variant="h3" className="pt-6 pb-4">
 							Trending Albums
 						</Text>
 						<FlashList
@@ -110,7 +103,7 @@ const HomePage = () => {
 								Platform.OS === "web"
 							}
 						/>
-						<Text variant="h2" className="pt-6 pb-4">
+						<Text variant="h3" className="pt-6 pb-4">
 							Top Albums
 						</Text>
 						<FlashList
@@ -140,7 +133,7 @@ const HomePage = () => {
 								Platform.OS === "web"
 							}
 						/>
-						<Text variant="h2" className="pt-6 pb-4">
+						<Text variant="h3" className="pt-6 pb-4">
 							Most Popular Albums
 						</Text>
 						<FlashList
@@ -170,7 +163,7 @@ const HomePage = () => {
 								Platform.OS === "web"
 							}
 						/>
-						<Text variant="h2" className="pt-6 pb-4">
+						<Text variant="h3" className="pt-6 pb-4">
 							Top Artists
 						</Text>
 						<FlashList
@@ -194,7 +187,7 @@ const HomePage = () => {
 					</View>
 				</View>
 			</ScrollView>
-		</SafeAreaView>
+		</Page>
 	);
 };
 

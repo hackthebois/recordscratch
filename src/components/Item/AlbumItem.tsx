@@ -1,4 +1,3 @@
-import { cn } from "@/lib";
 import { View } from "react-native";
 import { ResourceItem } from "./ResourceItem";
 

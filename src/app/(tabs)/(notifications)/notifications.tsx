@@ -23,6 +23,7 @@ import { Pressable, View } from "react-native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api, RouterOutputs } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 const NotificationBlock = ({
 	icon,
@@ -67,14 +68,14 @@ const NotificationBlock = ({
 						</Link>
 						<View className="flex flex-1 flex-row flex-wrap items-center">
 							<Text numberOfLines={2}>
-								<Text className="font-bold text-lg">
+								<Text className="text-lg font-bold">
 									{profile.name}
 								</Text>
 								<Text className="text-left text-lg">
 									{" " + action + (content ? ": " : "")}
 								</Text>
 								{content ? (
-									<Text className="text-lg text-muted-foreground">
+									<Text className="text-muted-foreground text-lg">
 										{content}
 									</Text>
 								) : null}
@@ -143,8 +144,7 @@ export default function Notifications() {
 	const emptyNotifications = allNotifications?.length === 0;
 
 	return (
-		<>
-			<Stack.Screen options={{ title: "Notifications" }} />
+		<Page title="Notifications">
 			{emptyNotifications ? (
 				<View className="my-[20vh] flex w-full flex-col items-center justify-center gap-6">
 					<BellOff size={64} className="text-muted-foreground" />
@@ -160,7 +160,7 @@ export default function Notifications() {
 					}
 					ItemSeparatorComponent={() => (
 						<WebWrapper>
-							<View className="h-[2px] bg-muted sm:my-2" />
+							<View className="bg-muted h-0.5 sm:my-2" />
 						</WebWrapper>
 					)}
 					renderItem={({ item }) => (
@@ -174,6 +174,6 @@ export default function Notifications() {
 					contentContainerClassName="sm:my-4"
 				/>
 			)}
-		</>
+		</Page>
 	);
 }

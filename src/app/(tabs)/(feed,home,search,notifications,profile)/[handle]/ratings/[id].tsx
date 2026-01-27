@@ -11,6 +11,7 @@ import { CommentAndProfile } from "@/types";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { Page } from "@/components/Page";
 
 const RatingPage = () => {
 	const { id, handle } = useLocalSearchParams<{
@@ -67,12 +68,7 @@ const RatingPage = () => {
 	if (!profile || !rating) return <NotFoundScreen />;
 
 	return (
-		<>
-			<Stack.Screen
-				options={{
-					title: `${profile.name}'s Rating`,
-				}}
-			/>
+		<Page title={`${profile.name}'s Rating`}>
 			<ScrollView>
 				<WebWrapper>
 					<SectionList
@@ -80,7 +76,7 @@ const RatingPage = () => {
 						ListHeaderComponent={
 							<>
 								<Review {...rating} profile={profile} />
-								<View className="h-[1px] bg-muted" />
+								<View className="bg-muted h-px" />
 							</>
 						}
 						extraData={expandedSections}
@@ -107,7 +103,7 @@ const RatingPage = () => {
 					/>
 				</WebWrapper>
 			</ScrollView>
-		</>
+		</Page>
 	);
 };
 export default RatingPage;
