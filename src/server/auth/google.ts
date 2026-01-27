@@ -9,7 +9,7 @@ const getGoogle = (c: Context) => {
 	return new Google(
 		process.env.GOOGLE_CLIENT_ID!,
 		process.env.GOOGLE_CLIENT_SECRET!,
-		`${process.env.SERVER_URL}/api/auth/google/callback${expoAddress ? `?expoAddress=${expoAddress}` : ""}`,
+		`${process.env.EXPO_PUBLIC_SITE_URL}/api/auth/google/callback${expoAddress ? `?expoAddress=${expoAddress}` : ""}`,
 	);
 };
 

@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "expo start --clear --port=3000",
 		"android": "expo run:android",
-		"build": "bun expo export -p web",
+		"build": "bunx expo export -p web",
 		"start": "bun run server.ts",
 		"ios": "expo run:ios",
 		"web": "expo start --web",
