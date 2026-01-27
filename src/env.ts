@@ -11,23 +11,23 @@ let env = {
 };
 
 if (Platform.OS === "android") {
-	env.SITE_URL = "https://api.recordscratch.app";
+	env.SITE_URL = "https://recordscratch.app";
 }
 
-if (Platform.OS === "web" && process.env.NODE_ENV !== "development") {
+if (Platform.OS === "web") {
 	env.ENV = "production";
-	env.SCHEME = "https://recordscratch.app";
-	env.SITE_URL = "https://api.recordscratch.app";
+	env.SCHEME = process.env.EXPO_PUBLIC_SITE_URL!;
+	env.SITE_URL = process.env.EXPO_PUBLIC_SITE_URL!;
 	env.DEBUG = false;
 }
 
 if (Updates.channel === "production") {
 	env.ENV = "production";
-	env.SITE_URL = "https://api.recordscratch.app";
+	env.SITE_URL = "https://recordscratch.app";
 	env.DEBUG = false;
 } else if (Updates.channel === "staging") {
 	env.ENV = "staging";
-	env.SITE_URL = "https://dev-api.recordscratch.app"; // No staging site yet
+	env.SITE_URL = "https://dev.recordscratch.app"; // No staging site yet
 }
 
 export default env;
