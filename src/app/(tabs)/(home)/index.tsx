@@ -17,6 +17,7 @@ import { WebHeaderRight } from "@/components/WebHeaderRight";
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { defaultScreenOptions } from "@/lib/navigation";
 
 const AlbumOfTheDay = () => {
 	const router = useRouter();
@@ -70,17 +71,16 @@ const HomePage = () => {
 			<Stack.Screen
 				options={{
 					title: "Home",
-					headerRight: () => <WebHeaderRight />,
 				}}
 			/>
 			<ScrollView
 				contentContainerClassName="flex flex-col pb-4 items-center"
 				nestedScrollEnabled
 			>
-				<View className="w-full max-w-screen-lg">
+				<View className="w-full max-w-5xl">
 					<AlbumOfTheDay />
 					<View className="px-4">
-						<Text variant="h2" className="pb-4 pt-6">
+						<Text variant="h2" className="pt-6 pb-4">
 							Trending Albums
 						</Text>
 						<FlashList
@@ -110,7 +110,7 @@ const HomePage = () => {
 								Platform.OS === "web"
 							}
 						/>
-						<Text variant="h2" className="pb-4 pt-6">
+						<Text variant="h2" className="pt-6 pb-4">
 							Top Albums
 						</Text>
 						<FlashList
@@ -140,7 +140,7 @@ const HomePage = () => {
 								Platform.OS === "web"
 							}
 						/>
-						<Text variant="h2" className="pb-4 pt-6">
+						<Text variant="h2" className="pt-6 pb-4">
 							Most Popular Albums
 						</Text>
 						<FlashList
@@ -170,7 +170,7 @@ const HomePage = () => {
 								Platform.OS === "web"
 							}
 						/>
-						<Text variant="h2" className="pb-4 pt-6">
+						<Text variant="h2" className="pt-6 pb-4">
 							Top Artists
 						</Text>
 						<FlashList

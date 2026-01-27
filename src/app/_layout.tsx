@@ -1,9 +1,11 @@
 import env from "@/env";
-import { AuthProvider, QueryProvider } from "@/components/Providers";
+import {
+	AuthProvider,
+	QueryProvider,
+	ThemeProvider,
+} from "@/components/Providers";
 import { PrefetchProfile } from "@/components/Prefetch";
-import { NAV_THEME } from "@/lib/constants";
 import { catchError } from "@/lib/errors";
-import { useColorScheme } from "@/lib/useColorScheme";
 import {
 	Montserrat_100Thin,
 	Montserrat_200ExtraLight,
@@ -16,7 +18,6 @@ import {
 	Montserrat_900Black,
 	useFonts,
 } from "@expo-google-fonts/montserrat";
-import { DefaultTheme, Theme, ThemeProvider } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
 import * as Sentry from "@sentry/react-native";
 import { isRunningInExpoGo } from "expo";
@@ -24,24 +25,13 @@ import { SplashScreen, Stack, useNavigationContainerRef } from "expo-router";
 import * as Updates from "expo-updates";
 import React, { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import "../global.css";
+import "../../global.css";
 import {
 	configureReanimatedLogger,
 	ReanimatedLogLevel,
 } from "react-native-reanimated";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { defaultScreenOptions } from "@/lib/navigation";
-
-const LIGHT_THEME: Theme = {
-	...DefaultTheme,
-	dark: false,
-	colors: NAV_THEME.light,
-};
-const DARK_THEME: Theme = {
-	...DefaultTheme,
-	dark: true,
-	colors: NAV_THEME.dark,
-};
+import { Text, View } from "react-native";
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -80,8 +70,6 @@ const RootLayout = () => {
 		Montserrat_800ExtraBold,
 		Montserrat_900Black,
 	});
-	const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
-	const [isColorSchemeLoaded, setIsColorSchemeLoaded] = useState(false);
 	const ref = useNavigationContainerRef();
 	const [updatesHandled, setUpdatesHandled] = useState(false);
 
@@ -117,28 +105,12 @@ const RootLayout = () => {
 		}
 	}, [ref]);
 
-	useEffect(() => {
-		(async () => {
-			const theme = await AsyncStorage.getItem("theme");
-			console.log("base", theme);
-			if (!theme) {
-				setColorScheme(colorScheme);
-				setIsColorSchemeLoaded(true);
-				return;
-			}
-
-			const colorTheme = theme === "dark" ? "dark" : "light";
-			setColorScheme(colorTheme);
-			setIsColorSchemeLoaded(true);
-		})();
-	}, []);
-
 	// Expo Router uses Error Boundaries to catch errors in the navigation tree.
 	useEffect(() => {
 		if (fontError) throw fontError;
 	}, [fontError]);
 
-	if (!fontLoaded || !isColorSchemeLoaded || !updatesHandled) {
+	if (!fontLoaded || !updatesHandled) {
 		return null;
 	}
 
@@ -146,9 +118,7 @@ const RootLayout = () => {
 		<AuthProvider>
 			<QueryProvider>
 				<SafeAreaProvider>
-					<ThemeProvider
-						value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
-					>
+					<ThemeProvider>
 						<PrefetchProfile />
 						<Stack screenOptions={defaultScreenOptions}>
 							<Stack.Screen

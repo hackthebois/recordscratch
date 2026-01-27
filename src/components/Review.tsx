@@ -219,7 +219,7 @@ export const Review = ({
 	const myProfile = useAuth((s) => s.profile);
 	return (
 		<WebWrapper>
-			<View className="flex flex-col gap-4 bg-background p-4 text-card-foreground">
+			<View className="bg-background text-card-foreground flex flex-col gap-4 p-4">
 				<ResourceItem
 					resource={{ parentId, resourceId, category }}
 					showType
@@ -243,10 +243,10 @@ export const Review = ({
 						<Link href={`/${String(profile.handle)}`} asChild>
 							<Pressable className="flex flex-row flex-wrap items-center gap-2">
 								<UserAvatar imageUrl={getImageUrl(profile)} />
-								<Text className="font-medium text-lg">
+								<Text className="text-lg font-medium">
 									{profile.name}
 								</Text>
-								<Text className="text-left text-lg text-muted-foreground">
+								<Text className="text-muted-foreground text-left text-lg">
 									@{profile.handle} • {timeAgo(updatedAt)}
 								</Text>
 							</Pressable>

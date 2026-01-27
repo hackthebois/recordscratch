@@ -55,17 +55,11 @@ import {
 	Hand as LucideHand,
 	Plus as LucidePlus,
 } from "lucide-react-native";
-import { cssInterop } from "nativewind";
+import { styled } from "nativewind";
 
 function iconWithClassName(icon: LucideIcon) {
-	cssInterop(icon, {
-		className: {
-			target: "style",
-			nativeStyleToProp: {
-				color: true,
-				opacity: true,
-			},
-		},
+	styled(icon, {
+		className: "style",
 	});
 
 	return icon;

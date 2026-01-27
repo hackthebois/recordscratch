@@ -7,11 +7,17 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useRef } from "react";
 import { reloadAppAsync } from "expo";
 import { useStore } from "zustand";
-import { Platform } from "react-native";
+import { Platform, useColorScheme } from "react-native";
 import { queryClient } from "@/lib/api";
+import { THEME } from "@/lib/constants";
+import { VariableContextProvider } from "nativewind";
 
 export const QueryProvider = (props: { children: React.ReactNode }) => {
-	return <QueryClientProvider client={queryClient}>{props.children}</QueryClientProvider>;
+	return (
+		<QueryClientProvider client={queryClient}>
+			{props.children}
+		</QueryClientProvider>
+	);
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -44,7 +50,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	}, [login]);
 
 	useEffect(() => {
-		if (status !== "loading" && (status !== "authenticated" || pathname === "/signin")) {
+		if (
+			status !== "loading" &&
+			(status !== "authenticated" || pathname === "/signin")
+		) {
 			handleLoginRedirect({ status, router });
 		}
 	}, [pathname]);
@@ -53,5 +62,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		return null;
 	}
 
-	return <AuthContext.Provider value={store}>{children}</AuthContext.Provider>;
+	return (
+		<AuthContext.Provider value={store}>{children}</AuthContext.Provider>
+	);
+};
+
+export const ThemeProvider = (props: { children: React.ReactNode }) => {
+	const colorScheme = useColorScheme();
+	const theme = colorScheme === "dark" ? THEME.dark : THEME.light;
+
+	return (
+		<VariableContextProvider value={theme}>
+			{props.children}
+		</VariableContextProvider>
+	);
 };
