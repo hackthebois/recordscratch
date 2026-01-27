@@ -25,7 +25,10 @@ import * as Updates from "expo-updates";
 import React, { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import "../global.css";
-import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
+import {
+	configureReanimatedLogger,
+	ReanimatedLogLevel,
+} from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { defaultScreenOptions } from "@/lib/navigation";
 
@@ -44,11 +47,6 @@ export {
 	// Catch any errors thrown by the Layout component.
 	ErrorBoundary,
 } from "expo-router";
-
-export const unstable_settings = {
-	// Ensure that reloading on `/modal` keeps a back button present.
-	initialRouteName: "auth",
-};
 
 const timeoutPromise = new Promise<void>((_, reject) => {
 	setTimeout(() => {
@@ -148,7 +146,9 @@ const RootLayout = () => {
 		<AuthProvider>
 			<QueryProvider>
 				<SafeAreaProvider>
-					<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+					<ThemeProvider
+						value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
+					>
 						<PrefetchProfile />
 						<Stack screenOptions={defaultScreenOptions}>
 							<Stack.Screen

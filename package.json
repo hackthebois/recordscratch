@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "expo start --clear --port=3000",
 		"android": "expo run:android",
+		"start": "bun run server.ts",
 		"ios": "expo run:ios",
 		"web": "expo start --web",
 		"test": "jest --watchAll",
