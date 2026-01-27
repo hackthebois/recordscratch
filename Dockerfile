@@ -7,6 +7,7 @@ COPY . .
 
 RUN bun install
 
+# FIX: Build hanging
 # RUN bun run build
 
 EXPOSE 3000

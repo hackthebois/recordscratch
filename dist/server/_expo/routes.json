@@ -1,0 +1,1004 @@
+{
+  "apiRoutes": [
+    {
+      "file": "_expo/functions/[...slugs]+api.js",
+      "page": "/[...slugs]",
+      "namedRegex": "^(?:/(?<slugs>.+?))?(?:/)?$",
+      "routeKeys": {
+        "slugs": "slugs"
+      }
+    }
+  ],
+  "htmlRoutes": [
+    {
+      "file": "./(tabs)/(home)/index.tsx",
+      "page": "/(tabs)/(home)/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./index.tsx",
+      "page": "/index",
+      "namedRegex": "^/(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(auth)/signin.tsx",
+      "page": "/(auth)/signin",
+      "namedRegex": "^(?:/\\(auth\\))?/signin(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(auth)/onboard.tsx",
+      "page": "/(auth)/onboard",
+      "namedRegex": "^(?:/\\(auth\\))?/onboard(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(modals)/rating.tsx",
+      "page": "/(modals)/rating",
+      "namedRegex": "^(?:/\\(modals\\))?/rating(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(auth)/deactivated.tsx",
+      "page": "/(auth)/deactivated",
+      "namedRegex": "^(?:/\\(auth\\))?/deactivated(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(modals)/list/create.tsx",
+      "page": "/(modals)/list/create",
+      "namedRegex": "^(?:/\\(modals\\))?/list/create(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(modals)/reply/rating.tsx",
+      "page": "/(modals)/reply/rating",
+      "namedRegex": "^(?:/\\(modals\\))?/reply/rating(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(modals)/reply/comment.tsx",
+      "page": "/(modals)/reply/comment",
+      "namedRegex": "^(?:/\\(modals\\))?/reply/comment(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(modals)/list/addToList.tsx",
+      "page": "/(modals)/list/addToList",
+      "namedRegex": "^(?:/\\(modals\\))?/list/addToList(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(modals)/list/rearrangeList.tsx",
+      "page": "/(modals)/list/rearrangeList",
+      "namedRegex": "^(?:/\\(modals\\))?/list/rearrangeList(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(modals)/list/searchResource.tsx",
+      "page": "/(modals)/list/searchResource",
+      "namedRegex": "^(?:/\\(modals\\))?/list/searchResource(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed)/feed.tsx",
+      "page": "/(tabs)/(feed)/feed",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/feed(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(search)/search.tsx",
+      "page": "/(tabs)/(search)/search",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/search(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(profile)/profile.tsx",
+      "page": "/(tabs)/(profile)/profile",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/profile(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "expo-router/build/views/Sitemap.js",
+      "page": "/_sitemap",
+      "namedRegex": "^/_sitemap(?:/)?$",
+      "routeKeys": {},
+      "generated": true
+    },
+    {
+      "file": "./(tabs)/(notifications)/notifications.tsx",
+      "page": "/(tabs)/(notifications)/notifications",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/notifications(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/terms.tsx",
+      "page": "/(tabs)/(profile)/settings/terms",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/settings/terms(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/index.tsx",
+      "page": "/(tabs)/(profile)/settings/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/settings(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/terms.tsx",
+      "page": "/(tabs)/(notifications)/settings/terms",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/settings/terms(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/index.tsx",
+      "page": "/(tabs)/(notifications)/settings/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/settings(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/terms.tsx",
+      "page": "/(tabs)/(search)/settings/terms",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/settings/terms(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/index.tsx",
+      "page": "/(tabs)/(search)/settings/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/settings(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/terms.tsx",
+      "page": "/(tabs)/(home)/settings/terms",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/settings/terms(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/index.tsx",
+      "page": "/(tabs)/(home)/settings/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/settings(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/terms.tsx",
+      "page": "/(tabs)/(feed)/settings/terms",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/settings/terms(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/index.tsx",
+      "page": "/(tabs)/(feed)/settings/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/settings(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/support.tsx",
+      "page": "/(tabs)/(profile)/settings/support",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/settings/support(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/privacy.tsx",
+      "page": "/(tabs)/(profile)/settings/privacy",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/settings/privacy(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/support.tsx",
+      "page": "/(tabs)/(notifications)/settings/support",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/settings/support(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/privacy.tsx",
+      "page": "/(tabs)/(notifications)/settings/privacy",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/settings/privacy(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/support.tsx",
+      "page": "/(tabs)/(search)/settings/support",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/settings/support(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/privacy.tsx",
+      "page": "/(tabs)/(search)/settings/privacy",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/settings/privacy(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/support.tsx",
+      "page": "/(tabs)/(home)/settings/support",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/settings/support(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/privacy.tsx",
+      "page": "/(tabs)/(home)/settings/privacy",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/settings/privacy(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/support.tsx",
+      "page": "/(tabs)/(feed)/settings/support",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/settings/support(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/privacy.tsx",
+      "page": "/(tabs)/(feed)/settings/privacy",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/settings/privacy(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/editprofile.tsx",
+      "page": "/(tabs)/(profile)/settings/editprofile",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/settings/editprofile(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/editprofile.tsx",
+      "page": "/(tabs)/(notifications)/settings/editprofile",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/settings/editprofile(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/editprofile.tsx",
+      "page": "/(tabs)/(search)/settings/editprofile",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/settings/editprofile(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/editprofile.tsx",
+      "page": "/(tabs)/(home)/settings/editprofile",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/settings/editprofile(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/editprofile.tsx",
+      "page": "/(tabs)/(feed)/settings/editprofile",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/settings/editprofile(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/deleteaccount.tsx",
+      "page": "/(tabs)/(profile)/settings/deleteaccount",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/settings/deleteaccount(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/deleteaccount.tsx",
+      "page": "/(tabs)/(notifications)/settings/deleteaccount",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/settings/deleteaccount(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/deleteaccount.tsx",
+      "page": "/(tabs)/(search)/settings/deleteaccount",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/settings/deleteaccount(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/deleteaccount.tsx",
+      "page": "/(tabs)/(home)/settings/deleteaccount",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/settings/deleteaccount(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/settings/deleteaccount.tsx",
+      "page": "/(tabs)/(feed)/settings/deleteaccount",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/settings/deleteaccount(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/songs/[songId]/reviews.tsx",
+      "page": "/(tabs)/(profile)/albums/[albumId]/songs/[songId]/reviews",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/albums/(?<albumId>[^/]+?)/songs/(?<songId>[^/]+?)/reviews(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId",
+        "songId": "songId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/songs/[songId]/index.tsx",
+      "page": "/(tabs)/(profile)/albums/[albumId]/songs/[songId]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/albums/(?<albumId>[^/]+?)/songs/(?<songId>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId",
+        "songId": "songId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/ratings/[id].tsx",
+      "page": "/(tabs)/(profile)/[handle]/ratings/[id]",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/(?<handle>[^/]+?)/ratings/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "handle": "handle",
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/songs/[songId]/reviews.tsx",
+      "page": "/(tabs)/(notifications)/albums/[albumId]/songs/[songId]/reviews",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/albums/(?<albumId>[^/]+?)/songs/(?<songId>[^/]+?)/reviews(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId",
+        "songId": "songId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/songs/[songId]/index.tsx",
+      "page": "/(tabs)/(notifications)/albums/[albumId]/songs/[songId]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/albums/(?<albumId>[^/]+?)/songs/(?<songId>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId",
+        "songId": "songId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/ratings/[id].tsx",
+      "page": "/(tabs)/(notifications)/[handle]/ratings/[id]",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/(?<handle>[^/]+?)/ratings/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "handle": "handle",
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/songs/[songId]/reviews.tsx",
+      "page": "/(tabs)/(search)/albums/[albumId]/songs/[songId]/reviews",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/albums/(?<albumId>[^/]+?)/songs/(?<songId>[^/]+?)/reviews(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId",
+        "songId": "songId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/songs/[songId]/index.tsx",
+      "page": "/(tabs)/(search)/albums/[albumId]/songs/[songId]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/albums/(?<albumId>[^/]+?)/songs/(?<songId>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId",
+        "songId": "songId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/ratings/[id].tsx",
+      "page": "/(tabs)/(search)/[handle]/ratings/[id]",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/(?<handle>[^/]+?)/ratings/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "handle": "handle",
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/songs/[songId]/reviews.tsx",
+      "page": "/(tabs)/(home)/albums/[albumId]/songs/[songId]/reviews",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/albums/(?<albumId>[^/]+?)/songs/(?<songId>[^/]+?)/reviews(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId",
+        "songId": "songId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/songs/[songId]/index.tsx",
+      "page": "/(tabs)/(home)/albums/[albumId]/songs/[songId]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/albums/(?<albumId>[^/]+?)/songs/(?<songId>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId",
+        "songId": "songId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/ratings/[id].tsx",
+      "page": "/(tabs)/(home)/[handle]/ratings/[id]",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/(?<handle>[^/]+?)/ratings/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "handle": "handle",
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/songs/[songId]/reviews.tsx",
+      "page": "/(tabs)/(feed)/albums/[albumId]/songs/[songId]/reviews",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/albums/(?<albumId>[^/]+?)/songs/(?<songId>[^/]+?)/reviews(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId",
+        "songId": "songId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/songs/[songId]/index.tsx",
+      "page": "/(tabs)/(feed)/albums/[albumId]/songs/[songId]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/albums/(?<albumId>[^/]+?)/songs/(?<songId>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId",
+        "songId": "songId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/ratings/[id].tsx",
+      "page": "/(tabs)/(feed)/[handle]/ratings/[id]",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/(?<handle>[^/]+?)/ratings/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "handle": "handle",
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/lists/[id]/settings.tsx",
+      "page": "/(tabs)/(profile)/lists/[id]/settings",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/lists/(?<id>[^/]+?)/settings(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/lists/[id]/index.tsx",
+      "page": "/(tabs)/(profile)/lists/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/lists/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/genre/[id]/index.tsx",
+      "page": "/(tabs)/(profile)/genre/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/genre/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/comments/[id].tsx",
+      "page": "/(tabs)/(profile)/comments/[id]",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/comments/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/top.tsx",
+      "page": "/(tabs)/(profile)/artists/[id]/top",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/artists/(?<id>[^/]+?)/top(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/related.tsx",
+      "page": "/(tabs)/(profile)/artists/[id]/related",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/artists/(?<id>[^/]+?)/related(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/index.tsx",
+      "page": "/(tabs)/(profile)/artists/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/artists/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/discography.tsx",
+      "page": "/(tabs)/(profile)/artists/[id]/discography",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/artists/(?<id>[^/]+?)/discography(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/reviews.tsx",
+      "page": "/(tabs)/(profile)/albums/[albumId]/reviews",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/albums/(?<albumId>[^/]+?)/reviews(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/index.tsx",
+      "page": "/(tabs)/(profile)/albums/[albumId]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/albums/(?<albumId>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/ratings/index.tsx",
+      "page": "/(tabs)/(profile)/[handle]/ratings/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/(?<handle>[^/]+?)/ratings(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/lists.tsx",
+      "page": "/(tabs)/(profile)/[handle]/lists",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/(?<handle>[^/]+?)/lists(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/index.tsx",
+      "page": "/(tabs)/(profile)/[handle]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/(?<handle>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/followers.tsx",
+      "page": "/(tabs)/(profile)/[handle]/followers",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(profile\\))?/(?<handle>[^/]+?)/followers(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/lists/[id]/settings.tsx",
+      "page": "/(tabs)/(notifications)/lists/[id]/settings",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/lists/(?<id>[^/]+?)/settings(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/lists/[id]/index.tsx",
+      "page": "/(tabs)/(notifications)/lists/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/lists/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/genre/[id]/index.tsx",
+      "page": "/(tabs)/(notifications)/genre/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/genre/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/comments/[id].tsx",
+      "page": "/(tabs)/(notifications)/comments/[id]",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/comments/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/top.tsx",
+      "page": "/(tabs)/(notifications)/artists/[id]/top",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/artists/(?<id>[^/]+?)/top(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/related.tsx",
+      "page": "/(tabs)/(notifications)/artists/[id]/related",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/artists/(?<id>[^/]+?)/related(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/index.tsx",
+      "page": "/(tabs)/(notifications)/artists/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/artists/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/discography.tsx",
+      "page": "/(tabs)/(notifications)/artists/[id]/discography",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/artists/(?<id>[^/]+?)/discography(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/reviews.tsx",
+      "page": "/(tabs)/(notifications)/albums/[albumId]/reviews",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/albums/(?<albumId>[^/]+?)/reviews(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/index.tsx",
+      "page": "/(tabs)/(notifications)/albums/[albumId]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/albums/(?<albumId>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/ratings/index.tsx",
+      "page": "/(tabs)/(notifications)/[handle]/ratings/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/(?<handle>[^/]+?)/ratings(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/lists.tsx",
+      "page": "/(tabs)/(notifications)/[handle]/lists",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/(?<handle>[^/]+?)/lists(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/index.tsx",
+      "page": "/(tabs)/(notifications)/[handle]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/(?<handle>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/followers.tsx",
+      "page": "/(tabs)/(notifications)/[handle]/followers",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(notifications\\))?/(?<handle>[^/]+?)/followers(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/lists/[id]/settings.tsx",
+      "page": "/(tabs)/(search)/lists/[id]/settings",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/lists/(?<id>[^/]+?)/settings(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/lists/[id]/index.tsx",
+      "page": "/(tabs)/(search)/lists/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/lists/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/genre/[id]/index.tsx",
+      "page": "/(tabs)/(search)/genre/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/genre/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/comments/[id].tsx",
+      "page": "/(tabs)/(search)/comments/[id]",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/comments/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/top.tsx",
+      "page": "/(tabs)/(search)/artists/[id]/top",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/artists/(?<id>[^/]+?)/top(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/related.tsx",
+      "page": "/(tabs)/(search)/artists/[id]/related",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/artists/(?<id>[^/]+?)/related(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/index.tsx",
+      "page": "/(tabs)/(search)/artists/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/artists/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/discography.tsx",
+      "page": "/(tabs)/(search)/artists/[id]/discography",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/artists/(?<id>[^/]+?)/discography(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/reviews.tsx",
+      "page": "/(tabs)/(search)/albums/[albumId]/reviews",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/albums/(?<albumId>[^/]+?)/reviews(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/index.tsx",
+      "page": "/(tabs)/(search)/albums/[albumId]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/albums/(?<albumId>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/ratings/index.tsx",
+      "page": "/(tabs)/(search)/[handle]/ratings/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/(?<handle>[^/]+?)/ratings(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/lists.tsx",
+      "page": "/(tabs)/(search)/[handle]/lists",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/(?<handle>[^/]+?)/lists(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/index.tsx",
+      "page": "/(tabs)/(search)/[handle]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/(?<handle>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/followers.tsx",
+      "page": "/(tabs)/(search)/[handle]/followers",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(search\\))?/(?<handle>[^/]+?)/followers(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/lists/[id]/settings.tsx",
+      "page": "/(tabs)/(home)/lists/[id]/settings",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/lists/(?<id>[^/]+?)/settings(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/lists/[id]/index.tsx",
+      "page": "/(tabs)/(home)/lists/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/lists/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/genre/[id]/index.tsx",
+      "page": "/(tabs)/(home)/genre/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/genre/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/comments/[id].tsx",
+      "page": "/(tabs)/(home)/comments/[id]",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/comments/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/top.tsx",
+      "page": "/(tabs)/(home)/artists/[id]/top",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/artists/(?<id>[^/]+?)/top(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/related.tsx",
+      "page": "/(tabs)/(home)/artists/[id]/related",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/artists/(?<id>[^/]+?)/related(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/index.tsx",
+      "page": "/(tabs)/(home)/artists/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/artists/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/discography.tsx",
+      "page": "/(tabs)/(home)/artists/[id]/discography",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/artists/(?<id>[^/]+?)/discography(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/reviews.tsx",
+      "page": "/(tabs)/(home)/albums/[albumId]/reviews",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/albums/(?<albumId>[^/]+?)/reviews(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/index.tsx",
+      "page": "/(tabs)/(home)/albums/[albumId]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/albums/(?<albumId>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/ratings/index.tsx",
+      "page": "/(tabs)/(home)/[handle]/ratings/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/(?<handle>[^/]+?)/ratings(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/lists.tsx",
+      "page": "/(tabs)/(home)/[handle]/lists",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/(?<handle>[^/]+?)/lists(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/index.tsx",
+      "page": "/(tabs)/(home)/[handle]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/(?<handle>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/followers.tsx",
+      "page": "/(tabs)/(home)/[handle]/followers",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(home\\))?/(?<handle>[^/]+?)/followers(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/lists/[id]/settings.tsx",
+      "page": "/(tabs)/(feed)/lists/[id]/settings",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/lists/(?<id>[^/]+?)/settings(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/lists/[id]/index.tsx",
+      "page": "/(tabs)/(feed)/lists/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/lists/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/genre/[id]/index.tsx",
+      "page": "/(tabs)/(feed)/genre/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/genre/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/comments/[id].tsx",
+      "page": "/(tabs)/(feed)/comments/[id]",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/comments/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/top.tsx",
+      "page": "/(tabs)/(feed)/artists/[id]/top",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/artists/(?<id>[^/]+?)/top(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/related.tsx",
+      "page": "/(tabs)/(feed)/artists/[id]/related",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/artists/(?<id>[^/]+?)/related(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/index.tsx",
+      "page": "/(tabs)/(feed)/artists/[id]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/artists/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/artists/[id]/discography.tsx",
+      "page": "/(tabs)/(feed)/artists/[id]/discography",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/artists/(?<id>[^/]+?)/discography(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/reviews.tsx",
+      "page": "/(tabs)/(feed)/albums/[albumId]/reviews",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/albums/(?<albumId>[^/]+?)/reviews(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/albums/[albumId]/index.tsx",
+      "page": "/(tabs)/(feed)/albums/[albumId]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/albums/(?<albumId>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "albumId": "albumId"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/ratings/index.tsx",
+      "page": "/(tabs)/(feed)/[handle]/ratings/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/(?<handle>[^/]+?)/ratings(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/lists.tsx",
+      "page": "/(tabs)/(feed)/[handle]/lists",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/(?<handle>[^/]+?)/lists(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/index.tsx",
+      "page": "/(tabs)/(feed)/[handle]/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/(?<handle>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    },
+    {
+      "file": "./(tabs)/(feed,home,search,notifications,profile)/[handle]/followers.tsx",
+      "page": "/(tabs)/(feed)/[handle]/followers",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/\\(feed\\))?/(?<handle>[^/]+?)/followers(?:/)?$",
+      "routeKeys": {
+        "handle": "handle"
+      }
+    }
+  ],
+  "notFoundRoutes": [
+    {
+      "file": "./+not-found.tsx",
+      "page": "/+not-found",
+      "namedRegex": "^(?:/(?<notfound>.+?))?(?:/)?$",
+      "routeKeys": {
+        "notfound": "not-found"
+      }
+    }
+  ],
+  "redirects": [],
+  "rewrites": []
+}
