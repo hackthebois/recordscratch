@@ -29,7 +29,7 @@ const MusicSearch = ({
 	const { data: music, isLoading } = useQuery({
 		queryKey: ["search", query, category],
 		queryFn: async () => {
-			return await deezerHelpers.search({
+			return await deezerHelpers().search({
 				query: query,
 				filters: {
 					albums: category === "ALBUM",

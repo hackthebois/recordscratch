@@ -1,4 +1,4 @@
-FROM oven/bun:latest
+FROM imbios/bun-node:latest
 WORKDIR /app
 
 # 1. Copy only package files first
@@ -9,6 +9,9 @@ RUN bun install
 
 # 3. Copy the rest of the source code
 COPY . .
+
+ARG EXPO_PUBLIC_SITE_URL
+ENV EXPO_PUBLIC_SITE_URL=$EXPO_PUBLIC_SITE_URL
 
 # 4. Build
 RUN bun run build

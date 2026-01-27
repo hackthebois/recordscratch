@@ -6,7 +6,6 @@ import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import superjson from "superjson";
 import * as SecureStore from "expo-secure-store";
 import { catchError } from "./errors";
-import { reloadAppAsync } from "expo";
 import { Platform } from "react-native";
 
 export { type RouterInputs, type RouterOutputs } from "@/server/api";
@@ -23,7 +22,7 @@ export const queryClient = new QueryClient({
 const trpcClient = createTRPCClient<AppRouter>({
 	links: [
 		loggerLink({
-			enabled: () => env.DEBUG,
+			enabled: () => env.ENV === "development",
 			colorMode: "ansi",
 		}),
 		httpBatchLink({
