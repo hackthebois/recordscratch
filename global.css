@@ -9,6 +9,16 @@
   --radius-xl: calc(var(--radius) + 4px);
 
   --spacing-hairline: hairlineWidth();
+
+  --font-thin: "Montserrat_100Thin";
+  --font-extralight: "Montserrat_200ExtraLight";
+  --font-light: "Montserrat_300Light";
+  --font-normal: "Montserrat_400Regular";
+  --font-medium: "Montserrat_500Medium";
+  --font-semibold: "Montserrat_600SemiBold";
+  --font-bold: "Montserrat_700Bold";
+  --font-extrabold: "Montserrat_800ExtraBold";
+  --font-black: "Montserrat_900Black"
 }
 
 @layer theme {
