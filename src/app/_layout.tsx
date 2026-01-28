@@ -21,13 +21,13 @@ import { SplashScreen, Stack, useNavigationContainerRef } from "expo-router";
 import * as Updates from "expo-updates";
 import React, { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import "../global.css";
+import "../../global.css";
 import {
 	configureReanimatedLogger,
 	ReanimatedLogLevel,
 } from "react-native-reanimated";
 import { defaultScreenOptions } from "@/lib/navigation";
-import { Uniwind, useUniwind } from "uniwind";
+import { useUniwind } from "uniwind";
 import { ThemeProvider } from "@react-navigation/native";
 import { NAV_THEME } from "@/lib/theme";
 

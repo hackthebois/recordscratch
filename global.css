@@ -80,5 +80,13 @@
       --color-sidebar-border: oklch(1 0 0 / 10%);
       --color-sidebar-ring: oklch(0.556 0 0);
     }
+
+    ::-webkit-scrollbar {
+      @apply bg-background w-2.5 h-2.5;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      @apply bg-border rounded-full;
+    }
   }
 }
