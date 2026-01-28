@@ -94,7 +94,10 @@ export default function SearchPage() {
 	const userProfile = useAuth((s) => s.profile);
 
 	return (
-		<Page options={{ headerShown: Platform.OS === "web" }}>
+		<Page
+			options={{ headerShown: Platform.OS === "web" }}
+			edges={["top", "left", "right"]}
+		>
 			<WebWrapper>
 				<View className="gap-2 px-4 sm:mt-4">
 					<View className="border-border h-14 w-full flex-row items-center rounded-xl border pr-4">

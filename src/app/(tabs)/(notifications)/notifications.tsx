@@ -16,7 +16,7 @@ import {
 	parseLikeNotification,
 } from "@/lib";
 import { FlashList } from "@shopify/flash-list";
-import { Link, LinkProps, Stack, usePathname } from "expo-router";
+import { Link, LinkProps, usePathname } from "expo-router";
 import React, { useEffect } from "react";
 import { Pressable, View } from "react-native";
 
@@ -160,7 +160,7 @@ export default function Notifications() {
 					}
 					ItemSeparatorComponent={() => (
 						<WebWrapper>
-							<View className="bg-muted h-0.5 sm:my-2" />
+							<View className="bg-border h-px sm:my-2" />
 						</WebWrapper>
 					)}
 					renderItem={({ item }) => (

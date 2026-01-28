@@ -49,73 +49,65 @@ import {
 	UserPen as LucideUserPen,
 	X as LucideX,
 	Frown as LuicideFrown,
-	LucideIcon,
 	ReceiptText as LucideReceiptText,
 	ShieldCheck as LucideShieldCheck,
 	Hand as LucideHand,
 	Plus as LucidePlus,
 } from "lucide-react-native";
-
-function iconWithClassName(icon: LucideIcon) {
-	//styled(icon, {
-	//	className: "style",
-	//});
-
-	return icon;
-}
+import { withUniwind } from "uniwind";
 
 // Export all icons
-export const AlertCircle = iconWithClassName(LucideAlertCircle);
-export const AlignJustify = iconWithClassName(LucideAlignJustify);
-export const CheckCircle = iconWithClassName(LucideCheckCircle);
-export const Check = iconWithClassName(LucideCheck);
-export const ChevronLeft = iconWithClassName(LucideChevronLeft);
-export const ChevronRight = iconWithClassName(LucideChevronRight);
-export const ChevronUp = iconWithClassName(LucideChevronUp);
-export const ChevronDown = iconWithClassName(LucideChevronDown);
-export const XCircle = iconWithClassName(LucideXCircle);
-export const ArrowLeft = iconWithClassName(LucideArrowLeft);
-export const AtSign = iconWithClassName(LucideAtSign);
-export const Bell = iconWithClassName(LucideBell);
-export const BellOff = iconWithClassName(LucideBellOff);
-export const BellRing = iconWithClassName(LucideBellRing);
-export const Dot = iconWithClassName(LucideDot);
-export const Eraser = iconWithClassName(LucideEraser);
-export const Heart = iconWithClassName(LucideHeart);
-export const HelpCircle = iconWithClassName(LucideHelpCircle);
-export const Home = iconWithClassName(LucideHome);
-export const ListMusic = iconWithClassName(LucideListMusic);
-export const ListPlus = iconWithClassName(LucideListPlus);
-export const Loader2 = iconWithClassName(LucideLoader2);
-export const Mail = iconWithClassName(LucideMail);
-export const MessageCircle = iconWithClassName(LucideMessageCircle);
-export const MessageSquareText = iconWithClassName(LucideMessageSquareText);
-export const Moon = iconWithClassName(LucideMoon);
-export const MoonStar = iconWithClassName(LucideMoonStar);
-export const MoreHorizontal = iconWithClassName(LucideMoreHorizontal);
-export const Pencil = iconWithClassName(LucidePencil);
-export const Rows3 = iconWithClassName(LucideRows3);
-export const Reply = iconWithClassName(LucideReply);
-export const Save = iconWithClassName(LucideSave);
-export const Search = iconWithClassName(LucideSearch);
-export const Send = iconWithClassName(LucideSend);
-export const Settings = iconWithClassName(LucideSettings);
-export const Shield = iconWithClassName(LucideShield);
-export const Square = iconWithClassName(LucideSquare);
-export const SquareCheck = iconWithClassName(LucideSquareCheck);
-export const SquarePlus = iconWithClassName(LucideSquarePlus);
-export const Star = iconWithClassName(LucideStar);
-export const Sun = iconWithClassName(LucideSun);
-export const Trash = iconWithClassName(LucideTrash);
-export const Trash2 = iconWithClassName(LucideTrash2);
-export const User = iconWithClassName(LucideUser);
-export const UserMinus = iconWithClassName(LucideUserMinus);
-export const UserCheck = iconWithClassName(LucideUserCheck);
-export const UserX = iconWithClassName(LucideUserX);
-export const UserPen = iconWithClassName(LucideUserPen);
-export const X = iconWithClassName(LucideX);
-export const Frown = iconWithClassName(LuicideFrown);
-export const ReceiptText = iconWithClassName(LucideReceiptText);
-export const ShieldCheck = iconWithClassName(LucideShieldCheck);
-export const Hand = iconWithClassName(LucideHand);
-export const Plus = iconWithClassName(LucidePlus);
+export const AlertCircle = withUniwind(LucideAlertCircle);
+export const AlignJustify = withUniwind(LucideAlignJustify);
+export const CheckCircle = withUniwind(LucideCheckCircle);
+export const Check = withUniwind(LucideCheck);
+export const ChevronLeft = withUniwind(LucideChevronLeft);
+export const ChevronRight = withUniwind(LucideChevronRight);
+export const ChevronUp = withUniwind(LucideChevronUp);
+export const ChevronDown = withUniwind(LucideChevronDown);
+export const XCircle = withUniwind(LucideXCircle);
+export const ArrowLeft = withUniwind(LucideArrowLeft);
+export const AtSign = withUniwind(LucideAtSign);
+export const Bell = withUniwind(LucideBell);
+export const BellOff = withUniwind(LucideBellOff);
+export const BellRing = withUniwind(LucideBellRing);
+export const Dot = withUniwind(LucideDot);
+export const Eraser = withUniwind(LucideEraser);
+export const Heart = withUniwind(LucideHeart);
+export const HelpCircle = withUniwind(LucideHelpCircle);
+export const Home = withUniwind(LucideHome);
+export const ListMusic = withUniwind(LucideListMusic);
+export const ListPlus = withUniwind(LucideListPlus);
+export const Loader2 = withUniwind(LucideLoader2);
+export const Mail = withUniwind(LucideMail);
+export const MessageCircle = withUniwind(LucideMessageCircle);
+export const MessageSquareText = withUniwind(LucideMessageSquareText);
+export const Moon = withUniwind(LucideMoon);
+export const MoonStar = withUniwind(LucideMoonStar);
+export const MoreHorizontal = withUniwind(LucideMoreHorizontal);
+export const Pencil = withUniwind(LucidePencil);
+export const Rows3 = withUniwind(LucideRows3);
+export const Reply = withUniwind(LucideReply);
+export const Save = withUniwind(LucideSave);
+export const Search = withUniwind(LucideSearch);
+export const Send = withUniwind(LucideSend);
+export const Settings = withUniwind(LucideSettings);
+export const Shield = withUniwind(LucideShield);
+export const Square = withUniwind(LucideSquare);
+export const SquareCheck = withUniwind(LucideSquareCheck);
+export const SquarePlus = withUniwind(LucideSquarePlus);
+export const Star = withUniwind(LucideStar);
+export const Sun = withUniwind(LucideSun);
+export const Trash = withUniwind(LucideTrash);
+export const Trash2 = withUniwind(LucideTrash2);
+export const User = withUniwind(LucideUser);
+export const UserMinus = withUniwind(LucideUserMinus);
+export const UserCheck = withUniwind(LucideUserCheck);
+export const UserX = withUniwind(LucideUserX);
+export const UserPen = withUniwind(LucideUserPen);
+export const X = withUniwind(LucideX);
+export const Frown = withUniwind(LuicideFrown);
+export const ReceiptText = withUniwind(LucideReceiptText);
+export const ShieldCheck = withUniwind(LucideShieldCheck);
+export const Hand = withUniwind(LucideHand);
+export const Plus = withUniwind(LucidePlus);

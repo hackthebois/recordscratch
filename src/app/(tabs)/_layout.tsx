@@ -14,8 +14,11 @@ import { Platform } from "react-native";
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { useCSSVariable } from "uniwind";
 
 export default function TabLayout() {
+	const backgroundColor = useCSSVariable("--color-background");
+	const borderColor = useCSSVariable("--color-border");
 	const sessionId = useAuth((s) => s.sessionId);
 	const { data: notifications } = useQuery(
 		api.notifications.getUnseen.queryOptions(undefined, {
@@ -40,7 +43,9 @@ export default function TabLayout() {
 				tabBarStyle: {
 					height: 80,
 					position: "absolute",
+					backgroundColor: backgroundColor as string,
 					display: Platform.OS === "web" ? "none" : "flex",
+					borderTopColor: borderColor as string,
 				},
 				tabBarButton: ({ style, ...props }) => (
 					<Pressable
