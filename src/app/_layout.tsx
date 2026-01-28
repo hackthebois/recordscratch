@@ -27,7 +27,9 @@ import {
 	ReanimatedLogLevel,
 } from "react-native-reanimated";
 import { defaultScreenOptions } from "@/lib/navigation";
-import { Uniwind } from "uniwind";
+import { Uniwind, useUniwind } from "uniwind";
+import { ThemeProvider } from "@react-navigation/native";
+import { NAV_THEME } from "@/lib/theme";
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -55,6 +57,7 @@ Sentry.init({
 SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
+	const { theme } = useUniwind();
 	const [fontLoaded, fontError] = useFonts({
 		Montserrat_100Thin,
 		Montserrat_200ExtraLight,
@@ -110,105 +113,105 @@ const RootLayout = () => {
 		return null;
 	}
 
-	console.log(Uniwind.currentTheme);
-
 	return (
-		<AuthProvider>
-			<QueryProvider>
-				<SafeAreaProvider>
-					<PrefetchProfile />
-					<Stack screenOptions={defaultScreenOptions}>
-						<Stack.Screen
-							name="index"
-							options={{
-								headerShown: false,
-							}}
-						/>
-						<Stack.Screen
-							name="(tabs)"
-							options={{
-								headerShown: false,
-							}}
-						/>
-						<Stack.Screen
-							name="(auth)/signin"
-							options={{
-								headerShown: false,
-							}}
-						/>
-						<Stack.Screen
-							name="(auth)/onboard"
-							options={{
-								headerShown: false,
-							}}
-						/>
-						<Stack.Screen
-							name="(auth)/deactivated"
-							options={{
-								headerShown: false,
-							}}
-						/>
-						<Stack.Screen
-							name="(modals)/rating"
-							options={{
-								title: "",
-								presentation: "modal",
-								animation: "slide_from_bottom",
-							}}
-						/>
-						<Stack.Screen
-							name="(modals)/list/searchResource"
-							options={{
-								title: "SEARCH",
-								presentation: "modal",
-								animation: "slide_from_bottom",
-							}}
-						/>
-						<Stack.Screen
-							name="(modals)/list/rearrangeList"
-							options={{
-								title: "Rearrange the List",
-								presentation: "modal",
-								animation: "slide_from_bottom",
-							}}
-						/>
-						<Stack.Screen
-							name="(modals)/list/create"
-							options={{
-								title: "Create List",
-								presentation: "modal",
-								animation: "slide_from_bottom",
-							}}
-						/>
-						<Stack.Screen
-							name="(modals)/list/addToList"
-							options={{
-								title: "Add it to a List",
-								presentation: "modal",
-								animation: "slide_from_bottom",
-							}}
-						/>
-						<Stack.Screen
-							name="(modals)/reply/rating"
-							options={{
-								title: "",
-								presentation: "modal",
-								animation: "slide_from_bottom",
-							}}
-						/>
-						<Stack.Screen
-							name="(modals)/reply/comment"
-							options={{
-								title: "",
-								presentation: "modal",
-								animation: "slide_from_bottom",
-							}}
-						/>
-					</Stack>
-					<PortalHost />
-				</SafeAreaProvider>
-			</QueryProvider>
-		</AuthProvider>
+		<ThemeProvider value={NAV_THEME[theme ?? "light"]}>
+			<AuthProvider>
+				<QueryProvider>
+					<SafeAreaProvider>
+						<PrefetchProfile />
+						<Stack screenOptions={defaultScreenOptions}>
+							<Stack.Screen
+								name="index"
+								options={{
+									headerShown: false,
+								}}
+							/>
+							<Stack.Screen
+								name="(tabs)"
+								options={{
+									headerShown: false,
+								}}
+							/>
+							<Stack.Screen
+								name="(auth)/signin"
+								options={{
+									headerShown: false,
+								}}
+							/>
+							<Stack.Screen
+								name="(auth)/onboard"
+								options={{
+									headerShown: false,
+								}}
+							/>
+							<Stack.Screen
+								name="(auth)/deactivated"
+								options={{
+									headerShown: false,
+								}}
+							/>
+							<Stack.Screen
+								name="(modals)/rating"
+								options={{
+									title: "",
+									presentation: "modal",
+									animation: "slide_from_bottom",
+								}}
+							/>
+							<Stack.Screen
+								name="(modals)/list/searchResource"
+								options={{
+									title: "SEARCH",
+									presentation: "modal",
+									animation: "slide_from_bottom",
+								}}
+							/>
+							<Stack.Screen
+								name="(modals)/list/rearrangeList"
+								options={{
+									title: "Rearrange the List",
+									presentation: "modal",
+									animation: "slide_from_bottom",
+								}}
+							/>
+							<Stack.Screen
+								name="(modals)/list/create"
+								options={{
+									title: "Create List",
+									presentation: "modal",
+									animation: "slide_from_bottom",
+								}}
+							/>
+							<Stack.Screen
+								name="(modals)/list/addToList"
+								options={{
+									title: "Add it to a List",
+									presentation: "modal",
+									animation: "slide_from_bottom",
+								}}
+							/>
+							<Stack.Screen
+								name="(modals)/reply/rating"
+								options={{
+									title: "",
+									presentation: "modal",
+									animation: "slide_from_bottom",
+								}}
+							/>
+							<Stack.Screen
+								name="(modals)/reply/comment"
+								options={{
+									title: "",
+									presentation: "modal",
+									animation: "slide_from_bottom",
+								}}
+							/>
+						</Stack>
+						<PortalHost />
+					</SafeAreaProvider>
+				</QueryProvider>
+			</AuthProvider>
+		</ThemeProvider>
 	);
 };
 
