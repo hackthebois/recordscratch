@@ -67,27 +67,27 @@ const Followers = () => {
 							</TabsTrigger>
 						</TabsList>
 					</View>
+					<FlashList
+						data={followProfiles?.flatMap(
+							(item) => item?.profile as Profile,
+						)}
+						renderItem={({ item }) => (
+							<WebWrapper>
+								{item && (
+									<ProfileItem
+										profile={item}
+										isUser={profile!.userId === item.userId}
+									/>
+								)}
+							</WebWrapper>
+						)}
+						ItemSeparatorComponent={() => <View className="h-3" />}
+						className="px-4"
+						contentContainerClassName="py-4"
+						refreshing={isRefetchingByUser}
+						onRefresh={refetchByUser}
+					/>
 				</WebWrapper>
-				<FlashList
-					data={followProfiles?.flatMap(
-						(item) => item?.profile as Profile,
-					)}
-					renderItem={({ item }) => (
-						<WebWrapper>
-							{item && (
-								<ProfileItem
-									profile={item}
-									isUser={profile!.userId === item.userId}
-								/>
-							)}
-						</WebWrapper>
-					)}
-					ItemSeparatorComponent={() => <View className="h-3" />}
-					className="px-4"
-					contentContainerClassName="py-4"
-					refreshing={isRefetchingByUser}
-					onRefresh={refetchByUser}
-				/>
 			</Tabs>
 		</Page>
 	);
