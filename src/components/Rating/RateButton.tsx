@@ -75,7 +75,7 @@ const RateButton = ({
 				<Star
 					size={iconSize[size]}
 					color={THEME.star}
-					fill={userRating ? THEME["star-orange"] : undefined}
+					fill={userRating ? THEME["star-orange"] : "transparent"}
 				/>
 				<Text>{userRating ? userRating.rating : "Rate"}</Text>
 			</Button>
