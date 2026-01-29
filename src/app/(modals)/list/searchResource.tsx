@@ -16,6 +16,7 @@ import { useForm, useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
+import { THEME } from "@/lib/constants";
 
 const MusicSearch = ({
 	query,
@@ -45,7 +46,7 @@ const MusicSearch = ({
 	if (isLoading) {
 		return (
 			<View className="flex flex-1 items-center justify-center pt-40">
-				<ActivityIndicator size="large" color="#ff8500" />
+				<ActivityIndicator size="large" color={THEME["star-orange"]} />
 			</View>
 		);
 	}

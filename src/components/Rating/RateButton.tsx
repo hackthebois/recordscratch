@@ -10,6 +10,7 @@ import { Button, buttonSizes } from "../ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { View } from "react-native";
+import { THEME } from "@/lib/constants";
 
 const iconSize = {
 	lg: 27,
@@ -58,8 +59,6 @@ const RateButton = ({
 		);
 	}
 
-	const fill = userRating ? { fill: "#fb8500" } : undefined;
-
 	return (
 		<Link
 			href={{
@@ -73,7 +72,11 @@ const RateButton = ({
 			asChild
 		>
 			<Button variant="secondary" size={size} className="flex-row gap-2">
-				<Star size={iconSize[size]} color="#fb8500" {...fill} />
+				<Star
+					size={iconSize[size]}
+					color={THEME.star}
+					fill={userRating ? THEME["star-orange"] : undefined}
+				/>
 				<Text>{userRating ? userRating.rating : "Rate"}</Text>
 			</Button>
 		</Link>

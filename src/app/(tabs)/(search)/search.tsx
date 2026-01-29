@@ -15,6 +15,7 @@ import { WebWrapper } from "@/components/WebWrapper";
 import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
+import { THEME } from "@/lib/constants";
 
 type TabsType = Omit<SearchOptions, "query"> & {
 	label: string;
@@ -152,7 +153,7 @@ export default function SearchPage() {
 							<View className="flex items-center justify-center pt-40">
 								<ActivityIndicator
 									size="large"
-									color="#ff8500"
+									color={THEME["star-orange"]}
 								/>
 							</View>
 						) : (

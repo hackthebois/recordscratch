@@ -15,6 +15,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
+import { THEME } from "@/lib/constants";
 
 const RatingInput = ({
 	value: rating,
@@ -23,6 +24,7 @@ const RatingInput = ({
 	value: number | null;
 	onChange: (_rating: number | null) => void;
 }) => {
+	console.log(rating, onChange);
 	return (
 		<View className="flex flex-row justify-between">
 			{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((index) => (
@@ -38,19 +40,14 @@ const RatingInput = ({
 							index <= rating ? (
 								<Star
 									size={28}
-									className="fill-star stroke-star"
+									fill={THEME.star}
+									color={THEME.star}
 								/>
 							) : (
-								<Star
-									size={28}
-									className="fill-background stroke-star"
-								/>
+								<Star size={28} color={THEME.star} />
 							)
 						) : (
-							<Star
-								size={28}
-								className="fill-background stroke-star"
-							/>
+							<Star size={28} color={THEME.star} />
 						)}
 						<Text className="text-muted-foreground">{index}</Text>
 					</View>
@@ -140,7 +137,7 @@ const RatingModal = () => {
 		>
 			<KeyboardAvoidingScrollView modal>
 				<WebWrapper>
-					<View className="gap-4 px-4 sm:mt-4 sm:px-0">
+					<View className="gap-4 px-4 sm:mt-4">
 						{imageUrl ? (
 							<Image
 								alt={`cover`}

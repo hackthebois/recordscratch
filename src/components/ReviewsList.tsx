@@ -10,6 +10,7 @@ import { WebWrapper } from "./WebWrapper";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { THEME } from "@/lib/constants";
 
 export const ReviewsList = (
 	input: RouterInputs["ratings"]["feed"] & {
@@ -39,7 +40,7 @@ export const ReviewsList = (
 			keyExtractor={(item, index) => `review-${item.userId}-${index}`}
 			ItemSeparatorComponent={() => (
 				<WebWrapper>
-					<View className="h-[1px] bg-muted" />
+					<View className="bg-muted h-px" />
 				</WebWrapper>
 			)}
 			renderItem={({ item }) => (
@@ -51,17 +52,23 @@ export const ReviewsList = (
 			)}
 			ListFooterComponent={() =>
 				hasNextPage ? (
-					<ActivityIndicator size="large" color="#ff8500" />
+					<ActivityIndicator
+						size="large"
+						color={THEME["star-orange"]}
+					/>
 				) : null
 			}
 			ListEmptyComponent={
 				<View className="px-4 pt-40">
 					{isLoading ? (
-						<ActivityIndicator size="large" color="#ff8500" />
+						<ActivityIndicator
+							size="large"
+							color={THEME["star-orange"]}
+						/>
 					) : (
 						<Text
 							variant="h3"
-							className="text-center text-muted-foreground"
+							className="text-muted-foreground text-center"
 						>
 							{emptyText ? emptyText : "No reviews found"}
 						</Text>

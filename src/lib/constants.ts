@@ -41,4 +41,6 @@ export const THEME = {
 		input: "hsl(240 3.7% 15.9%)",
 		ring: "hsl(240 4.9% 83.9%)",
 	},
+	star: "#ffb703",
+	"star-orange": "#fb8500",
 };
