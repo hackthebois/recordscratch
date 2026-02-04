@@ -24,6 +24,10 @@ Bun.serve({
 		const staticPath = url.pathname === "/" ? "/index.html" : url.pathname;
 		const file = Bun.file(CLIENT_BUILD_DIR + staticPath);
 
+		console.log(
+			`[server] ${req.method} ${req.url} ${CLIENT_BUILD_DIR} ${SERVER_BUILD_DIR}`,
+		);
+
 		if (await file.exists())
 			return new Response(await file.arrayBuffer(), {
 				headers: {

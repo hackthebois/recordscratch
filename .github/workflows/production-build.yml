@@ -28,7 +28,7 @@ jobs:
           file: Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           build-args: |
             EXPO_PUBLIC_SITE_URL=${{ vars.EXPO_PUBLIC_SITE_URL }}
       - name: Deploy to Coolify
