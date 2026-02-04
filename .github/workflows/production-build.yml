@@ -1,4 +1,3 @@
-# For more details, read this: https://coolify.io/docs/github-actions
 name: Build Static Image
 on:
   push:
@@ -29,7 +28,9 @@ jobs:
           file: Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev
+          build-args: |
+            EXPO_PUBLIC_SITE_URL=${{ vars.EXPO_PUBLIC_SITE_URL }}
       - name: Deploy to Coolify
         run: | 
          curl --request GET '${{ vars.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
