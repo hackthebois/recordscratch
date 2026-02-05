@@ -347,10 +347,10 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 											<Pressable className="flex-1">
 												<StatBlock
 													title={"Ratings"}
-													description={String(
+													description={
 														profile.meta
-															.totalRatings,
-													)}
+															.totalRatings ?? 0
+													}
 													size="sm"
 												/>
 											</Pressable>
@@ -362,10 +362,10 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 											<Pressable className="flex-1">
 												<StatBlock
 													title={"Followers"}
-													description={String(
+													description={
 														profile.meta
-															.totalFollowers,
-													)}
+															.totalFollowers
+													}
 													size="sm"
 												/>
 											</Pressable>
@@ -377,10 +377,10 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 											<Pressable className="flex-1">
 												<StatBlock
 													title={"Following"}
-													description={String(
+													description={
 														profile.meta
-															.totalFollowing,
-													)}
+															.totalFollowing
+													}
 													size="sm"
 												/>
 											</Pressable>

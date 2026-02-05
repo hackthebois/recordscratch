@@ -45,24 +45,35 @@ export const ArtistItem = ({
 
 	if (!artist) {
 		return (
-			<View
-				className={cn(
-					"flex items-center gap-4",
-					className,
-					direction === "vertical" ? "flex-col" : "flex-row",
-				)}
-			>
+			<View>
 				<View
-					style={{
-						width: imageWidthAndHeight,
-						height: imageWidthAndHeight,
-					}}
+					className={cn(
+						"flex items-center gap-4",
+						className,
+						direction === "vertical" ? "flex-col" : "flex-row",
+					)}
+					style={style}
 				>
-					<Skeleton className="relative h-full w-full rounded-full" />
-				</View>
-				<View className="justify-center gap-1">
-					<Skeleton className="mb-1 h-4 w-32" />
-					{showType ? <Skeleton className="h-4 w-24" /> : null}
+					<View
+						style={{
+							width: imageWidthAndHeight,
+							height: imageWidthAndHeight,
+						}}
+					>
+						<Skeleton className="relative h-full w-full rounded-full" />
+					</View>
+					<View className="justify-center gap-1">
+						<Skeleton
+							className="mb-1 h-4"
+							style={{
+								width:
+									direction === "vertical"
+										? imageWidthAndHeight
+										: 128,
+							}}
+						/>
+						{showType ? <Skeleton className="h-4 w-24" /> : null}
+					</View>
 				</View>
 			</View>
 		);
@@ -100,7 +111,7 @@ export const ArtistItem = ({
 							}}
 						/>
 					) : (
-						<View className="h-full bg-muted"></View>
+						<View className="bg-muted h-full"></View>
 					)}
 				</View>
 				<View className="justify-center gap-1">

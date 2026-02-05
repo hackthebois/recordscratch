@@ -11,7 +11,7 @@ const StatBlock = ({
 	className,
 }: {
 	title: string;
-	description: string;
+	description: string | number;
 	size?: "sm" | "default";
 	loading?: boolean;
 	className?: string;
@@ -19,7 +19,7 @@ const StatBlock = ({
 	return (
 		<View
 			className={cn(
-				"gap-2 rounded-xl border border-border",
+				"border-border gap-2 rounded-xl border",
 				size === "sm" && "px-3 py-2",
 				size === "default" && "px-4 py-3",
 				className,

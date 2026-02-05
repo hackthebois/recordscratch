@@ -173,13 +173,14 @@ const HomePage = () => {
 									artistId={item}
 									direction="vertical"
 									imageWidthAndHeight={105}
+									className="max-w-32"
 								/>
 							)}
 							horizontal
 							showsHorizontalScrollIndicator={
 								Platform.OS === "web"
 							}
-							contentContainerClassName="h-40"
+							contentContainerClassName="h-48"
 							ItemSeparatorComponent={() => (
 								<View className="w-4" />
 							)}

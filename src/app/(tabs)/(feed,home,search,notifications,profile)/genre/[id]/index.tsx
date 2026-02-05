@@ -4,9 +4,8 @@ import Metadata from "@/components/Metadata";
 import { getQueryOptions } from "@/lib/deezer";
 import { FlashList } from "@shopify/flash-list";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { Platform, ScrollView, View } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/text";
 import { WebWrapper } from "@/components/WebWrapper";
 import { ArtistItem } from "@/components/Item/ArtistItem";
@@ -64,7 +63,7 @@ const GenrePage = () => {
 							showsHorizontalScrollIndicator={
 								Platform.OS === "web"
 							}
-							contentContainerClassName="h-64"
+							contentContainerClassName="h-60"
 							ItemSeparatorComponent={() => (
 								<View className="w-4" />
 							)}
@@ -78,9 +77,8 @@ const GenrePage = () => {
 								<ArtistItem
 									artistId={String(item.id)}
 									direction="vertical"
-									imageWidthAndHeight={115}
+									imageWidthAndHeight={105}
 									className="max-w-32"
-									textClassName="line-clamp-2"
 								/>
 							)}
 							horizontal

@@ -13,7 +13,7 @@ const duration = 1000;
 function Skeleton({
 	className,
 	...props
-}: Omit<React.ComponentPropsWithoutRef<typeof Animated.View>, "style">) {
+}: React.ComponentPropsWithoutRef<typeof Animated.View>) {
 	const sv = useSharedValue(1);
 
 	React.useEffect(() => {
@@ -32,9 +32,9 @@ function Skeleton({
 
 	return (
 		<Animated.View
-			style={style}
-			className={cn("rounded-md bg-secondary dark:bg-muted", className)}
+			className={cn("bg-secondary dark:bg-muted rounded-md", className)}
 			{...props}
+			style={[style, props.style]}
 		/>
 	);
 }

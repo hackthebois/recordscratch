@@ -118,7 +118,7 @@ export default function AlbumLayout() {
 								<Pressable>
 									<StatBlock
 										title="Ratings"
-										description={String(rating?.total)}
+										description={rating?.total ?? 0}
 									/>
 								</Pressable>
 							</Link>
