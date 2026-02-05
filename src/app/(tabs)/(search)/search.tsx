@@ -132,7 +132,7 @@ export default function SearchPage() {
 							}
 						}}
 					>
-						<TabsList className="flex-row">
+						<TabsList className="w-full flex-row">
 							{Object.entries(tabs).map(([key, tab]) => (
 								<TabsTrigger
 									key={key}
