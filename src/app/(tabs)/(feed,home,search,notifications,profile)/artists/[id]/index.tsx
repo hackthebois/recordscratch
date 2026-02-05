@@ -89,7 +89,7 @@ const ArtistPage = () => {
 									}}
 								>
 									<View className="flex w-full flex-row items-center pt-6 pb-4">
-										<Text variant="h2">Top Songs</Text>
+										<Text variant="h3">Top Songs</Text>
 										<ChevronRight
 											size={30}
 											className="color-muted-foreground"
@@ -106,7 +106,7 @@ const ArtistPage = () => {
 									}}
 								>
 									<View className="flex w-full flex-row items-center pt-6 pb-4">
-										<Text variant="h2">Discography</Text>
+										<Text variant="h3">Discography</Text>
 										<ChevronRight
 											size={30}
 											className="color-muted-foreground"
@@ -136,7 +136,7 @@ const ArtistPage = () => {
 									}}
 								>
 									<View className="flex w-full flex-row items-center pt-6 pb-4">
-										<Text variant="h2">
+										<Text variant="h3">
 											Related Artists
 										</Text>
 										<ChevronRight

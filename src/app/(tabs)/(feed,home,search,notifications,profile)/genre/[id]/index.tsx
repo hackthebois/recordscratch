@@ -52,7 +52,7 @@ const GenrePage = () => {
 						<></>
 					</Metadata>
 					<View className="px-4">
-						<Text variant="h2" className="pt-6 pb-4">
+						<Text variant="h3" className="pt-6 pb-4">
 							Recent {genre.name} Releases
 						</Text>
 						<FlashList
@@ -69,7 +69,7 @@ const GenrePage = () => {
 								<View className="w-4" />
 							)}
 						/>
-						<Text variant="h2" className="pt-6 pb-4">
+						<Text variant="h3" className="pt-6 pb-4">
 							Top {genre.name} Artists
 						</Text>
 						<FlashList

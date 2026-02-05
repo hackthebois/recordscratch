@@ -51,7 +51,7 @@ const Metadata = ({
 						</Text>
 					)}
 					{title && (
-						<Text variant={"h1"} className="text-center">
+						<Text variant="h1" className="text-center">
 							{title}
 						</Text>
 					)}
