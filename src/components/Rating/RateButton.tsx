@@ -10,7 +10,7 @@ import { Button, buttonSizes } from "../ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { View } from "react-native";
-import { THEME } from "@/lib/constants";
+import { THEME } from "@/lib/theme";
 
 const iconSize = {
 	lg: 27,
@@ -74,7 +74,7 @@ const RateButton = ({
 			<Button variant="secondary" size={size} className="flex-row gap-2">
 				<Star
 					size={iconSize[size]}
-					color={THEME.star}
+					color={THEME["star-orange"]}
 					fill={userRating ? THEME["star-orange"] : "transparent"}
 				/>
 				<Text>{userRating ? userRating.rating : "Rate"}</Text>

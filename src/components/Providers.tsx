@@ -7,9 +7,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useRef } from "react";
 import { reloadAppAsync } from "expo";
 import { useStore } from "zustand";
-import { Platform, useColorScheme } from "react-native";
+import { Platform } from "react-native";
 import { queryClient } from "@/lib/api";
-import { THEME } from "@/lib/constants";
 
 export const QueryProvider = (props: { children: React.ReactNode }) => {
 	return (

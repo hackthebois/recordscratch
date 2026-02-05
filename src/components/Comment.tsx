@@ -2,7 +2,6 @@ import { UserAvatar } from "@/components/UserAvatar";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/lib/auth";
 import { Heart, MessageCircle } from "@/lib/icons/IconsLoader";
-import { cn } from "@/lib";
 import { Reply } from "@/lib/icons/IconsLoader";
 import { Trash } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
@@ -27,6 +26,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { THEME } from "@/lib/theme";
 
 const DeactivateButton = ({ onPress }: { onPress: () => void }) => {
 	const [open, setOpen] = useState(false);
@@ -126,11 +126,9 @@ const LikeButton = (props: { commentId: string }) => {
 		>
 			<Heart
 				size={25}
-				className={cn(
-					liked
-						? "fill-red-500 stroke-red-500"
-						: "fill-background stroke-muted-foreground",
-				)}
+				fill={liked ? THEME.heart : undefined}
+				color={liked ? THEME.heart : undefined}
+				className="text-muted-foreground"
 			/>
 			{isLoading ? (
 				<Skeleton className="flex-row gap-2">
@@ -255,7 +253,7 @@ export const Comment = ({
 				<Pressable className="flex flex-row flex-wrap items-center gap-2">
 					<UserAvatar imageUrl={getImageUrl(profile)} />
 					<Text className="text-lg">{profile.name}</Text>
-					<Text className="text-left text-lg text-muted-foreground">
+					<Text className="text-muted-foreground text-left text-lg">
 						@{profile.handle} • {timeAgo(updatedAt)}
 					</Text>
 				</Pressable>

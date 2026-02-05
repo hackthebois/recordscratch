@@ -10,7 +10,7 @@ import { WebWrapper } from "./WebWrapper";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { THEME } from "@/lib/constants";
+import { THEME } from "@/lib/theme";
 
 export const ReviewsList = (
 	input: RouterInputs["ratings"]["feed"] & {

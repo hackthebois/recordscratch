@@ -20,6 +20,7 @@
   --font-extrabold: "Montserrat_800ExtraBold";
   --font-black: "Montserrat_900Black";
 
+  --color-heart: oklch(63.7% 0.237 25.331);
 }
 
 @layer theme {

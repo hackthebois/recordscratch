@@ -15,7 +15,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
-import { THEME } from "@/lib/constants";
+import { THEME } from "@/lib/theme";
 
 const RatingInput = ({
 	value: rating,

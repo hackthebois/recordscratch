@@ -53,6 +53,9 @@ export const THEME = {
 		chart4: "hsl(280 65% 60%)",
 		chart5: "hsl(340 75% 55%)",
 	},
+	star: "#ffb703",
+	"star-orange": "#fb8500",
+	heart: "#fb2c36",
 };
 
 export const NAV_THEME: Record<"light" | "dark", Theme> = {

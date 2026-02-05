@@ -15,7 +15,7 @@ import { WebWrapper } from "@/components/WebWrapper";
 import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
-import { THEME } from "@/lib/constants";
+import { THEME } from "@/lib/theme";
 
 type TabsType = Omit<SearchOptions, "query"> & {
 	label: string;

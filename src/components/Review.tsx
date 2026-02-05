@@ -29,6 +29,8 @@ import { useAuth } from "@/lib/auth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api, RouterInputs } from "@/lib/api";
+import { THEME } from "@/lib/theme";
+import { useCSSVariable } from "uniwind";
 
 const DeactivateButton = ({
 	resourceId,
@@ -144,6 +146,8 @@ const LikeButton = (props: SelectLike) => {
 	const liked = isLiking ? true : isUnLiking ? false : like;
 	const likesCount = isLiking ? likes + 1 : isUnLiking ? likes - 1 : likes;
 
+	const colorMutedForeground = useCSSVariable("--color-muted-foreground");
+
 	return (
 		<Button
 			variant="ghost"
@@ -160,11 +164,8 @@ const LikeButton = (props: SelectLike) => {
 		>
 			<Heart
 				size={25}
-				className={cn(
-					liked
-						? "fill-red-500 stroke-red-500"
-						: "fill-background stroke-muted-foreground",
-				)}
+				fill={liked ? THEME.heart : "transparent"}
+				color={liked ? THEME.heart : (colorMutedForeground as string)}
 			/>
 			<Text className="font-bold">{likesCount}</Text>
 		</Button>
