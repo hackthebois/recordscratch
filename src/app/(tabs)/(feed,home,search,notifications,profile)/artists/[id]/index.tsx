@@ -55,7 +55,7 @@ const ArtistPage = () => {
 	);
 
 	return (
-		<Page>
+		<Page title={artist.name}>
 			<View className="flex-1">
 				<ScrollView>
 					<WebWrapper>

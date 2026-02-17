@@ -44,7 +44,7 @@ const GenrePage = () => {
 	);
 
 	return (
-		<Page>
+		<Page title={genre.name}>
 			<ScrollView>
 				<WebWrapper>
 					<Metadata title={genre.name} cover={genre.picture_big}>

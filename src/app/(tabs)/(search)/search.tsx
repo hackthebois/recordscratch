@@ -96,6 +96,7 @@ export default function SearchPage() {
 
 	return (
 		<Page
+			title="Search"
 			options={{ headerShown: Platform.OS === "web" }}
 			edges={["top", "left", "right"]}
 		>

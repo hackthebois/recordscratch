@@ -361,7 +361,7 @@ const OnboardPage = () => {
 	};
 
 	return (
-		<Page>
+		<Page title="Onboard">
 			<KeyboardAvoidingScrollView contentContainerClassName="items-center justify-center h-full">
 				{renderPage(page)}
 				<View className="mt-8 flex flex-row gap-4">

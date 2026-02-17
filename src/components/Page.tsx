@@ -1,4 +1,6 @@
 import { ScreenProps, Stack } from "expo-router";
+import { useEffect } from "react";
+import { Platform } from "react-native";
 import { Edges, SafeAreaView } from "react-native-safe-area-context";
 import { useCSSVariable } from "uniwind";
 
@@ -14,6 +16,12 @@ export const Page = ({
 	edges?: Edges;
 }) => {
 	const backgroundColor = useCSSVariable("--color-background");
+
+	useEffect(() => {
+		if (title && Platform.OS === "web" && typeof document !== "undefined") {
+			document.title = title;
+		}
+	}, [title]);
 
 	return (
 		<SafeAreaView

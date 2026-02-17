@@ -117,30 +117,31 @@ const ListPage = () => {
 	);
 	const dimensions = useWindowDimensions();
 
-	const options =
-		Platform.OS !== "web"
-			? {
-					title: `${list.name}`,
-					headerRight: () =>
-						isProfile ? (
-							<Link
-								href={{
-									pathname: "/lists/[id]/settings",
-									params: { id: listId },
-								}}
-								className="p-2"
-							>
-								<Settings
-									size={22}
-									className="text-foreground"
-								/>
-							</Link>
-						) : null,
-				}
-			: {};
-
 	return (
-		<Page options={options}>
+		<Page
+			title={list.name}
+			options={{
+				...(Platform.OS !== "web"
+					? {
+							headerRight: () =>
+								isProfile ? (
+									<Link
+										href={{
+											pathname: "/lists/[id]/settings",
+											params: { id: listId },
+										}}
+										className="p-2"
+									>
+										<Settings
+											size={22}
+											className="text-foreground"
+										/>
+									</Link>
+								) : null,
+						}
+					: {}),
+			}}
+		>
 			<ScrollView className="flex h-full flex-col gap-6">
 				<WebWrapper>
 					<Metadata

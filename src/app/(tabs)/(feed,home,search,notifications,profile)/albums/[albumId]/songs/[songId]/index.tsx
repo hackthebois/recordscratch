@@ -51,21 +51,22 @@ const SongPage = () => {
 		category: "SONG",
 	};
 
-	const options =
-		Platform.OS !== "web"
-			? {
-					headerRight: () => (
-						<Link href={`/albums/${album.id}`} asChild>
-							<Button variant="secondary" size={"sm"}>
-								<Text>Go to album</Text>
-							</Button>
-						</Link>
-					),
-				}
-			: {};
-
 	return (
-		<Page options={options}>
+		<Page
+			options={{
+				...(Platform.OS !== "web"
+					? {
+							headerRight: () => (
+								<Link href={`/albums/${album.id}`} asChild>
+									<Button variant="secondary" size={"sm"}>
+										<Text>Go to album</Text>
+									</Button>
+								</Link>
+							),
+						}
+					: {}),
+			}}
+		>
 			<View className="flex flex-1">
 				<ScrollView>
 					<WebWrapper>

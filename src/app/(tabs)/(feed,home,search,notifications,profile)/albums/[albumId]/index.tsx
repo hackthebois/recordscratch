@@ -67,7 +67,7 @@ export default function AlbumLayout() {
 	};
 
 	return (
-		<Page>
+		<Page title={album.title}>
 			<View className="flex flex-1">
 				<ScrollView contentContainerClassName="pb-4">
 					<WebWrapper>

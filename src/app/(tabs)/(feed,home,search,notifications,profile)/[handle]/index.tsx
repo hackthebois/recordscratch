@@ -197,28 +197,6 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 	//	deactivateProfile({ userId: profile!.userId });
 	//};
 
-	const options =
-		Platform.OS !== "web"
-			? {
-					title: profile.name,
-					headerRight: () =>
-						isProfile ? (
-							<Link href={`/settings`} className="p-2">
-								<Settings
-									size={22}
-									className="text-foreground"
-								/>
-							</Link>
-						) : (
-							<Suspense fallback={null}>
-								<FollowButton
-									profileId={profile!.userId}
-									size={"sm"}
-								/>
-							</Suspense>
-						),
-				}
-			: {};
 	if (profile.deactivated && userProfile?.role !== "MOD") {
 		return (
 			<View className="mx-4 flex-1 items-center justify-center gap-16">
@@ -232,7 +210,31 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 	}
 
 	return (
-		<Page options={options}>
+		<Page
+			title={profile.name}
+			options={{
+				...(Platform.OS !== "web"
+					? {
+							headerRight: () =>
+								isProfile ? (
+									<Link href={`/settings`} className="p-2">
+										<Settings
+											size={22}
+											className="text-foreground"
+										/>
+									</Link>
+								) : (
+									<Suspense fallback={null}>
+										<FollowButton
+											profileId={profile!.userId}
+											size={"sm"}
+										/>
+									</Suspense>
+								),
+						}
+					: {}),
+			}}
+		>
 			<ScrollView>
 				<WebWrapper>
 					<View className="mt-4 gap-2 px-4">
