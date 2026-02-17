@@ -87,11 +87,12 @@ export const TopList = ({
 	const userId = useAuth((s) => s.profile!.userId);
 	const router = useRouter();
 	const queryClient = useQueryClient();
+	const { width } = useWindowDimensions();
 
-	const screenSize = Math.min(useWindowDimensions().width, 1024);
+	const screenSize = Math.min(width, 1024);
 	const numColumns = screenSize === 1024 ? 6 : 3;
 	const top6Width =
-		(Math.min(screenSize, 1024) - 32 - (numColumns - 1) * 16) / numColumns;
+		(Math.min(screenSize, 1024) - 36 - (numColumns - 1) * 16) / numColumns;
 
 	const { mutate: deleteResource } = useMutation(
 		api.lists.resources.delete.mutationOptions({
@@ -131,7 +132,7 @@ export const TopList = ({
 	);
 	const className = "relative mb-1 h-auto overflow-hidden mt-2";
 	return (
-		<View className="flex flex-row flex-wrap gap-3 px-2">
+		<View className="flex flex-row flex-wrap gap-3">
 			{resources.map((resource) => (
 				<View className={className} key={resource.resourceId}>
 					<Resource
@@ -142,7 +143,7 @@ export const TopList = ({
 					<DeleteButton
 						isVisible={editMode}
 						position={resource.position}
-						className="absolute right-0.5 top-0.5"
+						className="absolute top-0.5 right-0.5"
 						onPress={() => {
 							deleteResource({
 								resourceId: resource.resourceId,
