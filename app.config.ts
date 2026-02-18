@@ -1,6 +1,6 @@
 import type { ConfigContext, ExpoConfig } from "@expo/config";
 
-const version = "0.1.2";
+const version = "0.1.3";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
 	...config,
@@ -62,6 +62,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		"expo-apple-authentication",
 		"expo-font",
 		"expo-secure-store",
+		"@sentry/react-native",
+		"expo-image",
 	],
 	experiments: {
 		typedRoutes: true,
