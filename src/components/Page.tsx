@@ -30,6 +30,7 @@ export const Page = ({
 				flex: 1,
 				backgroundColor: backgroundColor as string,
 			}}
+			collapsable={false}
 		>
 			{title || options ? (
 				<Stack.Screen
