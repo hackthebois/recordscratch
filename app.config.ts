@@ -63,7 +63,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		"expo-font",
 		"expo-secure-store",
 		"@sentry/react-native",
-		"expo-image",
 	],
 	experiments: {
 		typedRoutes: true,
