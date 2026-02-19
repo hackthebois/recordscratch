@@ -62,7 +62,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		"expo-apple-authentication",
 		"expo-font",
 		"expo-secure-store",
-		"@sentry/react-native",
 	],
 	experiments: {
 		typedRoutes: true,
