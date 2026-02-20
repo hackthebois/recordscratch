@@ -15,6 +15,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { Platform, Pressable, ScrollView, View } from "react-native";
 import { Page } from "@/components/Page";
+import { headerRight } from "@/lib/navigation";
 
 const SongPage = () => {
 	const router = useRouter();
@@ -55,19 +56,11 @@ const SongPage = () => {
 	return (
 		<Page
 			title={song.title}
-			options={{
-				unstable_headerRightItems:
-					Platform.OS !== "web"
-						? () => [
-								{
-									type: "button",
-									label: "Go to album",
-									onPress: () =>
-										router.push(`/albums/${album.id}`),
-								},
-							]
-						: undefined,
-			}}
+			options={headerRight({
+				type: "button",
+				label: "Go to album",
+				onPress: () => router.push(`/albums/${album.id}`),
+			})}
 		>
 			<View className="flex flex-1">
 				<ScrollView>

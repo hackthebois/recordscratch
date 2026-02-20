@@ -13,6 +13,7 @@ import { useForm } from "@tanstack/react-form";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { headerRight } from "@/lib/navigation";
 
 const CommentModal = () => {
 	const { width } = useWindowDimensions();
@@ -89,13 +90,11 @@ const CommentModal = () => {
 					<Stack.Screen
 						options={{
 							title: "Reply",
-							unstable_headerRightItems: () => [
-								{
-									type: "button",
-									label: "Send",
-									onPress: () => form.handleSubmit(),
-								},
-							],
+							...headerRight({
+								type: "button",
+								label: "Send",
+								onPress: () => form.handleSubmit(),
+							}),
 						}}
 					/>
 					<Comment comment={comment} hideActions />

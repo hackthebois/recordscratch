@@ -14,6 +14,7 @@ import { useForm } from "@tanstack/react-form";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { headerRight } from "@/lib/navigation";
 
 const Reply = () => {
 	const { width } = useWindowDimensions();
@@ -88,17 +89,15 @@ const Reply = () => {
 					<Stack.Screen
 						options={{
 							title: "Reply",
-							unstable_headerRightItems: () => [
-								{
-									type: "button",
-									label: "Send",
-									onPress: () => form.handleSubmit(),
-								},
-							],
+							...headerRight({
+								type: "button",
+								label: "Send",
+								onPress: () => form.handleSubmit(),
+							}),
 						}}
 					/>
 					<Review {...rating} profile={profile} hideActions />
-					<View className="bg-muted h-[1px]" />
+					<View className="bg-muted h-px" />
 					<form.Field
 						name="content"
 						children={(field) => (

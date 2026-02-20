@@ -42,6 +42,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
+import { headerRight } from "@/lib/navigation";
 
 const ToggleAccountStatus = ({
 	isActive,
@@ -215,26 +216,19 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 	return (
 		<Page
 			title={profile.name}
-			options={{
-				unstable_headerRightItems:
-					Platform.OS !== "web"
-						? () => [
-								isProfile
-									? {
-											type: "button",
-											label: "Settings",
-											onPress: () =>
-												router.push(`/settings`),
-										}
-									: {
-											type: "button",
-											label: followButton.label,
-											onPress: () =>
-												followButton.onPress(),
-										},
-							]
-						: undefined,
-			}}
+			options={headerRight(
+				isProfile
+					? {
+							type: "button",
+							label: "Settings",
+							onPress: () => router.push(`/settings`),
+						}
+					: {
+							type: "button",
+							label: followButton.label,
+							onPress: () => followButton.onPress(),
+						},
+			)}
 		>
 			<ScrollView>
 				<WebWrapper>

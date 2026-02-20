@@ -1,4 +1,4 @@
-import { WebHeaderRight } from "@/components/WebHeaderRight";
+import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { router } from "expo-router";
 import { StackScreenProps } from "expo-router";
@@ -15,6 +15,29 @@ export const backButton = {
 	onPress: () => router.back(),
 };
 
+export const headerRight = (headerRight: {
+	type: "button" | "menu" | "spacing" | "custom";
+	label: string;
+	onPress: () => void;
+	enabled?: boolean;
+}): StackScreenProps["options"] => {
+	if (!headerRight.enabled) return {};
+
+	return {
+		headerRight:
+			Platform.OS !== "web"
+				? () => (
+						<Button onPress={headerRight.onPress}>
+							{headerRight.label}
+						</Button>
+					)
+				: undefined,
+		unstable_headerRightItems: () => [headerRight as any],
+	};
+};
+
+export const sideSpacing = {};
+
 export const defaultScreenOptions: StackScreenProps["options"] = {
 	headerTitle: (props: any) => <HeaderTitle {...props} />,
 	headerShadowVisible: false,
@@ -23,6 +46,5 @@ export const defaultScreenOptions: StackScreenProps["options"] = {
 	headerTitleAlign: "center",
 	unstable_headerLeftItems: ({ canGoBack }) =>
 		canGoBack ? [backButton] : [],
-	headerRight: Platform.OS === "web" ? () => <WebHeaderRight /> : undefined,
 	headerBackVisible: false,
 };

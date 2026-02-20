@@ -19,6 +19,7 @@ import { Platform, ScrollView, useWindowDimensions, View } from "react-native";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
+import { headerRight } from "@/lib/navigation";
 
 const ListResources = ({
 	items,
@@ -121,22 +122,16 @@ const ListPage = () => {
 	return (
 		<Page
 			title={list.name}
-			options={{
-				unstable_headerRightItems:
-					Platform.OS !== "web" && isProfile
-						? () => [
-								{
-									type: "button",
-									label: "Settings",
-									onPress: () =>
-										router.push({
-											pathname: "/lists/[id]/settings",
-											params: { id: listId },
-										}),
-								},
-							]
-						: undefined,
-			}}
+			options={headerRight({
+				type: "button",
+				label: "Settings",
+				onPress: () =>
+					router.push({
+						pathname: "/lists/[id]/settings",
+						params: { id: listId },
+					}),
+				enabled: isProfile,
+			})}
 		>
 			<ScrollView className="flex h-full flex-col gap-6">
 				<WebWrapper>

@@ -34,6 +34,7 @@ import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
+import { headerRight } from "@/lib/navigation";
 
 const SONG_HEIGHT = 70;
 const MARGIN_TOP_OFFSET = 20;
@@ -417,18 +418,14 @@ const RearrangeListModal = () => {
 
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
-			<Page title={`Edit ${list?.name}`}>
-				<Stack.Screen
-					options={{
-						unstable_headerRightItems: () => [
-							{
-								type: "button",
-								label: "Save",
-								onPress: handleSave,
-							},
-						],
-					}}
-				/>
+			<Page
+				title={`Edit ${list?.name}`}
+				options={headerRight({
+					type: "button",
+					label: "Save",
+					onPress: handleSave,
+				})}
+			>
 				{Platform.OS === "web" ? (
 					<WebWrapper>
 						<Text className="text-muted-foreground mt-40 text-center text-xl">
