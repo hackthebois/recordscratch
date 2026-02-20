@@ -13,6 +13,7 @@ import { useForm } from "@tanstack/react-form";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { headerRight } from "@/lib/navigation";
 
 const CommentModal = () => {
 	const { width } = useWindowDimensions();
@@ -25,7 +26,7 @@ const CommentModal = () => {
 	const { data: comment } = useSuspenseQuery(
 		api.comments.get.queryOptions({
 			id,
-		})
+		}),
 	);
 
 	if (!comment) return null;
@@ -40,27 +41,27 @@ const CommentModal = () => {
 					queryClient.invalidateQueries(
 						api.comments.get.queryOptions({
 							id,
-						})
+						}),
 					),
 					queryClient.invalidateQueries(
 						api.comments.list.queryOptions({
 							resourceId: comment.resourceId,
 							authorId: comment.authorId,
-						})
+						}),
 					),
 					queryClient.invalidateQueries(
 						api.comments.count.rating.queryOptions({
 							resourceId: comment.resourceId,
 							authorId: comment.authorId,
-						})
+						}),
 					),
 					queryClient.invalidateQueries(
 						api.comments.count.reply.queryOptions({
 							id: comment.rootId ?? comment.id,
-						})
+						}),
 					),
 				]),
-		})
+		}),
 	);
 
 	const form = useForm({
@@ -88,29 +89,16 @@ const CommentModal = () => {
 				<View className="p-4">
 					<Stack.Screen
 						options={{
-							title: `Reply`,
-							headerRight: () => (
-								<Button
-									onPress={form.handleSubmit}
-									disabled={isPending}
-									variant="secondary"
-									style={{
-										marginRight:
-											width > 1024
-												? (width - 1024) / 2
-												: Platform.OS === "web"
-													? 16
-													: 0,
-									}}
-									className="flex-row items-center gap-2">
-									<Send size={16} />
-									<Text>Post</Text>
-								</Button>
-							),
+							title: "Reply",
+							...headerRight({
+								type: "button",
+								label: "Send",
+								onPress: () => form.handleSubmit(),
+							}),
 						}}
 					/>
 					<Comment comment={comment} hideActions />
-					<View className="h-[1px] bg-muted" />
+					<View className="bg-muted h-px" />
 					<form.Field
 						name="content"
 						children={(field) => (
@@ -119,7 +107,7 @@ const CommentModal = () => {
 									placeholder="Create a new comment..."
 									autoFocus
 									multiline
-									className="text-lg text-foreground outline-none"
+									className="text-foreground text-lg outline-none"
 									scrollEnabled={false}
 									onChangeText={field.handleChange}
 									value={field.state.value}
@@ -133,7 +121,8 @@ const CommentModal = () => {
 							onPress={form.handleSubmit}
 							disabled={isPending}
 							variant="secondary"
-							size="sm">
+							size="sm"
+						>
 							<Text>Post</Text>
 						</Button>
 					) : null}

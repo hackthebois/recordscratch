@@ -13,7 +13,7 @@ import { ReceiptText } from "@/lib/icons/IconsLoader";
 import { ShieldCheck } from "@/lib/icons/IconsLoader";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { reloadAppAsync } from "expo";
-import { Link, Stack } from "expo-router";
+import { Link } from "expo-router";
 import { ScrollView, View } from "react-native";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";

@@ -12,11 +12,13 @@ import { getQueryOptions } from "@/lib/deezer";
 import { formatDuration } from "@/lib";
 import { Resource } from "@/types";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { Platform, Pressable, ScrollView, View } from "react-native";
 import { Page } from "@/components/Page";
+import { headerRight } from "@/lib/navigation";
 
 const SongPage = () => {
+	const router = useRouter();
 	const { albumId, songId } = useLocalSearchParams<{
 		albumId: string;
 		songId: string;
@@ -53,19 +55,12 @@ const SongPage = () => {
 
 	return (
 		<Page
-			options={{
-				...(Platform.OS !== "web"
-					? {
-							headerRight: () => (
-								<Link href={`/albums/${album.id}`} asChild>
-									<Button variant="secondary" size={"sm"}>
-										<Text>Go to album</Text>
-									</Button>
-								</Link>
-							),
-						}
-					: {}),
-			}}
+			title={song.title}
+			options={headerRight({
+				type: "button",
+				label: "Go to album",
+				onPress: () => router.push(`/albums/${album.id}`),
+			})}
 		>
 			<View className="flex flex-1">
 				<ScrollView>

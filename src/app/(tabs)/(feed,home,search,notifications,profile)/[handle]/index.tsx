@@ -1,7 +1,10 @@
 import NotFoundScreen from "@/app/+not-found";
 import StatBlock from "@/components/CoreComponents/StatBlock";
 import DistributionChart from "@/components/DistributionChart";
-import { FollowButton } from "@/components/Followers/FollowButton";
+import {
+	FollowButton,
+	useFollowButton,
+} from "@/components/Followers/FollowButton";
 import ListOfLists from "@/components/List/ListOfLists";
 import { UserAvatar } from "@/components/UserAvatar";
 import { WebWrapper } from "@/components/WebWrapper";
@@ -13,7 +16,7 @@ import { ChevronRight, Hand, UserCheck } from "@/lib/icons/IconsLoader";
 import { Settings } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
 import { ListWithResources, ListsType } from "@/types";
-import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { ShieldCheck, UserX } from "lucide-react-native";
 import { Suspense, useState } from "react";
 import {
@@ -39,7 +42,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
-import env from "@/env";
+import { headerRight } from "@/lib/navigation";
 
 const ToggleAccountStatus = ({
 	isActive,
@@ -172,6 +175,7 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 	if (!profile) return <NotFoundScreen />;
 
 	const isProfile = profile.userId === userProfile?.userId;
+	const followButton = useFollowButton(profile.userId);
 
 	const { data: lists } = useSuspenseQuery(
 		api.lists.getUser.queryOptions({
@@ -212,28 +216,19 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 	return (
 		<Page
 			title={profile.name}
-			options={{
-				...(Platform.OS !== "web"
+			options={headerRight(
+				isProfile
 					? {
-							headerRight: () =>
-								isProfile ? (
-									<Link href={`/settings`} className="p-2">
-										<Settings
-											size={22}
-											className="text-foreground"
-										/>
-									</Link>
-								) : (
-									<Suspense fallback={null}>
-										<FollowButton
-											profileId={profile!.userId}
-											size={"sm"}
-										/>
-									</Suspense>
-								),
+							type: "button",
+							label: "Settings",
+							onPress: () => router.push(`/settings`),
 						}
-					: {}),
-			}}
+					: {
+							type: "button",
+							label: followButton.label,
+							onPress: () => followButton.onPress(),
+						},
+			)}
 		>
 			<ScrollView>
 				<WebWrapper>
@@ -409,37 +404,26 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 							/>
 						</View>
 					</View>
-					{/* FIX: Crashing on mobile */}
-					{!(Platform.OS !== "web" && env.ENV === "development") ? (
-						<>
-							<View className="px-4">
-								<TopListTab
-									isUser={isProfile}
-									tab={tab}
-									album={
-										topLists.album as
-											| ListWithResources
-											| undefined
-									}
-									song={
-										topLists.song as
-											| ListWithResources
-											| undefined
-									}
-									artist={
-										topLists.artist as
-											| ListWithResources
-											| undefined
-									}
-								/>
-							</View>
-							<ListsTab
-								handle={profile.handle}
-								lists={lists as ListsType[]}
-								isProfile={isProfile}
-							/>
-						</>
-					) : null}
+					<View className="px-4">
+						<TopListTab
+							isUser={isProfile}
+							tab={tab}
+							album={
+								topLists.album as ListWithResources | undefined
+							}
+							song={
+								topLists.song as ListWithResources | undefined
+							}
+							artist={
+								topLists.artist as ListWithResources | undefined
+							}
+						/>
+					</View>
+					<ListsTab
+						handle={profile.handle}
+						lists={lists as ListsType[]}
+						isProfile={isProfile}
+					/>
 				</WebWrapper>
 			</ScrollView>
 		</Page>

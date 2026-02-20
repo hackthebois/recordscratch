@@ -16,7 +16,7 @@ import {
 	parseLikeNotification,
 } from "@/lib";
 import { FlashList } from "@shopify/flash-list";
-import { Link, LinkProps, usePathname } from "expo-router";
+import { Link, LinkProps, usePathname, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { Pressable, View } from "react-native";
 
@@ -33,6 +33,7 @@ const NotificationBlock = ({
 	profile,
 }: Notification & { icon: React.ReactNode }) => {
 	const pathname = usePathname();
+	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { mutate } = useMutation(
 		api.notifications.markSeen.mutationOptions({
@@ -60,12 +61,14 @@ const NotificationBlock = ({
 				<View>{icon}</View>
 				<View className="flex flex-1 flex-col gap-2">
 					<View className="flex flex-1 flex-row items-center gap-3">
-						<Link href={`/${profile.handle}`}>
+						<Pressable
+							onPress={() => router.push(`/${profile.handle}`)}
+						>
 							<UserAvatar
 								imageUrl={getImageUrl(profile)}
 								size={50}
 							/>
-						</Link>
+						</Pressable>
 						<View className="flex flex-1 flex-row flex-wrap items-center">
 							<Text numberOfLines={2}>
 								<Text className="text-lg font-bold">

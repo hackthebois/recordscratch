@@ -1,24 +1,16 @@
-import { Text } from "@/components/ui/text";
 import { useAuth } from "@/lib/auth";
-import { Bell } from "@/lib/icons/IconsLoader";
-import { Home } from "@/lib/icons/IconsLoader";
-import { Rows3 } from "@/lib/icons/IconsLoader";
-import { Search } from "@/lib/icons/IconsLoader";
-import { User } from "@/lib/icons/IconsLoader";
 import { useNotificationObserver } from "@/lib/notifications/useNotificationObserver";
-import { cn } from "@/lib";
-import { Tabs } from "expo-router";
 import React from "react";
-import { Pressable } from "react-native";
-import { Platform } from "react-native";
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useCSSVariable } from "uniwind";
+import { NativeTabs } from "expo-router/unstable-native-tabs";
+import { Platform } from "react-native";
 
 export default function TabLayout() {
-	const backgroundColor = useCSSVariable("--color-background");
-	const borderColor = useCSSVariable("--color-border");
+	const foregroundColor = useCSSVariable("--color-foreground") as string;
+	const backgroundColor = useCSSVariable("--color-background") as string;
 	const sessionId = useAuth((s) => s.sessionId);
 	const { data: notifications } = useQuery(
 		api.notifications.getUnseen.queryOptions(undefined, {
@@ -29,128 +21,73 @@ export default function TabLayout() {
 	useNotificationObserver();
 
 	return (
-		<Tabs
-			backBehavior="history"
-			screenOptions={{
-				headerTitleAlign: "center",
-				tabBarShowLabel: false,
-				sceneStyle: {
-					paddingBottom: Platform.OS === "web" ? 0 : 80,
-				},
-				headerTitle: (props: any) => (
-					<Text variant="h4">{props.children}</Text>
-				),
-				tabBarStyle: {
-					height: 80,
-					position: "absolute",
-					backgroundColor: backgroundColor as string,
-					display: Platform.OS === "web" ? "none" : "flex",
-					borderTopColor: borderColor as string,
-				},
-				tabBarButton: ({ style, ...props }) => (
-					<Pressable
-						onPress={props.onPress}
-						style={{
-							flex: 1,
-							justifyContent: "center",
-							alignItems: "center",
-						}}
-					>
-						{props.children}
-					</Pressable>
-				),
-			}}
+		<NativeTabs
+			disableTransparentOnScrollEdge
+			tintColor={foregroundColor}
+			backgroundColor={backgroundColor}
 		>
-			<Tabs.Screen
-				name="(home)"
-				options={{
-					title: "",
-					tabBarIcon: ({ focused }) => (
-						<Home
-							size={26}
-							className={cn(
-								focused
-									? "text-primary"
-									: "text-muted-foreground",
-							)}
-						/>
-					),
-					headerShown: false,
-				}}
-			/>
-			<Tabs.Screen
-				name="(search)"
-				options={{
-					title: "",
-					tabBarIcon: ({ focused }) => (
-						<Search
-							size={26}
-							className={cn(
-								focused
-									? "text-primary"
-									: "text-muted-foreground",
-							)}
-						/>
-					),
-					headerShown: false,
-				}}
-			/>
-			<Tabs.Screen
-				name="(feed)"
-				options={{
-					title: "",
-					tabBarIcon: ({ focused }) => (
-						<Rows3
-							size={26}
-							className={cn(
-								focused
-									? "text-primary"
-									: "text-muted-foreground",
-							)}
-						/>
-					),
-					headerShown: false,
-				}}
-			/>
-			<Tabs.Screen
-				name="(notifications)"
-				options={{
-					title: "",
-					tabBarBadge: notifications
-						? notifications > 9
-							? "9+"
-							: notifications
-						: undefined,
-					tabBarIcon: ({ focused }) => (
-						<Bell
-							size={26}
-							className={cn(
-								focused
-									? "text-primary"
-									: "text-muted-foreground",
-							)}
-						/>
-					),
-					headerShown: false,
-				}}
-			/>
-			<Tabs.Screen
-				name="(profile)"
-				options={{
-					title: "",
-					tabBarIcon: ({ focused }) => (
-						<User
-							size={26}
-							className={cn(
-								focused
-									? "text-primary"
-									: "text-muted-foreground",
-							)}
-						/>
-					),
-					headerShown: false,
-				}}
-			/>
-		</Tabs>
+			<NativeTabs.Trigger name="(home)">
+				<NativeTabs.Trigger.Label hidden={Platform.OS !== "web"}>
+					Home
+				</NativeTabs.Trigger.Label>
+				<NativeTabs.Trigger.Icon
+					sf={{
+						default: "house",
+						selected: "house.fill",
+					}}
+					md="home"
+				/>
+			</NativeTabs.Trigger>
+			<NativeTabs.Trigger name="(search)">
+				<NativeTabs.Trigger.Label hidden={Platform.OS !== "web"}>
+					Search
+				</NativeTabs.Trigger.Label>
+				<NativeTabs.Trigger.Icon
+					sf={{
+						default: "magnifyingglass",
+						selected: "magnifyingglass",
+					}}
+					md="search"
+				/>
+			</NativeTabs.Trigger>
+			<NativeTabs.Trigger name="(feed)">
+				<NativeTabs.Trigger.Label hidden={Platform.OS !== "web"}>
+					Feed
+				</NativeTabs.Trigger.Label>
+				<NativeTabs.Trigger.Icon
+					sf={{
+						default: "list.bullet",
+						selected: "list.bullet",
+					}}
+					md="rowing"
+				/>
+			</NativeTabs.Trigger>
+			<NativeTabs.Trigger name="(notifications)">
+				<NativeTabs.Trigger.Label hidden={Platform.OS !== "web"}>
+					Notifications
+				</NativeTabs.Trigger.Label>
+				<NativeTabs.Trigger.Icon
+					sf={{ default: "bell", selected: "bell.fill" }}
+					md="notifications"
+				/>
+				{notifications && notifications > 0 ? (
+					<NativeTabs.Trigger.Badge>
+						{notifications > 9 ? "9+" : String(notifications)}
+					</NativeTabs.Trigger.Badge>
+				) : null}
+			</NativeTabs.Trigger>
+			<NativeTabs.Trigger name="(profile)">
+				<NativeTabs.Trigger.Label hidden={Platform.OS !== "web"}>
+					Profile
+				</NativeTabs.Trigger.Label>
+				<NativeTabs.Trigger.Icon
+					sf={{
+						default: "person.circle",
+						selected: "person.circle.fill",
+					}}
+					md="verified_user"
+				/>
+			</NativeTabs.Trigger>
+		</NativeTabs>
 	);
 }

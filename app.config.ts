@@ -1,6 +1,6 @@
 import type { ConfigContext, ExpoConfig } from "@expo/config";
 
-const version = "0.1.2";
+const version = "0.1.3";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
 	...config,
@@ -23,7 +23,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 			ITSAppUsesNonExemptEncryption: false,
 		},
 	},
-	newArchEnabled: true,
 	android: {
 		adaptiveIcon: {
 			foregroundImage: "./assets/adaptive-icon.png",

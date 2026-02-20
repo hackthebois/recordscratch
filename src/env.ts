@@ -10,7 +10,7 @@ let env = {
 		Platform.OS === "web"
 			? process.env.EXPO_PUBLIC_SITE_URL
 			: "recordscratch://",
-	SITE_URL: process.env.EXPO_PUBLIC_SITE_URL,
+	SITE_URL: process.env.EXPO_PUBLIC_SITE_URL || "https://recordscratch.app",
 };
 
 export default env;

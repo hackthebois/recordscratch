@@ -16,6 +16,7 @@ import NotFound from "../../+not-found";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
+import { WebWrapper } from "@/components/WebWrapper";
 
 const AlbumOfTheDay = () => {
 	const router = useRouter();
@@ -66,11 +67,8 @@ const HomePage = () => {
 
 	return (
 		<Page title="Home">
-			<ScrollView
-				contentContainerClassName="flex flex-col pb-4 items-center"
-				nestedScrollEnabled
-			>
-				<View className="w-full max-w-5xl">
+			<ScrollView nestedScrollEnabled>
+				<WebWrapper>
 					<AlbumOfTheDay />
 					<View className="px-4">
 						<Text variant="h3" className="pt-6 pb-4">
@@ -186,7 +184,7 @@ const HomePage = () => {
 							)}
 						/>
 					</View>
-				</View>
+				</WebWrapper>
 			</ScrollView>
 		</Page>
 	);
