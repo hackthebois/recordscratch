@@ -23,7 +23,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 			ITSAppUsesNonExemptEncryption: false,
 		},
 	},
-	newArchEnabled: true,
 	android: {
 		adaptiveIcon: {
 			foregroundImage: "./assets/adaptive-icon.png",

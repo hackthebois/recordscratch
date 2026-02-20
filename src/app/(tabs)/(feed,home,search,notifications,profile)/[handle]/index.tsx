@@ -16,7 +16,7 @@ import { ChevronRight, Hand, UserCheck } from "@/lib/icons/IconsLoader";
 import { Settings } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
 import { ListWithResources, ListsType } from "@/types";
-import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { ShieldCheck, UserX } from "lucide-react-native";
 import { Suspense, useState } from "react";
 import {
@@ -42,7 +42,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
-import env from "@/env";
 
 const ToggleAccountStatus = ({
 	isActive,
