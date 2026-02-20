@@ -67,10 +67,7 @@ const HomePage = () => {
 
 	return (
 		<Page title="Home">
-			<ScrollView
-				contentContainerClassName="flex flex-col pb-4 items-center"
-				nestedScrollEnabled
-			>
+			<ScrollView nestedScrollEnabled>
 				<WebWrapper>
 					<AlbumOfTheDay />
 					<View className="px-4">

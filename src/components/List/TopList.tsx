@@ -51,7 +51,7 @@ const Resource = ({
 	const props = {
 		direction: "vertical" as any,
 		textClassName:
-			"line-clamp-2 truncate w-38 text-wrap text-center sm:line-clamp-3",
+			"line-clamp-2 truncate text-wrap text-center sm:line-clamp-3",
 		imageWidthAndHeight: top6Width,
 		style: { width: top6Width },
 	};

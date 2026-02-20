@@ -411,37 +411,26 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 							/>
 						</View>
 					</View>
-					{/* FIX: Crashing on mobile */}
-					{!(Platform.OS !== "web" && env.ENV === "development") ? (
-						<>
-							<View className="px-4">
-								<TopListTab
-									isUser={isProfile}
-									tab={tab}
-									album={
-										topLists.album as
-											| ListWithResources
-											| undefined
-									}
-									song={
-										topLists.song as
-											| ListWithResources
-											| undefined
-									}
-									artist={
-										topLists.artist as
-											| ListWithResources
-											| undefined
-									}
-								/>
-							</View>
-							<ListsTab
-								handle={profile.handle}
-								lists={lists as ListsType[]}
-								isProfile={isProfile}
-							/>
-						</>
-					) : null}
+					<View className="px-4">
+						<TopListTab
+							isUser={isProfile}
+							tab={tab}
+							album={
+								topLists.album as ListWithResources | undefined
+							}
+							song={
+								topLists.song as ListWithResources | undefined
+							}
+							artist={
+								topLists.artist as ListWithResources | undefined
+							}
+						/>
+					</View>
+					<ListsTab
+						handle={profile.handle}
+						lists={lists as ListsType[]}
+						isProfile={isProfile}
+					/>
 				</WebWrapper>
 			</ScrollView>
 		</Page>
