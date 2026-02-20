@@ -20,7 +20,6 @@ import type {
 	PushToken,
 	User,
 } from "@/types";
-import "dotenv/config"; // Ensures env vars are loaded first
 import { and, eq, inArray } from "drizzle-orm";
 import type { ExpoPushMessage, ExpoPushTicket } from "expo-server-sdk";
 import { v4 as uuidv4 } from "uuid";

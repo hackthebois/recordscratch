@@ -1,8 +1,9 @@
-import { ScreenProps, Stack } from "expo-router";
+import { Stack, StackScreenProps } from "expo-router";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 import { Edges, SafeAreaView } from "react-native-safe-area-context";
 import { useCSSVariable } from "uniwind";
+import { WebWrapper } from "./WebWrapper";
 
 export const Page = ({
 	title,
@@ -11,7 +12,7 @@ export const Page = ({
 	edges = ["left", "right"],
 }: {
 	title?: string;
-	options?: ScreenProps["options"];
+	options?: StackScreenProps["options"];
 	children: React.ReactNode;
 	edges?: Edges;
 }) => {

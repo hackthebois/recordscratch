@@ -11,7 +11,10 @@ export default function NotFoundScreen() {
 			<Stack.Screen options={{ title: "Oops!" }} />
 			<View className="flex h-96 items-center justify-center gap-10">
 				<Text variant="h2">This page doesn't exist.</Text>
-				<Button variant="secondary" onPress={() => router.replace("/(tabs)")}>
+				<Button
+					variant="secondary"
+					onPress={() => router.replace("/(tabs)")}
+				>
 					<Text>Return to Home Screen</Text>
 				</Button>
 			</View>

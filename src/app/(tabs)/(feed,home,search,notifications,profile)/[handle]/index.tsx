@@ -1,7 +1,10 @@
 import NotFoundScreen from "@/app/+not-found";
 import StatBlock from "@/components/CoreComponents/StatBlock";
 import DistributionChart from "@/components/DistributionChart";
-import { FollowButton } from "@/components/Followers/FollowButton";
+import {
+	FollowButton,
+	useFollowButton,
+} from "@/components/Followers/FollowButton";
 import ListOfLists from "@/components/List/ListOfLists";
 import { UserAvatar } from "@/components/UserAvatar";
 import { WebWrapper } from "@/components/WebWrapper";
@@ -172,6 +175,7 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 	if (!profile) return <NotFoundScreen />;
 
 	const isProfile = profile.userId === userProfile?.userId;
+	const followButton = useFollowButton(profile.userId);
 
 	const { data: lists } = useSuspenseQuery(
 		api.lists.getUser.queryOptions({
@@ -213,26 +217,24 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 		<Page
 			title={profile.name}
 			options={{
-				...(Platform.OS !== "web"
-					? {
-							headerRight: () =>
-								isProfile ? (
-									<Link href={`/settings`} className="p-2">
-										<Settings
-											size={22}
-											className="text-foreground"
-										/>
-									</Link>
-								) : (
-									<Suspense fallback={null}>
-										<FollowButton
-											profileId={profile!.userId}
-											size={"sm"}
-										/>
-									</Suspense>
-								),
-						}
-					: {}),
+				unstable_headerRightItems:
+					Platform.OS !== "web"
+						? () => [
+								isProfile
+									? {
+											type: "button",
+											label: "Settings",
+											onPress: () =>
+												router.push(`/settings`),
+										}
+									: {
+											type: "button",
+											label: followButton.label,
+											onPress: () =>
+												followButton.onPress(),
+										},
+							]
+						: undefined,
 			}}
 		>
 			<ScrollView>

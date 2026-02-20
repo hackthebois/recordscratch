@@ -1,14 +1,11 @@
 import { useAuth } from "@/lib/auth";
 import { useNotificationObserver } from "@/lib/notifications/useNotificationObserver";
 import React from "react";
-import { DynamicColorIOS } from "react-native";
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useCSSVariable } from "uniwind";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
-import { Icon, VectorIcon } from "expo-router";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 export default function TabLayout() {
 	const foregroundColor = useCSSVariable("--color-foreground") as string;
@@ -25,16 +22,7 @@ export default function TabLayout() {
 	return (
 		<NativeTabs
 			disableTransparentOnScrollEdge
-			labelStyle={{
-				color: DynamicColorIOS({
-					dark: foregroundColor,
-					light: foregroundColor,
-				}),
-			}}
-			tintColor={DynamicColorIOS({
-				dark: foregroundColor,
-				light: foregroundColor,
-			})}
+			tintColor={foregroundColor}
 			backgroundColor={backgroundColor}
 		>
 			<NativeTabs.Trigger name="(home)">
