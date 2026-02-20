@@ -420,15 +420,13 @@ const RearrangeListModal = () => {
 			<Page title={`Edit ${list?.name}`}>
 				<Stack.Screen
 					options={{
-						headerRight: () => (
-							<Button
-								variant="secondary"
-								onPress={handleSave}
-								className="mt-1 flex"
-							>
-								<Text variant="h4">Save</Text>
-							</Button>
-						),
+						unstable_headerRightItems: () => [
+							{
+								type: "button",
+								label: "Save",
+								onPress: handleSave,
+							},
+						],
 					}}
 				/>
 				{Platform.OS === "web" ? (

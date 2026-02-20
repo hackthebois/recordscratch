@@ -13,7 +13,7 @@ import { ListPlus, Pencil, Settings } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
 import { cn, timeAgo } from "@/lib";
 import { Category, ListItem } from "@/types";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { Platform, ScrollView, useWindowDimensions, View } from "react-native";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -99,6 +99,7 @@ const ListResources = ({
 const ListPage = () => {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const listId = id!;
+	const router = useRouter();
 
 	const { data: list } = useSuspenseQuery(
 		api.lists.get.queryOptions({ id: listId }),
@@ -121,25 +122,20 @@ const ListPage = () => {
 		<Page
 			title={list.name}
 			options={{
-				...(Platform.OS !== "web"
-					? {
-							headerRight: () =>
-								isProfile ? (
-									<Link
-										href={{
+				unstable_headerRightItems:
+					Platform.OS !== "web" && isProfile
+						? () => [
+								{
+									type: "button",
+									label: "Settings",
+									onPress: () =>
+										router.push({
 											pathname: "/lists/[id]/settings",
 											params: { id: listId },
-										}}
-										className="p-2"
-									>
-										<Settings
-											size={22}
-											className="text-foreground"
-										/>
-									</Link>
-								) : null,
-						}
-					: {}),
+										}),
+								},
+							]
+						: undefined,
 			}}
 		>
 			<ScrollView className="flex h-full flex-col gap-6">
