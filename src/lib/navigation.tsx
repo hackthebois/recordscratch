@@ -9,10 +9,16 @@ const HeaderTitle = (props: any) => {
 	return <Text variant="h4">{props.children}</Text>;
 };
 
+const labelStyle = {
+	fontFamily: "Montserrat_500Medium",
+	fontSize: 14,
+};
+
 export const backButton = {
 	type: "button" as const,
 	label: "Back",
 	onPress: () => router.back(),
+	labelStyle,
 };
 
 export const headerRight = (headerRight: {
@@ -21,7 +27,7 @@ export const headerRight = (headerRight: {
 	onPress: () => void;
 	enabled?: boolean;
 }): StackScreenProps["options"] => {
-	if (!headerRight.enabled) return {};
+	if (headerRight.enabled === false) return {};
 
 	return {
 		headerRight:
@@ -32,7 +38,12 @@ export const headerRight = (headerRight: {
 						</Button>
 					)
 				: undefined,
-		unstable_headerRightItems: () => [headerRight as any],
+		unstable_headerRightItems: () => [
+			{
+				...headerRight,
+				labelStyle,
+			} as any,
+		],
 	};
 };
 
