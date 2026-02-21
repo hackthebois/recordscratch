@@ -64,7 +64,10 @@ const app = new Hono()
 			return c.json(error.data, 500);
 		}
 
-		return new Response(res.body);
+		return new Response(res.body, {
+			headers: res.headers,
+			status: res.status,
+		});
 	})
 	.get("/ingest/**", (c) => {
 		const headers = c.req.header();
