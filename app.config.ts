@@ -1,6 +1,6 @@
 import type { ConfigContext, ExpoConfig } from "@expo/config";
 
-const version = "0.1.3";
+const version = "0.1.4";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
 	...config,

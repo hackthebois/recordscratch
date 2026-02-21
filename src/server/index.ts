@@ -9,6 +9,13 @@ import { googleHandler } from "./auth/google";
 import { appleHandler } from "./auth/apple";
 import { authHandler } from "./auth";
 import { proxy } from "hono/proxy";
+import z from "zod";
+
+const DeezerErrorSchema = z.object({
+	code: z.number(),
+	message: z.string(),
+	type: z.string(),
+});
 
 const app = new Hono()
 	.use(
@@ -41,9 +48,23 @@ const app = new Hono()
 		const headers = c.req.header();
 		delete headers["host"];
 
-		return proxy("https://api.deezer.com" + c.req.url.split("/music")[1], {
-			headers,
-		});
+		const res = await fetch(
+			"https://api.deezer.com" + c.req.url.split("/music")[1],
+			{
+				headers,
+			},
+		);
+
+		const resClone = res.clone();
+		const json = await resClone.json();
+
+		const error = DeezerErrorSchema.safeParse(json);
+
+		if (error.success) {
+			return c.json(error.data, 500);
+		}
+
+		return new Response(res.body);
 	})
 	.get("/ingest/**", (c) => {
 		const headers = c.req.header();
