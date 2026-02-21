@@ -12,9 +12,11 @@ import { proxy } from "hono/proxy";
 import z from "zod";
 
 const DeezerErrorSchema = z.object({
-	code: z.number(),
-	message: z.string(),
-	type: z.string(),
+	error: z.object({
+		code: z.number(),
+		message: z.string(),
+		type: z.string(),
+	}),
 });
 
 const app = new Hono()
