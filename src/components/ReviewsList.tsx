@@ -3,7 +3,7 @@ import { RouterInputs } from "@/server/api";
 import { ReviewType } from "@/types";
 import { FlashList, FlashListProps } from "@shopify/flash-list";
 import React from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, FlatList, Platform, View } from "react-native";
 import { Review } from "./Review";
 import { Text } from "./ui/text";
 import { WebWrapper } from "./WebWrapper";
@@ -19,18 +19,26 @@ export const ReviewsList = (
 	},
 ) => {
 	const { ListHeaderComponent, emptyText, ...queryInput } = input;
-	const { data, fetchNextPage, hasNextPage, refetch, isLoading } =
-		useInfiniteQuery(
-			api.ratings.feed.infiniteQueryOptions(queryInput, {
-				getNextPageParam: (lastPage: { nextCursor: any }) =>
-					lastPage.nextCursor,
-			}),
-		);
+	const {
+		data,
+		fetchNextPage,
+		hasNextPage,
+		refetch,
+		isLoading,
+		isFetchingNextPage,
+	} = useInfiniteQuery(
+		api.ratings.feed.infiniteQueryOptions(queryInput, {
+			getNextPageParam: (lastPage: { nextCursor: any }) =>
+				lastPage.nextCursor,
+		}),
+	);
 
 	const { refetchByUser, isRefetchingByUser } = useRefreshByUser(refetch);
 
+	const List = Platform.OS === "web" ? FlatList : FlashList;
+
 	return (
-		<FlashList
+		<List
 			ListHeaderComponent={ListHeaderComponent}
 			data={
 				data?.pages?.flatMap((page) => page.items).length === 0
@@ -78,7 +86,7 @@ export const ReviewsList = (
 			scrollEnabled={true}
 			onEndReachedThreshold={0.1}
 			onEndReached={() => {
-				if (hasNextPage) {
+				if (hasNextPage && !isFetchingNextPage) {
 					fetchNextPage();
 				}
 			}}
