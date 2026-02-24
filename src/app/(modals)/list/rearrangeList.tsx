@@ -18,7 +18,7 @@ import Animated, {
 	withSpring,
 	withTiming,
 } from "react-native-reanimated";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { AlignJustify, Trash2 } from "@/lib/icons/IconsLoader";
 import ReText from "@/components/ui/retext";
 import { useState } from "react";
@@ -34,7 +34,7 @@ import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
-import { headerRight } from "@/lib/navigation";
+import { useHeaderRight } from "@/lib/navigation";
 
 const SONG_HEIGHT = 70;
 const MARGIN_TOP_OFFSET = 20;
@@ -416,16 +416,15 @@ const RearrangeListModal = () => {
 		]);
 	};
 
+	const headerRight = useHeaderRight({
+		type: "button",
+		label: "Save",
+		onPress: handleSave,
+	});
+
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
-			<Page
-				title={`Edit ${list?.name}`}
-				options={headerRight({
-					type: "button",
-					label: "Save",
-					onPress: handleSave,
-				})}
-			>
+			<Page title={`Edit ${list?.name}`} options={headerRight}>
 				{Platform.OS === "web" ? (
 					<WebWrapper>
 						<Text className="text-muted-foreground mt-40 text-center text-xl">

@@ -5,17 +5,15 @@ import Metadata from "@/components/Metadata";
 import RateButton from "@/components/Rating/RateButton";
 import { RatingInfo } from "@/components/Rating/RatingInfo";
 import { WebWrapper } from "@/components/WebWrapper";
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
 import { api } from "@/lib/api";
 import { getQueryOptions } from "@/lib/deezer";
 import { formatDuration } from "@/lib";
 import { Resource } from "@/types";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
-import { Platform, Pressable, ScrollView, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { Page } from "@/components/Page";
-import { headerRight } from "@/lib/navigation";
+import { useHeaderRight } from "@/lib/navigation";
 
 const SongPage = () => {
 	const router = useRouter();
@@ -53,15 +51,14 @@ const SongPage = () => {
 		category: "SONG",
 	};
 
+	const headerRight = useHeaderRight({
+		type: "button",
+		label: "Go to album",
+		onPress: () => router.push(`/albums/${album.id}`),
+	});
+
 	return (
-		<Page
-			title={song.title}
-			options={headerRight({
-				type: "button",
-				label: "Go to album",
-				onPress: () => router.push(`/albums/${album.id}`),
-			})}
-		>
+		<Page title={song.title} options={headerRight}>
 			<View className="flex flex-1">
 				<ScrollView>
 					<WebWrapper>
@@ -88,15 +85,7 @@ const SongPage = () => {
 										parentId={String(song.album.id)}
 										category="SONG"
 									/>
-									<Link href={`/albums/${album.id}`} asChild>
-										<Button
-											variant="secondary"
-											size={"sm"}
-											className="hidden sm:flex"
-										>
-											<Text>Go to album</Text>
-										</Button>
-									</Link>
+									{headerRight.Button}
 								</View>
 								<Link
 									href={`/albums/${album.id}/songs/${song.id}/reviews`}

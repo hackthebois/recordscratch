@@ -2,22 +2,18 @@ import NotFoundScreen from "@/app/+not-found";
 import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
 import { Review } from "@/components/Review";
 import { WebWrapper } from "@/components/WebWrapper";
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Platform, TextInput, View } from "react-native";
+import { TextInput, View } from "react-native";
 import { z } from "zod";
-import { useWindowDimensions } from "react-native";
 import { Send } from "@/lib/icons/IconsLoader";
 import { useForm } from "@tanstack/react-form";
 
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { headerRight } from "@/lib/navigation";
+import { useHeaderRight } from "@/lib/navigation";
 
 const Reply = () => {
-	const { width } = useWindowDimensions();
 	const router = useRouter();
 	const { resourceId, handle } = useLocalSearchParams<{
 		resourceId: string;
@@ -55,7 +51,7 @@ const Reply = () => {
 		},
 	});
 
-	const { mutate, isPending } = useMutation(
+	const { mutate } = useMutation(
 		api.comments.create.mutationOptions({
 			onSuccess: async () => {
 				router.back();
@@ -82,6 +78,13 @@ const Reply = () => {
 		}),
 	);
 
+	const headerRight = useHeaderRight({
+		type: "button",
+		label: "Send",
+		Icon: <Send size={16} className="text-foreground" />,
+		onPress: () => form.handleSubmit(),
+	});
+
 	return (
 		<KeyboardAvoidingScrollView modal>
 			<WebWrapper>
@@ -89,11 +92,7 @@ const Reply = () => {
 					<Stack.Screen
 						options={{
 							title: "Reply",
-							...headerRight({
-								type: "button",
-								label: "Send",
-								onPress: () => form.handleSubmit(),
-							}),
+							...headerRight,
 						}}
 					/>
 					<Review {...rating} profile={profile} hideActions />
@@ -114,6 +113,7 @@ const Reply = () => {
 							</View>
 						)}
 					/>
+					{headerRight.Button}
 				</View>
 			</WebWrapper>
 		</KeyboardAvoidingScrollView>

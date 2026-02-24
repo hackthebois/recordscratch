@@ -19,7 +19,7 @@ import { Platform, ScrollView, useWindowDimensions, View } from "react-native";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
-import { headerRight } from "@/lib/navigation";
+import { useHeaderRight } from "@/lib/navigation";
 
 const ListResources = ({
 	items,
@@ -119,20 +119,20 @@ const ListPage = () => {
 	);
 	const dimensions = useWindowDimensions();
 
+	const headerRight = useHeaderRight({
+		type: "button",
+		label: "Settings",
+		Icon: <Settings size={16} className="text-foreground" />,
+		onPress: () =>
+			router.push({
+				pathname: "/lists/[id]/settings",
+				params: { id: listId },
+			}),
+		enabled: isProfile,
+	});
+
 	return (
-		<Page
-			title={list.name}
-			options={headerRight({
-				type: "button",
-				label: "Settings",
-				onPress: () =>
-					router.push({
-						pathname: "/lists/[id]/settings",
-						params: { id: listId },
-					}),
-				enabled: isProfile,
-			})}
-		>
+		<Page title={list.name} options={headerRight}>
 			<ScrollView className="flex h-full flex-col gap-6">
 				<WebWrapper>
 					<Metadata
@@ -173,6 +173,7 @@ const ListPage = () => {
 								<Text className="text-muted-foreground">
 									• {timeAgo(list!.updatedAt)}
 								</Text>
+								{headerRight.Button}
 							</View>
 						</View>
 					</Metadata>

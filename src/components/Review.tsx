@@ -10,7 +10,7 @@ import {
 	Trash,
 } from "@/lib/icons/IconsLoader";
 import { getImageUrl } from "@/lib/image";
-import { cn, timeAgo } from "@/lib";
+import { timeAgo } from "@/lib";
 import { Category, ReviewType, SelectComment, SelectLike } from "@/types";
 import { Link } from "expo-router";
 import React, { Suspense, useState } from "react";
@@ -73,7 +73,7 @@ const DeactivateButton = ({
 					size="sm"
 					onPress={() => setOpen(true)}
 				>
-					<Trash size={20} className="text-muted-foreground" />
+					<Trash className="text-muted-foreground size-5" />
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="max-w-450px">
@@ -151,7 +151,7 @@ const LikeButton = (props: SelectLike) => {
 	return (
 		<Button
 			variant="ghost"
-			size={"sm"}
+			size="sm"
 			onPress={() => {
 				if (isLiking || isUnLiking) return;
 				if (like) {
@@ -163,7 +163,7 @@ const LikeButton = (props: SelectLike) => {
 			className="flex-row gap-2"
 		>
 			<Heart
-				size={25}
+				className="size-5"
 				fill={liked ? THEME.heart : "transparent"}
 				color={liked ? THEME.heart : (colorMutedForeground as string)}
 			/>
@@ -194,8 +194,8 @@ const CommentsButton = ({
 			}}
 			asChild
 		>
-			<Button variant="ghost" size={"sm"} className="flex-row gap-2">
-				<MessageCircle size={25} className="text-muted-foreground" />
+			<Button variant="ghost" size="sm" className="flex-row gap-2">
+				<MessageCircle className="text-muted-foreground size-5" />
 				<Text className="font-bold">{comments}</Text>
 			</Button>
 		</Link>
@@ -232,13 +232,17 @@ export const Review = ({
 							{Array.from(Array(rating)).map((_, i) => (
 								<Star
 									key={i}
-									size={22}
+									className="size-5"
 									color="#ffb703"
 									fill={"#ffb703"}
 								/>
 							))}
 							{Array.from(Array(10 - rating)).map((_, i) => (
-								<Star key={i} size={22} color="#ffb703" />
+								<Star
+									key={i}
+									className="size-5"
+									color="#ffb703"
+								/>
 							))}
 						</View>
 						<Link href={`/${String(profile.handle)}`} asChild>
@@ -289,11 +293,8 @@ export const Review = ({
 								}}
 								asChild
 							>
-								<Button variant="ghost" size={"sm"}>
-									<Reply
-										size={25}
-										className="text-muted-foreground"
-									/>
+								<Button variant="ghost" size="sm">
+									<Reply className="text-muted-foreground size-5" />
 								</Button>
 							</Link>
 							{myProfile?.role === "MOD" && (

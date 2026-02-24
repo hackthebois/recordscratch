@@ -42,7 +42,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
-import { headerRight } from "@/lib/navigation";
+import { useHeaderRight } from "@/lib/navigation";
 
 const ToggleAccountStatus = ({
 	isActive,
@@ -213,23 +213,23 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 		);
 	}
 
+	const headerRight = useHeaderRight(
+		isProfile
+			? {
+					type: "button",
+					label: "Settings",
+					Icon: <Settings size={16} className="text-foreground" />,
+					onPress: () => router.push(`/settings`),
+				}
+			: {
+					type: "button",
+					label: followButton.label,
+					onPress: () => followButton.onPress(),
+				},
+	);
+
 	return (
-		<Page
-			title={profile.name}
-			options={headerRight(
-				isProfile
-					? {
-							type: "button",
-							label: "Settings",
-							onPress: () => router.push(`/settings`),
-						}
-					: {
-							type: "button",
-							label: followButton.label,
-							onPress: () => followButton.onPress(),
-						},
-			)}
-		>
+		<Page title={profile.name} options={headerRight}>
 			<ScrollView>
 				<WebWrapper>
 					<View className="mt-4 gap-2 px-4">
@@ -304,23 +304,7 @@ export const ProfilePage = ({ handle: customHandle }: { handle?: string }) => {
 										{Platform.OS === "web" ? (
 											<>
 												{isProfile ? (
-													<Link
-														href={`/settings`}
-														asChild
-													>
-														<Button
-															variant="secondary"
-															className="flex-row items-center"
-														>
-															<Settings
-																size={16}
-																className="text-foreground mr-2"
-															/>
-															<Text>
-																Settings
-															</Text>
-														</Button>
-													</Link>
+													headerRight.Button
 												) : (
 													<Suspense fallback={null}>
 														<FollowButton

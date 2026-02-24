@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
+import { WebHeaderRight } from "@/components/WebHeaderRight";
 import { router } from "expo-router";
 import { StackScreenProps } from "expo-router";
 import { Platform } from "react-native";
@@ -21,27 +22,43 @@ export const backButton = {
 	labelStyle,
 };
 
-export const headerRight = (headerRight: {
+type HeaderRight = {
 	type: "button" | "menu" | "spacing" | "custom";
 	label: string;
+	Icon?: React.ReactNode;
 	onPress: () => void;
 	enabled?: boolean;
-}): StackScreenProps["options"] => {
-	if (headerRight.enabled === false) return {};
+};
+export const useHeaderRight = (
+	headerRight: HeaderRight,
+): StackScreenProps["options"] & HeaderRight & { Button?: React.ReactNode } => {
+	const HeaderButton = (
+		<Button variant="secondary" onPress={headerRight.onPress}>
+			{headerRight.Icon ? headerRight.Icon : null}
+			<Text>{headerRight.label}</Text>
+		</Button>
+	);
+
+	if (headerRight.enabled === false) return headerRight;
+
+	if (Platform.OS === "web")
+		return {
+			...headerRight,
+			Button: HeaderButton,
+		};
 
 	return {
-		headerRight:
-			Platform.OS !== "web"
-				? () => (
-						<Button
-							onPress={headerRight.onPress}
-							className="rounded-full"
-							size="sm"
-						>
-							<Text>{headerRight.label}</Text>
-						</Button>
-					)
-				: undefined,
+		...headerRight,
+		Button: HeaderButton,
+		headerRight: () => (
+			<Button
+				onPress={headerRight.onPress}
+				className="rounded-full"
+				size="sm"
+			>
+				<Text>{headerRight.label}</Text>
+			</Button>
+		),
 		unstable_headerRightItems: () => [
 			{
 				...headerRight,
@@ -62,4 +79,5 @@ export const defaultScreenOptions: StackScreenProps["options"] = {
 	unstable_headerLeftItems: ({ canGoBack }) =>
 		canGoBack ? [backButton] : [],
 	headerBackVisible: Platform.OS !== "ios",
+	headerRight: Platform.OS === "web" ? () => <WebHeaderRight /> : undefined,
 };

@@ -1,22 +1,19 @@
 import { Comment } from "@/components/Comment";
 import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
 import { WebWrapper } from "@/components/WebWrapper";
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
 import { Send } from "@/lib/icons/IconsLoader";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { TextInput, View, Platform, useWindowDimensions } from "react-native";
+import { TextInput, View } from "react-native";
 import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
 
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { headerRight } from "@/lib/navigation";
+import { useHeaderRight } from "@/lib/navigation";
 
 const CommentModal = () => {
-	const { width } = useWindowDimensions();
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { id } = useLocalSearchParams<{
@@ -31,7 +28,7 @@ const CommentModal = () => {
 
 	if (!comment) return null;
 
-	const { mutate, isPending } = useMutation(
+	const { mutate } = useMutation(
 		api.comments.create.mutationOptions({
 			onSuccess: async () => {
 				router.back();
@@ -83,6 +80,13 @@ const CommentModal = () => {
 		},
 	});
 
+	const headerRight = useHeaderRight({
+		type: "button",
+		label: "Send",
+		Icon: <Send size={16} className="text-foreground" />,
+		onPress: () => form.handleSubmit(),
+	});
+
 	return (
 		<KeyboardAvoidingScrollView modal>
 			<WebWrapper>
@@ -90,11 +94,7 @@ const CommentModal = () => {
 					<Stack.Screen
 						options={{
 							title: "Reply",
-							...headerRight({
-								type: "button",
-								label: "Send",
-								onPress: () => form.handleSubmit(),
-							}),
+							...headerRight,
 						}}
 					/>
 					<Comment comment={comment} hideActions />
@@ -115,17 +115,7 @@ const CommentModal = () => {
 							</View>
 						)}
 					/>
-
-					{Platform.OS === "web" ? (
-						<Button
-							onPress={form.handleSubmit}
-							disabled={isPending}
-							variant="secondary"
-							size="sm"
-						>
-							<Text>Post</Text>
-						</Button>
-					) : null}
+					{headerRight.Button}
 				</View>
 			</WebWrapper>
 		</KeyboardAvoidingScrollView>
