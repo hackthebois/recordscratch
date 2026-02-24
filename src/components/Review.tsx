@@ -294,7 +294,7 @@ export const Review = ({
 								asChild
 							>
 								<Button variant="ghost" size="sm">
-									<Reply className="text-muted-foreground size-5" />
+									<Reply className="text-muted-foreground size-6" />
 								</Button>
 							</Link>
 							{myProfile?.role === "MOD" && (

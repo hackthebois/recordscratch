@@ -88,29 +88,27 @@ const Reply = () => {
 	return (
 		<KeyboardAvoidingScrollView modal>
 			<WebWrapper>
-				<View className="p-4">
-					<Stack.Screen
-						options={{
-							title: "Reply",
-							...headerRight,
-						}}
-					/>
-					<Review {...rating} profile={profile} hideActions />
-					<View className="bg-muted h-px" />
+				<Stack.Screen
+					options={{
+						title: "Reply",
+						...headerRight,
+					}}
+				/>
+				<Review {...rating} profile={profile} hideActions />
+				<View className="bg-muted h-px" />
+				<View className="flex-1 gap-4 p-4">
 					<form.Field
 						name="content"
 						children={(field) => (
-							<View className="flex-1 p-4">
-								<TextInput
-									placeholder="Create a new comment..."
-									autoFocus
-									multiline
-									className="text-foreground text-lg outline-none"
-									scrollEnabled={false}
-									onChangeText={field.handleChange}
-									value={field.state.value}
-								/>
-							</View>
+							<TextInput
+								placeholder="Create a new comment..."
+								autoFocus
+								multiline
+								className="text-foreground text-lg outline-none"
+								scrollEnabled={false}
+								onChangeText={field.handleChange}
+								value={field.state.value}
+							/>
 						)}
 					/>
 					{headerRight.Button}

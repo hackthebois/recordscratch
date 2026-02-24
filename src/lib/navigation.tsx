@@ -51,7 +51,6 @@ export const useHeaderRight = ({
 
 	return {
 		...headerRight,
-		Button: HeaderButton,
 		headerRight: () => (
 			<Button
 				onPress={headerRight.onPress}

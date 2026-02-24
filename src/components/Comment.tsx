@@ -28,7 +28,6 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { THEME } from "@/lib/theme";
 import { useCSSVariable } from "uniwind";
-import { which } from "bun";
 
 const DeactivateButton = ({ onPress }: { onPress: () => void }) => {
 	const [open, setOpen] = useState(false);
@@ -40,7 +39,7 @@ const DeactivateButton = ({ onPress }: { onPress: () => void }) => {
 					size="sm"
 					onPress={() => setOpen(true)}
 				>
-					<Trash size={20} className="text-muted-foreground" />
+					<Trash className="text-muted-foreground size-5" />
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="max-w-450px">
@@ -117,7 +116,7 @@ const LikeButton = (props: { commentId: string }) => {
 	return (
 		<Button
 			variant="ghost"
-			size={"sm"}
+			size="sm"
 			onPress={() => {
 				if (isLiking || isUnLiking) return;
 				if (like) {
@@ -129,7 +128,7 @@ const LikeButton = (props: { commentId: string }) => {
 			className="flex-row gap-2"
 		>
 			<Heart
-				size={25}
+				className="size-5"
 				fill={liked ? THEME.heart : "transparent"}
 				color={liked ? THEME.heart : (colorMutedForeground as string)}
 			/>
@@ -160,11 +159,11 @@ const CommentButton = ({
 	return (
 		<Button
 			variant="ghost"
-			size={"sm"}
+			size="sm"
 			className="flex-row gap-2"
 			onPress={onPress}
 		>
-			<MessageCircle size={25} className="text-muted-foreground" />
+			<MessageCircle className="text-muted-foreground size-5" />
 			<Text className="font-bold">{comments}</Text>
 		</Button>
 	);
@@ -278,10 +277,7 @@ export const Comment = ({
 						asChild
 					>
 						<Button variant="ghost" size={"sm"}>
-							<Reply
-								size={25}
-								className="text-muted-foreground"
-							/>
+							<Reply className="text-muted-foreground size-6" />
 						</Button>
 					</Link>
 					{myProfile?.userId === profile.userId ? (
@@ -290,10 +286,7 @@ export const Comment = ({
 							size={"sm"}
 							onPress={() => deleteComment({ id })}
 						>
-							<Trash
-								size={20}
-								className="text-muted-foreground"
-							/>
+							<Trash className="text-muted-foreground size-5" />
 						</Button>
 					) : myProfile?.role === "MOD" ? (
 						<DeactivateButton
