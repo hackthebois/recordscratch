@@ -88,7 +88,7 @@ export default function TabLayout() {
 						default: "person.circle",
 						selected: "person.circle.fill",
 					}}
-					md="verified_user"
+					md="person"
 				/>
 			</NativeTabs.Trigger>
 		</NativeTabs>

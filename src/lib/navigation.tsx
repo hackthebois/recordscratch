@@ -33,8 +33,12 @@ export const headerRight = (headerRight: {
 		headerRight:
 			Platform.OS !== "web"
 				? () => (
-						<Button onPress={headerRight.onPress}>
-							{headerRight.label}
+						<Button
+							onPress={headerRight.onPress}
+							className="rounded-full"
+							size="sm"
+						>
+							<Text>{headerRight.label}</Text>
 						</Button>
 					)
 				: undefined,
@@ -57,5 +61,5 @@ export const defaultScreenOptions: StackScreenProps["options"] = {
 	headerTitleAlign: "center",
 	unstable_headerLeftItems: ({ canGoBack }) =>
 		canGoBack ? [backButton] : [],
-	headerBackVisible: false,
+	headerBackVisible: Platform.OS !== "ios",
 };
