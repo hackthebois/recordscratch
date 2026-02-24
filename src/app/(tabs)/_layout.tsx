@@ -4,14 +4,14 @@ import React from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { useCSSVariable } from "uniwind";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { Platform } from "react-native";
+import { useTheme } from "@react-navigation/native";
+import { THEME } from "@/lib/theme";
 
 export default function TabLayout() {
-	const foregroundColor = useCSSVariable("--color-foreground") as string;
-	const mutedColor = useCSSVariable("--color-muted") as string;
-	const backgroundColor = useCSSVariable("--color-background") as string;
+	const theme = useTheme();
+	const colors = THEME[theme.dark ? "dark" : "light"];
 	const sessionId = useAuth((s) => s.sessionId);
 	const { data: notifications } = useQuery(
 		api.notifications.getUnseen.queryOptions(undefined, {
@@ -24,10 +24,10 @@ export default function TabLayout() {
 	return (
 		<NativeTabs
 			disableTransparentOnScrollEdge
-			tintColor={foregroundColor}
-			backgroundColor={backgroundColor}
-			rippleColor={mutedColor}
-			indicatorColor={mutedColor}
+			tintColor={colors.foreground}
+			backgroundColor={colors.background}
+			rippleColor={colors.muted}
+			indicatorColor={colors.muted}
 		>
 			<NativeTabs.Trigger name="(home)">
 				<NativeTabs.Trigger.Label hidden={Platform.OS !== "web"}>

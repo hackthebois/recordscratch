@@ -29,12 +29,14 @@ type HeaderRight = {
 	onPress: () => void;
 	enabled?: boolean;
 };
-export const useHeaderRight = (
-	headerRight: HeaderRight,
-): StackScreenProps["options"] & HeaderRight & { Button?: React.ReactNode } => {
+export const useHeaderRight = ({
+	Icon,
+	...headerRight
+}: HeaderRight): StackScreenProps["options"] &
+	HeaderRight & { Button?: React.ReactNode } => {
 	const HeaderButton = (
 		<Button variant="secondary" onPress={headerRight.onPress}>
-			{headerRight.Icon ? headerRight.Icon : null}
+			{Icon ? Icon : null}
 			<Text>{headerRight.label}</Text>
 		</Button>
 	);
