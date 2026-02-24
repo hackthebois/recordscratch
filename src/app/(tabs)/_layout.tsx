@@ -10,6 +10,7 @@ import { Platform } from "react-native";
 
 export default function TabLayout() {
 	const foregroundColor = useCSSVariable("--color-foreground") as string;
+	const mutedColor = useCSSVariable("--color-muted") as string;
 	const backgroundColor = useCSSVariable("--color-background") as string;
 	const sessionId = useAuth((s) => s.sessionId);
 	const { data: notifications } = useQuery(
@@ -25,6 +26,8 @@ export default function TabLayout() {
 			disableTransparentOnScrollEdge
 			tintColor={foregroundColor}
 			backgroundColor={backgroundColor}
+			rippleColor={mutedColor}
+			indicatorColor={mutedColor}
 		>
 			<NativeTabs.Trigger name="(home)">
 				<NativeTabs.Trigger.Label hidden={Platform.OS !== "web"}>
@@ -59,7 +62,7 @@ export default function TabLayout() {
 						default: "list.bullet",
 						selected: "list.bullet",
 					}}
-					md="rowing"
+					md="list"
 				/>
 			</NativeTabs.Trigger>
 			<NativeTabs.Trigger name="(notifications)">
