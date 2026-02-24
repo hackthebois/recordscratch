@@ -57,19 +57,13 @@ const app = new Hono()
 			},
 		);
 
-		const resClone = res.clone();
-		const json = await resClone.json();
+		const json = await res.json();
 
 		const error = DeezerErrorSchema.safeParse(json);
 
-		if (error.success) {
-			return c.json(error.data, 500);
-		}
+		if (error.success) return c.json(error.data, 500);
 
-		return new Response(res.body, {
-			headers: res.headers,
-			status: res.status,
-		});
+		return c.json(json);
 	})
 	.get("/ingest/**", (c) => {
 		const headers = c.req.header();
