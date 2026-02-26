@@ -24,6 +24,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api, RouterOutputs } from "@/lib/api";
 import { Page } from "@/components/Page";
+import { useCSSVariable } from "uniwind";
 
 const NotificationBlock = ({
 	icon,
@@ -97,11 +98,13 @@ const NotificationItem = ({
 	notification: RouterOutputs["notifications"]["get"][0];
 }) => {
 	const profile = useAuth((s) => s.profile);
+	const heartColor = useCSSVariable("--color-heart") as string;
+
 	switch (notification.notifType) {
 		case "follow":
 			return (
 				<NotificationBlock
-					icon={<User size={28} className="text-sky-500" />}
+					icon={<User className="size-7 text-sky-500" />}
 					{...parseFollowNotification({
 						profile: notification.profile,
 						notification,
@@ -111,7 +114,7 @@ const NotificationItem = ({
 		case "like":
 			return (
 				<NotificationBlock
-					icon={<Heart size={26} color="#ff4d4f" />}
+					icon={<Heart color={heartColor} className="size-6" />}
 					{...parseLikeNotification({
 						profile: notification.profile,
 						rating: notification.rating,
@@ -123,9 +126,7 @@ const NotificationItem = ({
 		case "comment":
 			return (
 				<NotificationBlock
-					icon={
-						<MessageCircle size={26} className="text-emerald-500" />
-					}
+					icon={<MessageCircle className="size-6 text-emerald-500" />}
 					{...parseCommentNotification({
 						profile: notification.profile,
 						comment: notification.comment,

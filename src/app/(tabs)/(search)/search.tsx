@@ -93,6 +93,7 @@ export default function SearchPage() {
 	);
 
 	const userProfile = useAuth((s) => s.profile);
+	const starColor = useCSSVariable("--color-star") as string;
 	const starOrangeColor = useCSSVariable("--color-star-orange") as string;
 
 	return (
@@ -110,7 +111,7 @@ export default function SearchPage() {
 							autoComplete="off"
 							placeholder="Search"
 							value={params.query}
-							cursorColor={"#ffb703"}
+							cursorColor={starColor}
 							style={{
 								paddingTop: 0,
 								paddingBottom: Platform.OS === "ios" ? 4 : 0,

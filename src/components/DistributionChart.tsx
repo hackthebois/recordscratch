@@ -8,6 +8,7 @@ import Animated, {
 	withDelay,
 	withTiming,
 } from "react-native-reanimated";
+import { useCSSVariable } from "uniwind";
 
 const AnimatedBar = ({
 	status,
@@ -18,6 +19,8 @@ const AnimatedBar = ({
 }) => {
 	const heightAnim = useSharedValue(0);
 	const [isInitialLoad, setIsInitialLoad] = useState(true);
+	const starColor = useCSSVariable("--color-star") as string;
+	const starOrangeColor = useCSSVariable("--color-star-orange") as string;
 
 	useEffect(() => {
 		heightAnim.value = withDelay(
@@ -34,7 +37,8 @@ const AnimatedBar = ({
 		<Animated.View
 			style={{
 				height: heightAnim,
-				backgroundColor: status === "active" ? "#ff8c00" : "#ffb703",
+				backgroundColor:
+					status === "active" ? starOrangeColor : starColor,
 				opacity: status === "inactive" ? 0.7 : 1.0,
 			}}
 			className="h-full min-h-0 w-full rounded-t"

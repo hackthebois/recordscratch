@@ -218,6 +218,8 @@ export const Review = ({
 	feedInput?: RouterInputs["ratings"]["feed"];
 }) => {
 	const myProfile = useAuth((s) => s.profile);
+	const starColor = useCSSVariable("--color-star") as string;
+
 	return (
 		<WebWrapper>
 			<View className="bg-background text-card-foreground flex flex-col gap-4 p-4">
@@ -233,15 +235,15 @@ export const Review = ({
 								<Star
 									key={i}
 									className="size-5"
-									color="#ffb703"
-									fill={"#ffb703"}
+									color={starColor}
+									fill={starColor}
 								/>
 							))}
 							{Array.from(Array(10 - rating)).map((_, i) => (
 								<Star
 									key={i}
 									className="size-5"
-									color="#ffb703"
+									color={starColor}
 								/>
 							))}
 						</View>

@@ -144,6 +144,7 @@ const RatingModal = () => {
 
 	const query = useStore(form.store, (state) => state.values.query);
 	const debouncedQuery = useDebounce(query, 500);
+	const starColor = useCSSVariable("--color-star") as string;
 
 	const { mutate } = useMutation(
 		api.lists.resources.create.mutationOptions({
@@ -192,7 +193,7 @@ const RatingModal = () => {
 											autoComplete="off"
 											placeholder={`Search for a ${category.toLowerCase()}`}
 											value={field.state.value}
-											cursorColor={"#ffb703"}
+											cursorColor={starColor}
 											style={{
 												paddingTop: 0,
 												paddingBottom:

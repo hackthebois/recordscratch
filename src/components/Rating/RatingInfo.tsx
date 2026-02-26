@@ -8,6 +8,7 @@ import { Skeleton } from "../ui/skeleton";
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { useCSSVariable } from "uniwind";
 
 export const RatingInfo = ({
 	initialRating,
@@ -24,30 +25,31 @@ export const RatingInfo = ({
 			staleTime: Infinity,
 		}),
 	);
+	const starColor = useCSSVariable("--color-star") as string;
 
 	if (isLoading)
 		return (
 			<View
 				className={cn(
 					"flex min-h-12 justify-center gap-4",
-					size === "sm" && "min-w-18 h-8",
+					size === "sm" && "h-8 min-w-18",
 					size === "lg" && "h-12 min-w-20",
 				)}
 			>
 				<View className="flex flex-row items-center justify-center gap-2">
-					<Star size={size === "lg" ? 32 : 21} color="#ffb703" />
+					<Star size={size === "lg" ? 32 : 21} color={starColor} />
 					<View className="flex flex-col gap-1">
 						<Skeleton className="w-6">
 							<Text
 								className={cn({
-									"font-semibold text-lg": size === "lg",
+									"text-lg font-semibold": size === "lg",
 									"text font-semibold": size === "sm",
 								})}
 							/>
 						</Skeleton>
 						{size === "lg" && (
 							<Skeleton className="w-4">
-								<Text className="text-lg text-muted-foreground" />
+								<Text className="text-muted-foreground text-lg" />
 							</Skeleton>
 						)}
 					</View>
@@ -67,7 +69,7 @@ export const RatingInfo = ({
 			<Pressable
 				className={cn(
 					"flex min-h-12 justify-center gap-4",
-					size === "sm" && "min-w-18 h-8",
+					size === "sm" && "h-8 min-w-18",
 					size === "lg" && "h-12 min-w-20",
 				)}
 			>
@@ -75,14 +77,14 @@ export const RatingInfo = ({
 					<View className="flex flex-row items-center justify-center gap-2">
 						<Star
 							size={size === "lg" ? 32 : 21}
-							color="#ffb703"
-							fill="#ffb703"
+							color={starColor}
+							fill={starColor}
 						/>
 						<View className="flex flex-col">
 							{rating?.average && (
 								<Text
 									className={cn({
-										"font-semibold text-lg": size === "lg",
+										"text-lg font-semibold": size === "lg",
 										"text font-semibold": size === "sm",
 									})}
 								>
@@ -90,7 +92,7 @@ export const RatingInfo = ({
 								</Text>
 							)}
 							{size === "lg" && (
-								<Text className="text-lg text-muted-foreground">
+								<Text className="text-muted-foreground text-lg">
 									{rating?.total && Number(rating.total) !== 0
 										? rating.total
 										: resource.category === "ARTIST"
