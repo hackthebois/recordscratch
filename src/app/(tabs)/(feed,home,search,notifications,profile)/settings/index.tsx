@@ -11,7 +11,6 @@ import { UserMinus } from "@/lib/icons/IconsLoader";
 import { UserPen } from "@/lib/icons/IconsLoader";
 import { ReceiptText } from "@/lib/icons/IconsLoader";
 import { ShieldCheck } from "@/lib/icons/IconsLoader";
-import { useColorScheme } from "@/lib/useColorScheme";
 import { reloadAppAsync } from "expo";
 import { Link } from "expo-router";
 import { ScrollView, View } from "react-native";
@@ -20,10 +19,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
+import { useUniwind, Uniwind } from "uniwind";
 
 const SettingsPage = () => {
+	const { theme } = useUniwind();
 	const logout = useAuth((s) => s.logout);
-	const { setColorScheme, colorScheme } = useColorScheme();
 	const queryClient = useQueryClient();
 
 	const { data: user } = useQuery(api.users.me.queryOptions());
@@ -66,15 +66,15 @@ const SettingsPage = () => {
 						<Button
 							variant="outline"
 							onPress={async () =>
-								setColorScheme(
-									colorScheme === "dark" ? "light" : "dark",
+								Uniwind.setTheme(
+									theme === "dark" ? "light" : "dark",
 								)
 							}
 							className="flex-row items-center justify-between gap-2"
 						>
 							<View className="flex-1 flex-row items-center justify-between gap-2">
 								<Text>Theme</Text>
-								{colorScheme === "light" ? (
+								{theme === "light" ? (
 									<View className="flex-row items-center gap-2">
 										<Text className="text-blue-500">
 											Light

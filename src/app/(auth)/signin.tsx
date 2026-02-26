@@ -2,7 +2,6 @@ import { Text } from "@/components/ui/text";
 import env from "@/env";
 import { handleLoginRedirect, useAuth } from "@/lib/auth";
 import { catchError } from "@/lib/errors";
-import { useColorScheme } from "@/lib/useColorScheme";
 import { reloadAppAsync } from "expo";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { Image } from "expo-image";
@@ -11,14 +10,15 @@ import { useRouter } from "expo-router";
 import * as Browser from "expo-web-browser";
 import React, { useState } from "react";
 import { Platform, Pressable, View } from "react-native";
+import { useUniwind } from "uniwind";
 import { z } from "zod";
 
 Browser.maybeCompleteAuthSession();
 
 const SignInPage = () => {
+	const { theme } = useUniwind();
 	const login = useAuth((s) => s.login);
 	const router = useRouter();
-	const { colorScheme } = useColorScheme();
 	const [isAuthoring, setIsAuthoring] = useState(false);
 
 	const handlePressButtonAsync = async (adapter: "google") => {
@@ -37,15 +37,18 @@ const SignInPage = () => {
 				}
 				const result = await Browser.openAuthSessionAsync(
 					`${env.SITE_URL}/api/auth/${adapter}?expoAddress=${env.SCHEME}`,
-					`${env.SCHEME}`
+					`${env.SCHEME}`,
 				);
 				if (result.type !== "success") return;
 				const url = Linking.parse(result.url);
-				const sessionId = url.queryParams?.session_id?.toString() ?? null;
+				const sessionId =
+					url.queryParams?.session_id?.toString() ?? null;
 				if (!sessionId) return;
 
 				await login(sessionId)
-					.then(({ status }) => handleLoginRedirect({ status, router }))
+					.then(({ status }) =>
+						handleLoginRedirect({ status, router }),
+					)
 					.catch((e) => {
 						catchError(e);
 						reloadAppAsync();
@@ -80,7 +83,8 @@ const SignInPage = () => {
 			<Pressable
 				disabled={isAuthoring}
 				onPress={async () => await handlePressButtonAsync("google")}
-				className="flex-row items-center gap-4 rounded-full border border-border px-8 py-4">
+				className="border-border flex-row items-center gap-4 rounded-full border px-8 py-4"
+			>
 				<Image
 					source={require("../../../assets/google-logo.svg")}
 					style={{
@@ -88,7 +92,7 @@ const SignInPage = () => {
 						height: 30,
 					}}
 				/>
-				<Text className="font-medium text-lg">Sign in with Google</Text>
+				<Text className="text-lg font-medium">Sign in with Google</Text>
 			</Pressable>
 			{Platform.OS === "ios" || Platform.OS === "macos" ? (
 				<Pressable
@@ -97,11 +101,13 @@ const SignInPage = () => {
 						if (isAuthoring) return;
 						try {
 							setIsAuthoring(true);
-							const credential = await AppleAuthentication.signInAsync({
-								requestedScopes: [
-									AppleAuthentication.AppleAuthenticationScope.EMAIL,
-								],
-							});
+							const credential =
+								await AppleAuthentication.signInAsync({
+									requestedScopes: [
+										AppleAuthentication
+											.AppleAuthenticationScope.EMAIL,
+									],
+								});
 							const { identityToken, email } = credential;
 
 							const res = await fetch(
@@ -115,7 +121,7 @@ const SignInPage = () => {
 										idToken: identityToken,
 										email: email ?? undefined,
 									}),
-								}
+								},
 							);
 							const { sessionId } = z
 								.object({
@@ -124,7 +130,9 @@ const SignInPage = () => {
 								.parse(await res.json());
 
 							await login(sessionId)
-								.then(({ status }) => handleLoginRedirect({ status, router }))
+								.then(({ status }) =>
+									handleLoginRedirect({ status, router }),
+								)
 								.catch((e) => {
 									catchError(e);
 									reloadAppAsync();
@@ -132,7 +140,8 @@ const SignInPage = () => {
 						} catch (e) {
 							if (
 								e instanceof Error &&
-								e.message === "The user canceled the authorization attempt"
+								e.message ===
+									"The user canceled the authorization attempt"
 							) {
 								return;
 							}
@@ -141,16 +150,21 @@ const SignInPage = () => {
 							setIsAuthoring(false);
 						}
 					}}
-					className="flex-row items-center gap-4 rounded-full border border-border px-8 py-4">
+					className="border-border flex-row items-center gap-4 rounded-full border px-8 py-4"
+				>
 					<Image
-						key={colorScheme}
-						source={colorScheme === "dark" ? appleLogo.dark : appleLogo.light}
+						key={theme}
+						source={
+							theme === "dark" ? appleLogo.dark : appleLogo.light
+						}
 						style={{
 							width: 26,
 							height: 30,
 						}}
 					/>
-					<Text className="font-medium text-lg">Sign in with Apple</Text>
+					<Text className="text-lg font-medium">
+						Sign in with Apple
+					</Text>
 				</Pressable>
 			) : null}
 		</View>

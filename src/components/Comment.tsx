@@ -26,7 +26,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { THEME } from "@/lib/theme";
 import { useCSSVariable } from "uniwind";
 
 const DeactivateButton = ({ onPress }: { onPress: () => void }) => {
@@ -112,6 +111,7 @@ const LikeButton = (props: { commentId: string }) => {
 	const likesCount = isLiking ? likes + 1 : isUnLiking ? likes - 1 : likes;
 
 	const colorMutedForeground = useCSSVariable("--color-muted-foreground");
+	const heartColor = useCSSVariable("--color-heart") as string;
 
 	return (
 		<Button
@@ -129,8 +129,8 @@ const LikeButton = (props: { commentId: string }) => {
 		>
 			<Heart
 				className="size-5"
-				fill={liked ? THEME.heart : "transparent"}
-				color={liked ? THEME.heart : (colorMutedForeground as string)}
+				fill={liked ? heartColor : "transparent"}
+				color={liked ? heartColor : (colorMutedForeground as string)}
 			/>
 			{isLoading ? (
 				<Skeleton className="flex-row gap-2">

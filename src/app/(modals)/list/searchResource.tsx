@@ -16,7 +16,7 @@ import { useForm, useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
-import { THEME } from "@/lib/theme";
+import { useCSSVariable } from "uniwind";
 
 const MusicSearch = ({
 	query,
@@ -27,6 +27,7 @@ const MusicSearch = ({
 	category: "ALBUM" | "SONG" | "ARTIST";
 	onPress: (resource: Artist | Album | Track) => void;
 }) => {
+	const starOrangeColor = useCSSVariable("--color-star-orange") as string;
 	const { data: music, isLoading } = useQuery({
 		queryKey: ["search", query, category],
 		queryFn: async () => {
@@ -46,7 +47,7 @@ const MusicSearch = ({
 	if (isLoading) {
 		return (
 			<View className="flex flex-1 items-center justify-center pt-40">
-				<ActivityIndicator size="large" color={THEME["star-orange"]} />
+				<ActivityIndicator size="large" color={starOrangeColor} />
 			</View>
 		);
 	}

@@ -10,7 +10,7 @@ import { WebWrapper } from "./WebWrapper";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { THEME } from "@/lib/theme";
+import { useCSSVariable } from "uniwind";
 
 export const ReviewsList = (
 	input: RouterInputs["ratings"]["feed"] & {
@@ -34,6 +34,7 @@ export const ReviewsList = (
 	);
 
 	const { refetchByUser, isRefetchingByUser } = useRefreshByUser(refetch);
+	const starOrangeColor = useCSSVariable("--color-star-orange") as string;
 
 	const List = Platform.OS === "web" ? FlatList : FlashList;
 
@@ -60,10 +61,7 @@ export const ReviewsList = (
 			)}
 			ListFooterComponent={() =>
 				hasNextPage ? (
-					<ActivityIndicator
-						size="large"
-						color={THEME["star-orange"]}
-					/>
+					<ActivityIndicator size="large" color={starOrangeColor} />
 				) : null
 			}
 			ListEmptyComponent={
@@ -71,7 +69,7 @@ export const ReviewsList = (
 					{isLoading ? (
 						<ActivityIndicator
 							size="large"
-							color={THEME["star-orange"]}
+							color={starOrangeColor}
 						/>
 					) : (
 						<Text

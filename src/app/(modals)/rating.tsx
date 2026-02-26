@@ -15,7 +15,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
-import { THEME } from "@/lib/theme";
+import { useCSSVariable } from "uniwind";
 
 const RatingInput = ({
 	value: rating,
@@ -24,6 +24,7 @@ const RatingInput = ({
 	value: number | null;
 	onChange: (_rating: number | null) => void;
 }) => {
+	const starColor = useCSSVariable("--color-star") as string;
 	console.log(rating, onChange);
 	return (
 		<View className="flex flex-row justify-between">
@@ -40,14 +41,14 @@ const RatingInput = ({
 							index <= rating ? (
 								<Star
 									size={28}
-									fill={THEME.star}
-									color={THEME.star}
+									fill={starColor}
+									color={starColor}
 								/>
 							) : (
-								<Star size={28} color={THEME.star} />
+								<Star size={28} color={starColor} />
 							)
 						) : (
-							<Star size={28} color={THEME.star} />
+							<Star size={28} color={starColor} />
 						)}
 						<Text className="text-muted-foreground">{index}</Text>
 					</View>

@@ -10,7 +10,7 @@ import { Button, buttonSizes } from "../ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { View } from "react-native";
-import { THEME } from "@/lib/theme";
+import { useCSSVariable } from "uniwind";
 
 const iconSize = {
 	lg: 27,
@@ -37,6 +37,7 @@ const RateButton = ({
 	name?: string;
 	size?: "lg" | "default" | "sm";
 }) => {
+	const starOrangeColor = useCSSVariable("--color-star-orange") as string;
 	const userId = useAuth((s) => s.profile!.userId);
 	const { data: userRating, isLoading } = useQuery(
 		api.ratings.user.get.queryOptions(
@@ -74,8 +75,8 @@ const RateButton = ({
 			<Button variant="secondary" size={size} className="flex-row gap-2">
 				<Star
 					size={iconSize[size]}
-					color={THEME["star-orange"]}
-					fill={userRating ? THEME["star-orange"] : "transparent"}
+					color={starOrangeColor}
+					fill={userRating ? starOrangeColor : "transparent"}
 				/>
 				<Text>{userRating ? userRating.rating : "Rate"}</Text>
 			</Button>

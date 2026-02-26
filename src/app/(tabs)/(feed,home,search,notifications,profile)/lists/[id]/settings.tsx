@@ -2,7 +2,7 @@ import NotFoundScreen from "@/app/+not-found";
 import { KeyboardAvoidingScrollView } from "@/components/KeyboardAvoidingView";
 import { Button } from "@/components/ui/button";
 import { UpdateList, updateFormSchema } from "@/types";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Switch, TextInput, View } from "react-native";
 import { Text } from "@/components/ui/text";
 import { useState } from "react";

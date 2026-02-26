@@ -23,7 +23,6 @@ import { AlignJustify, Trash2 } from "@/lib/icons/IconsLoader";
 import ReText from "@/components/ui/retext";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useColorScheme } from "@/lib/useColorScheme";
 import * as Haptics from "expo-haptics";
 import color from "color";
 import { View, Platform } from "react-native";
@@ -35,6 +34,7 @@ import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
 import { useHeaderRight } from "@/lib/navigation";
+import { Uniwind, useUniwind } from "uniwind";
 
 const SONG_HEIGHT = 70;
 const MARGIN_TOP_OFFSET = 20;
@@ -148,6 +148,7 @@ const AnimatedResource = ({
 	deleteResource: (resourceId: string) => void;
 	contentHeight: number;
 }) => {
+	const { theme } = useUniwind();
 	const moving = useSharedValue<boolean>(false);
 	const position = useSharedValue<string>(
 		resourcesSharedMap.value[item.resourceId].toString(),
@@ -156,7 +157,6 @@ const AnimatedResource = ({
 		(resourcesSharedMap.value[item.resourceId] - 1) * SONG_HEIGHT +
 			MARGIN_TOP_OFFSET,
 	);
-	const { colorScheme } = useColorScheme();
 	const backgroundColor = color("hsl(240, 10%, 3.9%)").rgb().string();
 
 	useAnimatedReaction(
@@ -222,10 +222,10 @@ const AnimatedResource = ({
 		() => ({
 			position: "absolute",
 			top: top.value,
-			shadowColor: colorScheme === "light" ? "white" : "black",
+			shadowColor: theme === "light" ? "white" : "black",
 			zIndex: moving.value ? 1 : 0,
 			backgroundColor: moving.value
-				? colorScheme === "light"
+				? Uniwind.currentTheme === "light"
 					? "white"
 					: backgroundColor
 				: "transparent",
@@ -252,7 +252,7 @@ const AnimatedResource = ({
 					text={position}
 					style={{
 						paddingLeft: 16,
-						color: colorScheme ? "#6b7280" : "white",
+						color: Uniwind.currentTheme ? "#6b7280" : "white",
 						fontWeight: "bold",
 					}}
 				/>

@@ -15,7 +15,7 @@ import { WebWrapper } from "@/components/WebWrapper";
 import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
 import { Page } from "@/components/Page";
-import { THEME } from "@/lib/theme";
+import { useCSSVariable } from "uniwind";
 
 type TabsType = Omit<SearchOptions, "query"> & {
 	label: string;
@@ -93,6 +93,7 @@ export default function SearchPage() {
 	);
 
 	const userProfile = useAuth((s) => s.profile);
+	const starOrangeColor = useCSSVariable("--color-star-orange") as string;
 
 	return (
 		<Page
@@ -154,7 +155,7 @@ export default function SearchPage() {
 							<View className="flex items-center justify-center pt-40">
 								<ActivityIndicator
 									size="large"
-									color={THEME["star-orange"]}
+									color={starOrangeColor}
 								/>
 							</View>
 						) : (
