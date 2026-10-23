@@ -1,4 +1,6 @@
-FROM imbios/bun-node:latest
+FROM node:24.22.1-bookworm-slim AS node
+FROM oven/bun:1.4.4
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
 WORKDIR /app
 
 # 1. Copy only package files first
