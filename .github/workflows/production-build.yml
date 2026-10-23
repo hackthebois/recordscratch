@@ -1,7 +1,7 @@
 name: Build Static Image
 on:
   push:
-    branches: ["master", "security/bun-1.4.4-20261023"]
+    branches: ["master"]
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
@@ -28,10 +28,9 @@ jobs:
           file: Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ startsWith(github.ref_name, 'security/') && github.sha || 'latest' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           build-args: |
             EXPO_PUBLIC_SITE_URL=${{ vars.EXPO_PUBLIC_SITE_URL }}
       - name: Deploy to Coolify
-        if: ${{ !startsWith(github.ref_name, 'security/') }}
         run: | 
          curl --request GET '${{ vars.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
